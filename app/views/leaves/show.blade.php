@@ -1,0 +1,1 @@
+C:\wamp\www\leave-management\app/views/leaves/show.blade.php

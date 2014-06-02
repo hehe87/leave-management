@@ -24,5 +24,7 @@ Route::get('/users/register', array('as' => 'userRegisteration', 'uses' => 'User
 Route::post('/users/register', array('as' => 'userRegisterationPost', 'uses' => 'UsersController@register'));
 Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
 
+// Leave Routes
+Route::resource('/leaves', 'LeavesController');
 Route::resource('/users', 'UsersController');
 
