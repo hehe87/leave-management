@@ -11,7 +11,18 @@
 |
 */
 
+
+
 Route::get('/', function()
 {
 	return View::make('hello');
 });
+
+Route::get('/users/login', array('as' => 'userLogin', 'uses' => 'UsersController@login'));
+Route::post('/users/login', array('as' => 'userLoginPost', 'uses' => 'UsersController@login'));
+Route::get('/users/register', array('as' => 'userRegisteration', 'uses' => 'UsersController@register'));
+Route::post('/users/register', array('as' => 'userRegisterationPost', 'uses' => 'UsersController@register'));
+Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
+
+Route::resource('/users', 'UsersController');
+

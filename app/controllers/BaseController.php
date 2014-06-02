@@ -14,5 +14,12 @@ class BaseController extends Controller {
 			$this->layout = View::make($this->layout);
 		}
 	}
+	
+	protected function pre_print($data){
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+		exit;
+	}
 
 }

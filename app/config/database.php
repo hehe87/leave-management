@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'database',
+			'database'  => 'leave-management',
 			'username'  => 'root',
 			'password'  => 'Rubi@123',
 			'charset'   => 'utf8',
