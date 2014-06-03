@@ -117,4 +117,77 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     );
     return $validator;
   }
+  
+  
+  
+  /**
+    Function Name: 	getTotalLeaves
+    Author Name:	Nicolas Naresh
+    Date:		June, 02 2014
+    Parameters:	        -
+    Purpose:	      	This function calculates total number of leaves for current year for current user object
+			using his/her date of joining.
+  */
+  public function getTotalLeaves(){
+    $paidLeaves = 11;
+    $allLeaves = $paidLeaves;
+    $currentDate = new DateTime(date("Y-m-d"));
+    $currentYear = (int)$currentDate->format("Y");
+    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where("YEAR(holidayDate)", "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where("YEAR(holidayDate)", "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $dateOfJoining = new DateTime($this->doj);
+    $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,1,15,$dateOfJoining->format("Y"))));
+    $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
+    
+    $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
+    
+    $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
+    
+    if($isJoinedInCurrentYear){
+      $joiningDateUT = strtotime($dateOfJoining);
+      foreach($optionalHolidays as $oHoliday){
+	$oHolidayDate = new DateTime($oHoliday->holidayDate);
+	$oHolidayDateUT = strtotime($oHoliday->holidayDate);
+	if($joiningDateUT < $oHolidayDateUT){
+	  $userLeave = Leave::where("onDate", "=", $oHolidayDate->format("Y-m-d"))->where("leaveType","<>","CSR")->get();
+	  if(count(array_keys($userLeave)) == 0){
+	    $allLeaves += 1;
+	  }
+	}
+      }
+    }
+    else{
+      foreach($optionalHolidays as $oHoliday){
+	$oHolidayDate = new DateTime($oHoliday->holidayDate);
+	$userLeave = Leave::where("onDate", "=", $oHolidayDate->format("Y-m-d"))->where("leaveType","<>","CSR")->get();
+	if(count(array_keys($userLeave)) == 0){
+	  $allLeaves += 1;
+	}
+      }
+    }
+    $allLeaves += $yearsInCompany;
+    if($isJoinedBeforeLastLeaveDateOfJoiningYear){
+      $allLeaves += 1;
+    }
+    else{
+      $allLeaves -= 1;
+    }
+    return $allLeaves;
+  }
+  
+  
+  
+  
+  /**
+    Function Name: 	getRemainingLeaves
+    Author Name:	Nicolas Naresh
+    Date:		June, 02 2014
+    Parameters:	        -
+    Purpose:	      	This function calculates total number of leaves for current year for current user object
+			using his/her date of joining.
+  */
+  public function getRemainingLeaves(){
+    
+  }
+  
 }

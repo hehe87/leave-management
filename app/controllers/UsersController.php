@@ -1,6 +1,6 @@
 <?php
 /**
-  Class Name:                       UserController
+  Class Name:                       UsersController
   author :		            Nicolas Naresh
   Date:			            May, 30 2014
   Purpose:		            This class acts as a controller for user management
@@ -21,7 +21,7 @@ class UsersController extends \BaseController {
   */
   public function login(){
     if(Auth::check()){
-      return Redirect::to("/");
+      return Redirect::to(URL::route('usersHome'));
     }
     if(Request::isMethod('post')){
       $formData = Input::all();
@@ -33,10 +33,17 @@ class UsersController extends \BaseController {
       }
       if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
       {
-	return Redirect::to("/");
+	$employeeType = Auth::user()->employeeType;
+	if($employeeType === "EMPLOYEE"){
+	  return Redirect::to(URL::route('usersHome'));
+	}
+	else{
+	  return Redirect::to(URL::route('usersListing'));
+	}
+	
       }
       else{
-	return Redirect::to("users/login")->with('error', 'Email or Password does not match');
+	return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
       }
     }
     else{
@@ -53,7 +60,7 @@ class UsersController extends \BaseController {
   */
   public function logout(){
     Auth::logout();
-    return Redirect::to("users/login")->with('message', 'Your are now logged out!');
+    return Redirect::to(URL::route('userLogin'))->with('message', 'Your are now logged out!');
   }
   
   
@@ -66,24 +73,25 @@ class UsersController extends \BaseController {
                                 with registration form and with POST request registers a new user to the system.
   */
   public function register(){
+    
     if(Auth::check()){
-      return Redirect::to("/");
+      return Redirect::to(URL::route('usersHome'));
     }
     if(Request::isMethod('post')){
       $formData = Input::all();
       $validator = User::validateRegistrationForm($formData);
       if($validator->fails())
       {
-	return Redirect::to('users/register')->withErrors($validator)->withInput()->with('success', 'Your account has been created successfully, Please login now!');
+	return Redirect::to(URL::route('userRegister'))->withErrors($validator)->withInput();
       }
       else{
 	$formData = Input::except("password_confirmation","_token");
 	$formData["password"] = Hash::make($formData["password"]);
-	User::create($formData);
-	return Redirect::to('users/login');
+	$user = User::create($formData);
+	//$user->totalLeaves = $user->getTotalLeaves();
+	//$user->save();
+	return Redirect::to(URL::route('userLogin'))->with('success', 'Your account has been created successfully, Please login now!');
       }
-      
-	
     }
     else{
       return View::make('users.register');

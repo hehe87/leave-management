@@ -18,7 +18,7 @@ class HomeController extends BaseController {
 	public function showWelcome()
 	{
 		if(!Auth::check()){
-			return Redirect::to("users/login");
+			return Redirect::to(URL::route('userLogin'));
 		}
 		return View::make('hello');
 	}

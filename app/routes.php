@@ -13,10 +13,7 @@
 
 
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', array('as' => 'usersHome', 'uses' => 'HomeController@showWelcome'));
 
 Route::get('/users/login', array('as' => 'userLogin', 'uses' => 'UsersController@login'));
 Route::post('/users/login', array('as' => 'userLoginPost', 'uses' => 'UsersController@login'));
@@ -24,5 +21,11 @@ Route::get('/users/register', array('as' => 'userRegisteration', 'uses' => 'User
 Route::post('/users/register', array('as' => 'userRegisterationPost', 'uses' => 'UsersController@register'));
 Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
 
-Route::resource('/users', 'UsersController');
+Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
+
+
+Route::get('/holidays/create', array('as' => 'holidayCreate', 'uses' => 'HolidaysController@create'));
+Route::post('/holidays/store', array('as' => 'holidayStore', 'uses' => 'HolidaysController@store'));
+
+Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
 
