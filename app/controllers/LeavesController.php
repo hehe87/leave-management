@@ -9,6 +9,7 @@
   Most Important Related Files	:   /app/controllers/LeaveController.php
 */
 
+
 class LeavesController extends \BaseController {
 
 	/**
@@ -18,6 +19,12 @@ class LeavesController extends \BaseController {
     Parameters		:	    none
     Purpose			:		This function used to list all leaves
 	*/
+
+	public function __construct()
+	{
+		$this->beforeFilter('auth');
+	}
+	
 	
 	public function index()
 	{

@@ -3,7 +3,8 @@
   <head>
     <!-- including Stylesheets -->
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/bootstrap.min.css')}}}">
-      <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/datepicker.css')}}}">
+    <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/datepicker.css')}}}">
+	{{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
   </head>
   <body>

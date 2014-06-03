@@ -26,5 +26,6 @@ Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersControll
 
 // Leave Routes
 Route::resource('/leaves', 'LeavesController');
+
 Route::resource('/users', 'UsersController');
 

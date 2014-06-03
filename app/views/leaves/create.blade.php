@@ -21,7 +21,7 @@
 							{{ Form::label('leave_type', 'Leave Type', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::select('leave_type', array('LEAVE' => 'Leave', 'CSR' => 'CSR')) }}
+							{{ Form::select('leave_type', array('LEAVE' => 'Leave', 'CSR' => 'CSR'), '', array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
@@ -33,31 +33,33 @@
 							{{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::text('leave_date') }}
+							{{ Form::text('leave_date', '', array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-12">
-					<div class="row">
-						<div class="col-sm-3">
-							{{ Form::label('from_time', 'From Time', array('class' => 'control-label')) }}
-						</div>
-						<div class="col-sm-6">
-							{{ Form::text('from_time') }}
+			<div id="csr-container">
+				<div class="form-group">
+					<div class="col-sm-12">
+						<div class="row">
+							<div class="col-sm-3">
+								{{ Form::label('from_time', 'From Time', array('class' => 'control-label')) }}
+							</div>
+							<div class="col-sm-6">
+								{{ Form::text('from_time', '', array('class' => 'form-control')) }}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-12">
-					<div class="row">
-						<div class="col-sm-3">
-							{{ Form::label('to_time', 'To Time', array('class' => 'control-label')) }}
-						</div>
-						<div class="col-sm-6">
-							{{ Form::text('to_time') }}
+				<div class="form-group">
+					<div class="col-sm-12">
+						<div class="row">
+							<div class="col-sm-3">
+								{{ Form::label('to_time', 'To Time', array('class' => 'control-label')) }}
+							</div>
+							<div class="col-sm-6">
+								{{ Form::text('to_time', '', array('class' => 'form-control'))}}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -69,7 +71,7 @@
 							{{ Form::label('reason', 'Reason', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::text('reason') }}
+							{{ Form::text('reason', '', array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
@@ -81,7 +83,7 @@
 							{{ Form::label('approver_id', 'Approval', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::select('approver_id', $users) }}
+							{{ Form::select('approver_id', $users, '', array('class' => 'form-control')) }}
 						</div>
 					</div>
 				</div>
