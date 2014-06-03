@@ -1,52 +1,50 @@
 @extends('layouts.admin_layout')
 
 @section('content')
-  <table class="table table-striped table-hover table-condensed">
-    <thead>
-      <tr>
-        <th>
-          Name
-        </th>
-        <th>
-          Email
-        </th>
-        <th>
-          Phone Number
-        </th>
-        <th class="text-center">
-          Total Leaves
-        </th>
-        <th class="text-center">
-          Remaining Leaves
-        </th>
-        <th class="text-center">
-          Actions
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach ($users as $user)
-        <tr>
-          <td>
-            {{$user->name}}
-          </td>
-          <td>
-            {{$user->email}}
-          </td>
-          <td>
-            {{$user->phone}}
-          </td>
-          <td class="text-center">
-            {{$user->totalLeaves}}
-          </td>
-          <td class="text-center">
-            -
-          </td>
-          <td align="center">
-            <span class="btn btn-primary btn-xs">View Leaves</span>
-          </td>
-        </tr>
-      @endforeach
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-lg-2 pull-left">
+      <div class="form-group">
+        <label class="control-label">&nbsp;</label>
+        <a class="btn btn-primary form-control" href="{{ URL::route('userCreate') }}">Add New User</a>
+      </div>
+    </div>
+    <div class="col-lg-3 pull-right">
+      <div class="form-group has-feedback">
+        <label class="control-label">&nbsp;</label>
+        <input type="text" class="form-control" id="user-search" placeholder="Search Users" data-search_url="{{ URL::route('usersSearch') }}">
+        <span class="glyphicon glyphicon-search form-control-feedback"></span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <table class="table table-striped table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>
+              Name
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Phone Number
+            </th>
+            <th class="text-center">
+              Total Leaves
+            </th>
+            <th class="text-center">
+              Remaining Leaves
+            </th>
+            <th class="text-center">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody id="user-listing-tbody">
+          @include('users.listing', array('users'=>$users))
+        </tbody>
+      </table>
+    </div>
+  </div>
 @stop
