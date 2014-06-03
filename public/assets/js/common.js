@@ -1,6 +1,4 @@
-$(".date_control").datepicker({
-  format: "yyyy-mm-dd"
-});
+$(".date_control").datepicker({"dateFormat" : 'yy-mm-dd'});
 
 $('#leave_type').on('change', function(elem){
 	$leave_type = $(this).val();
@@ -18,9 +16,7 @@ $('#leave_type').on('change', function(elem){
 
 });
 
-$('#leave_date').datepicker({
-  onRender: function(date) {
-	//this line cause datepicker to hide partially
-    //return date.valueOf() < now.valueOf() ? 'disabled' : '';
-  }
+$('#addSlot').on('click', function(e){
+	$('#timeContainer').append($('#timeSlot').html());
 });
+

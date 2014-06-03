@@ -4,6 +4,8 @@
     <!-- including Stylesheets -->
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/bootstrap.min.css')}}}">
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/ui-lightness/jquery-ui-1.10.4.css')}}}">
+	{{ HTML::style('assets/css/jquery.dataTables.min.css') }}
+	{{ HTML::style('assets/css/dataTables.bootstrap.css') }}
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     <!-- end including Stylesheets -->
   </head>
@@ -31,7 +33,7 @@
             </li>
           @endif
           <li>
-            <a href="">Leaves</a>
+            <a href="{{ URL::to('/leaves/') }}">Leaves</a>
           </li>
           <li>
             <a href="">Reports</a>
@@ -47,6 +49,8 @@
     <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
+	{{ HTML::script('assets/js/jquery.dataTables.min.js') }}
+	{{ HTML::script('assets/js/dataTables.bootstrap.js') }}
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <!-- end including Scripts -->
   </body>

@@ -88,8 +88,8 @@ class UsersController extends \BaseController {
 	$formData = Input::except("password_confirmation","_token");
 	$formData["password"] = Hash::make($formData["password"]);
 	$user = User::create($formData);
-	//$user->totalLeaves = $user->getTotalLeaves();
-	//$user->save();
+	$user->totalLeaves = $user->getTotalLeaves();
+	$user->save();
 	return Redirect::to(URL::route('userLogin'))->with('success', 'Your account has been created successfully, Please login now!');
       }
     }

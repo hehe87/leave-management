@@ -21,5 +21,29 @@ class Leave extends \Eloquent {
 
 	// fillable fields
 	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'from_time', 'to_time', 'reason'];
+	
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
 
+	/**
+    Function Name	: 		normalizeInput
+    Author Name		:		Jack Braj
+    Date			:		June 03, 2014
+    Parameters		:	    array of inputs
+    Purpose			:		This function used to normalize time slots to save into database
+	*/
+	
+	public static function normalizeInput($inputs)
+	{
+		$row = [];
+		
+		foreach($inputs['from_hour'] as $tempKey => $tempData)
+		{			
+			$row[$tempKey] = ['user_id' => $inputs['user_id'], 'leave_date' => $inputs['leave_date'], 'leave_type' => $inputs['leave_type'], 'from_time' => $inputs['from_hour'][$tempKey].':'.$inputs['from_min'][$tempKey], 'to_time' => $inputs['to_hour'][$tempKey].':'.$inputs['to_min'][$tempKey], 'reason' => $inputs['reason'], 'approver_id' => $inputs['approver_id']];			
+		}
+		
+		return $row;
+	}
 }

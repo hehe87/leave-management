@@ -57,20 +57,31 @@ class LeavesController extends \BaseController {
 	
 	public function store()
 	{
+		$inputs = Leave::normalizeInput(Input::all());
 		$validator = Validator::make($data = Input::except('_token'), Leave::$rules);
 		
 		// add time rules to validation array if leave type is CSR
-		$validator->sometimes( array('from_time','to_time'), 'required', function($input)
+		/*$validator->sometimes( array('from_time[]','to_time[]'), 'required', function($input)
 		{
 			return ('CSR' == $input->leave_type);
-		});
+		});*/
 		
 		if ($validator->fails())
 		{
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
-
-		Leave::create($data);
+		
+		// Save each leave and related approval record
+		foreach($inputs as $input)
+		{
+			$leave = Leave::create($input);
+			// Insert related approval record
+			foreach($input['approver_id'] as $approver)
+			{
+				Approval::create(['approver_id' => $approver, 'leave_id' => $leave->id, 'approved' => 0, 'approval_note' => '']);
+			}
+		}
+		
 
 		return Redirect::route('leaves.index')
 						->with('message', 'Leave successfully applied');;
@@ -144,5 +155,23 @@ class LeavesController extends \BaseController {
 
 		return Redirect::route('leaves.index');
 	}
+	
+	/**
+    Function Name	: 		search
+    Author Name		:		Jack Braj
+    Date			:		June 03, 2014
+    Parameters		:	    none
+    Purpose			:		This function used to search leave by user name or leave date
+	*/
+	
+	public function search()
+	{
+		$searchText = Input::get('name');
+		
+		print_r(User::where('name', 'LIKE', '%'.$searchText.'%')
+					->with('leaves'));
+	}
+	
+	
 
 }

@@ -133,8 +133,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $allLeaves = $paidLeaves;
     $currentDate = new DateTime(date("Y-m-d"));
     $currentYear = (int)$currentDate->format("Y");
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where("YEAR(holidayDate)", "=", $currentYear)->orderBy("holidayDate", "asc")->get();
-    $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where("YEAR(holidayDate)", "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where( DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $dateOfJoining = new DateTime($this->doj);
     $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,1,15,$dateOfJoining->format("Y"))));
     $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
@@ -189,5 +189,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   public function getRemainingLeaves(){
     
   }
+  
+  /**
+    Function Name	: 		leaves
+    Author Name		:		Jack Braj
+    Date			:		June 03, 2014
+    Parameters		:	    none
+    Purpose			:		Return leave relationship for eloquent
+	*/
+	
+	public function leaves()
+	{
+		return $this->hasMany('Leave');
+	}
   
 }

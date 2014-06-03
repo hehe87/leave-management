@@ -11,7 +11,7 @@
 			@endforeach
 			</ul>
 		@endif
-		
+
 		{{ Form::open(array('action' => 'LeavesController@store', 'method' => 'post')) }}
 			{{ Form::hidden('user_id', Auth::user()->id) }}
 			<div class="form-group">
@@ -33,7 +33,7 @@
 							{{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::text('leave_date', '', array('class' => 'form-control')) }}
+							{{ Form::text('leave_date', '', array('class' => 'form-control date_control')) }}
 						</div>
 					</div>
 				</div>
@@ -41,25 +41,23 @@
 			<div id="csr-container">
 				<div class="form-group">
 					<div class="col-sm-12">
-						<div class="row">
+						<div class="row" id="timeContainer">
 							<div class="col-sm-3">
-								{{ Form::label('from_time', 'From Time', array('class' => 'control-label')) }}
+								{{ Form::label('from_time', 'Timings', array('class' => 'control-label')) }}
 							</div>
-							<div class="col-sm-6">
-								{{ Form::text('from_time', '', array('class' => 'form-control')) }}
+							<div id="timeSlot">
+								<div class="col-sm-3">
+									{{ Form::label('from_hour', 'From', array('class' => 'control-label col-sm-1')) }}
+									{{ Form::select('from_hour[]', range(0,23) ,'', array('class' => 'form-control input-sm col-xs-2')) }}
+									{{ Form::select('from_min[]', range(0,59) , '', array('class' => 'form-control input-sm col-xs-2')) }}
+								</div>
+								<div class="col-sm-3">
+									{{ Form::label('to_hour', 'To', array('class' => 'control-label col-sm-1')) }}
+									{{ Form::select('to_hour[]', range(0,23) , '', array('class' => 'form-control input-sm col-xs-2'))}}
+									{{ Form::select('to_min[]', range(0,59) , '', array('class' => 'form-control input-sm col-xs-2'))}}
+								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-12">
-						<div class="row">
-							<div class="col-sm-3">
-								{{ Form::label('to_time', 'To Time', array('class' => 'control-label')) }}
-							</div>
-							<div class="col-sm-6">
-								{{ Form::text('to_time', '', array('class' => 'form-control'))}}
-							</div>
+								{{ Form::button('Add Slot', array('class' => 'btn btn-success', 'id' => 'addSlot')) }}
 						</div>
 					</div>
 				</div>
@@ -71,7 +69,7 @@
 							{{ Form::label('reason', 'Reason', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::text('reason', '', array('class' => 'form-control')) }}
+							{{ Form::textarea('reason', '', array('class' => 'form-control', 'rows' => '4')) }}
 						</div>
 					</div>
 				</div>
@@ -83,7 +81,7 @@
 							{{ Form::label('approver_id', 'Approval', array('class' => 'control-label')) }}
 						</div>
 						<div class="col-sm-6">
-							{{ Form::select('approver_id', $users, '', array('class' => 'form-control')) }}
+							{{ Form::select('approver_id[]', $users, '', array('class' => 'form-control', 'multiple')) }}
 						</div>
 					</div>
 				</div>
