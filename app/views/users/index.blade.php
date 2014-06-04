@@ -1,11 +1,20 @@
 @extends('layouts.admin_layout')
+<!--
+  Page Name:                        index.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page displays users listing by including users/listing.blade.php file
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      views/users/listing.blade.php, views/layouts/admin_layout.blade.php
+-->
 
 @section('content')
   <div class="row">
     <div class="col-lg-2 pull-left">
       <div class="form-group">
         <label class="control-label">&nbsp;</label>
-        <a class="btn btn-primary form-control" href="{{ URL::route('userCreate') }}">Add New User</a>
+        <a class="btn btn-primary form-control normal-button" href="{{ URL::route('userCreate') }}">Add New User</a>
       </div>
     </div>
     <div class="col-lg-3 pull-right">

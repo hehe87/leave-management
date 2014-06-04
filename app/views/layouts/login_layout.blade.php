@@ -1,14 +1,46 @@
+<!--
+  Page Name:                       login_layout.blade.php
+  author :		            Nicolas Naresh
+  Date:			            May, 30 2014
+  Purpose:		            This page acts as a layout for login/forgotpassword panel
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      --
+-->
 <!DOCTYPE html>
 <html>
   <head>
     <!-- including Stylesheets -->
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/bootstrap.min.css')}}}">
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/ui-lightness/jquery-ui-1.10.4.css')}}}">
+      <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/login.css')}}}">
     <!-- end including Stylesheets -->
   </head>
   <body>
+    
     <div class="container-fluid">
-      @yield('content')
+      <div class="row">
+        <br/>
+        <br/>
+        <div class="col-sm-4 col-sm-offset-4 login-well well">
+          <div class="row">
+            <div class="col-sm-12">
+              @if (Session::has("success"))
+                <div class="alert alert-success">
+                  {{ Session::get('success') }}
+                </div>
+              @else
+                @if (Session::has("error"))
+                  <div class="alert alert-danger">
+                    {{ Session::get('error') }}
+                  </div>
+                @endif
+              @endif
+            </div>
+          </div>
+          @yield('content')
+        </div>
+      </div>
     </div>
     <!-- including Scripts -->
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>

@@ -1,4 +1,14 @@
 @extends('layouts.admin_layout')
+<!--
+  Page Name:                       edit.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page displays edit user form by including users/form.blade.php
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      views/users/form.blade.php, views/layouts/admin_layout.blade.php
+-->
+
 
 @section('content')
   <div class="row">

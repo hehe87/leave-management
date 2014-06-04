@@ -23,6 +23,10 @@ Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersC
 Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));
 Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));
 Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
+Route::get('/users/password/forgot', array('as' => 'userForgotPassword', 'uses' => 'UsersController@getForgotPassword'));
+Route::post('/users/password/forgot', array('as' => 'postUserForgotPassword', 'uses' => 'UsersController@postForgotPassword'));
+Route::get('/users/password/change/{token}', array('as' => 'userChangePassword', 'uses' => 'UsersController@getChangePassword'));
+Route::post('/users/password/change/{token}', array('as' => 'postUserChangePassword', 'uses' => 'UsersController@postChangePassword'));
 
 Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
 Route::post('/users/search', array('as' => 'usersSearch', 'uses' => 'UsersController@postSearch'));

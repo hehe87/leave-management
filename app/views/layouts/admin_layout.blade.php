@@ -1,3 +1,12 @@
+<!--
+  Page Name:                       admin_layout.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page acts as a layout for admin panel
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      --
+-->
 <!DOCTYPE html>
 <html>
   <head>
@@ -32,6 +41,7 @@
         </div>
       </div>
       <div class="row">
+        <!-- Left Panel Menus -->
         <ul id="left-panel" class="col-lg-2">
           @if (Route::currentRouteName() === "usersListing")
             <li class="active">
@@ -69,21 +79,22 @@
               Logout
             </a>
           </li>
-          <!--<li class="small-window-show">
-            <a class="link hide-panel">Hide Panel</a>
-          </li>-->
         </ul>
+        <!-- End Left Panel Menus -->
+        <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
           @yield('content')  
         </div>
+        <!-- End Content Panel -->
       </div>
     </div>
-    <!-- including Scripts -->
+    <!-- Including Scripts -->
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
-    <!-- end including Scripts -->
+    <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
+    <!-- End including Scripts -->
   </body>
 </html>

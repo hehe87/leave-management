@@ -1,20 +1,21 @@
-$(document).on("ready",function(){
-  $(".date_control").datepicker({
-    showOn : "button",
-    dateFormat: "yy-mm-dd"
-  });
-  
-  $(".date_control").each(function(){
-    $(this).val($(this).val().split(" ")[0]);
-  });
-  
-});
+/**
+  Page Name:                        admin_panel.js
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page contains javascript used in admin_panel
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:     -
+*/
 
+
+// opens datepicker calendar on click of calendar icon appended to the date control input element
 $(document).on("click",".glyphicon-calendar", function(){
   $(this).prev(".ui-datepicker-trigger").click();
 });
 
 
+// on keyup of input element with id user-search, makes an ajax call to search for input value
 $(document).on("keyup", "#user-search",function(){
   var $this = $(this);
   var value = $this.val();

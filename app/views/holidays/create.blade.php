@@ -1,4 +1,13 @@
 @extends('layouts.admin_layout')
+<!--
+  Page Name:                       create.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page displays add holiday form by including holidays/form.blade.php
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      views/holidays/form.blade.php, views/layouts/admin_layout.blade.php
+-->
 
 @section('content')
   <div class="row">

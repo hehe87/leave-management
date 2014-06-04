@@ -1,20 +1,23 @@
 @extends('layouts.admin_layout')
+<!--
+  Page Name:                        index.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page displays holidays listing
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:     views/layouts/admin_layout.blade.php
+-->
+
 
 @section('content')
   <div class="row">
     <div class="col-lg-2 pull-left">
       <div class="form-group">
         <label class="control-label">&nbsp;</label>
-        <a class="btn btn-primary form-control" href="{{ URL::route('holidayCreate') }}">Add New Holiday</a>
+        <a class="btn btn-primary form-control normal-button" href="{{ URL::route('holidayCreate') }}">Add New Holiday</a>
       </div>
     </div>
-    <!--<div class="col-lg-3 pull-right">
-      <div class="form-group has-feedback">
-        <label class="control-label">&nbsp;</label>
-        <input type="text" class="form-control" id="user-search" placeholder="Search Users" data-search_url="{{ URL::route('usersSearch') }}">
-        <span class="glyphicon glyphicon-search form-control-feedback"></span>
-      </div>
-    </div>-->
   </div>
   <div class="row">
     <div class="col-lg-12">
@@ -44,7 +47,7 @@
               <td align="center">
                 <table>
                   <tr>
-                    <td><a href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button"><span class="glyphicon glyphicon-edit"></span></a></td>
                     <td>&nbsp;&nbsp;</td>
                     <td><a href="" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
                   </tr>

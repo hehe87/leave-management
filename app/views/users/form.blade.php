@@ -1,3 +1,12 @@
+<!--
+  Page Name:                        form.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page contains the form structure for user add/edit pages
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:     -
+-->
 <div class="form-group">
   <div class="col-sm-12">
     <div class="row">
@@ -6,7 +15,6 @@
       </div>
       <div class="col-sm-6">
         {{ Form::text('name', $user->name, array('class' => 'form-control', 'placeholder' => 'Full Name')) }}
-        <!--<input type="" name="name" placeholder="Full Name" class="form-control" id=""/>-->
       </div>
     </div>
     @if ($errors->first('name'))
