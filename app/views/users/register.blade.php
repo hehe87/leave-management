@@ -1,11 +1,9 @@
-@extends('layouts.login_layout')
+@extends('layouts.admin_layout')
 
 @section('content')
   <div class="row">
-    <br/>
-    <br/>
-    <div class="col-sm-8 col-sm-offset-2 well">
-      {{ Form::open(array('url' => '/users/register', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+    <div class="col-sm-12">
+      {{ Form::open(array('url' => URL::route('userStore'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
         <h2 class="form-signin-heading">Registration Form</h2>
         <div class="form-group">
           <div class="col-sm-12">

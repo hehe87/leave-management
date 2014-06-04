@@ -1,3 +1,12 @@
+<!--
+  Page Name:                       admin_layout.blade.php
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page acts as a layout for admin panel
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:      --
+-->
 <!DOCTYPE html>
 <html>
   <head>
@@ -12,16 +21,29 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-12 page_header">
-          <div class="text-center page_heading_text">
-            Leave Management Admin Panel
+        <div class="col-lg-12 page_header text-center">
+          <div class="row">
+            <div class="text-center page_heading_text">
+              Leave Management Admin Panel
+            </div>
           </div>
-          <a class="pull-right logout-link" href="{{ URL::route('userLogout') }}">
-            Logout
-          </a>
+          <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+              <div class="link show h4-new">Welcome Administrator</div>
+            </div>
+            <div class="col-lg-3">
+              <div class="text-center">
+                <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
+                <a class="link logout-link" href="{{ URL::route('userLogout') }}">
+                  Logout
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row">
+        <!-- Left Panel Menus -->
         <ul id="left-panel" class="col-lg-2">
           @if (Route::currentRouteName() === "usersListing")
             <li class="active">
@@ -32,26 +54,51 @@
               <a href="{{URL::route('usersListing')}}">Users</a>
             </li>
           @endif
+          
           <li>
             <a href="{{ URL::to('/leaves/') }}">Leaves</a>
           </li>
+          
           <li>
             <a href="">Reports</a>
           </li>
+          
+          @if (Route::currentRouteName() === "holidaysListing")
+            <li class="active">
+              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
+            </li>
+          @else
+            <li>
+              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
+            </li>
+          @endif
+          
+          <li class="small-window-show">
+            <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
+          </li>
+          <li class="small-window-show">
+            <a class="link" href="{{ URL::route('userLogout') }}">
+              Logout
+            </a>
+          </li>
         </ul>
+        <!-- End Left Panel Menus -->
+        <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
           @yield('content')  
         </div>
+        <!-- End Content Panel -->
       </div>
     </div>
-    <!-- including Scripts -->
+    <!-- Including Scripts -->
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
-	{{ HTML::script('assets/js/jquery.dataTables.min.js') }}
-	{{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
+    {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
+    {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
-    <!-- end including Scripts -->
+    <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
+    <!-- End including Scripts -->
   </body>
 </html>

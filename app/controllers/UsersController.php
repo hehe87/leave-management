@@ -64,46 +64,141 @@ class UsersController extends \BaseController {
   }
   
   
+  
   /**
-    Function Name: 		login
+    Function Name: 		getForgotPassword
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
-    Parameters:	            	username, password
-    Purpose:			This function acts as user registration action which on GET request displays user
-                                with registration form and with POST request registers a new user to the system.
+    Parameters:	            	-
+    Purpose:			This function displays forgot password page
   */
-  public function register(){
+  public function getForgotPassword(){
+    return View::make('users.forgotpassword');
+  }
+  
+  
+  /**
+    Function Name: 		postForgotPassword
+    Author Name:		Nicolas Naresh
+    Date:			June, 02 2014
+    Parameters:	            	-
+    Purpose:			This function emails a link to input email id with a change password link
+  */
+  public function postForgotPassword(){
+    $email = Input::get("email");
+    $validator = Validator::make(
+      array("email" => $email),
+      array("email" => "required|email")
+    );
     
-    if(Auth::check()){
-      return Redirect::to(URL::route('usersHome'));
-    }
-    if(Request::isMethod('post')){
-      $formData = Input::all();
-      $validator = User::validateRegistrationForm($formData);
-      if($validator->fails())
-      {
-	return Redirect::to(URL::route('userRegister'))->withErrors($validator)->withInput();
-      }
-      else{
-	$formData = Input::except("password_confirmation","_token");
-	$formData["password"] = Hash::make($formData["password"]);
-	$user = User::create($formData);
-	$user->totalLeaves = $user->getTotalLeaves();
-	$user->save();
-	return Redirect::to(URL::route('userLogin'))->with('success', 'Your account has been created successfully, Please login now!');
-      }
+    if($validator->fails()){
+      return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Email Address is not valid');
     }
     else{
-      return View::make('users.register');
+      $user = User::where("email", $email)->get();
+      if($user->first()){
+	$user = $user->first();
+	$userName = $user->name;
+      }
+      else{
+	return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Account not found for this Email');
+      }
+      
+      $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
+      
+      $emailSubject = "Leave Management: Change Your Password";
+      
+      $data = array(
+	'token' => $token,
+	'userName' => $userName,
+	'email' => $email
+      );
+      Mail::send('emails.changepassword', $data, function($message) use ($email,$userName, $emailSubject, $user, $token)
+      {
+	$message->to($email, $userName)->from('nicolas.naresh@ithands.net', 'Admin')->subject($emailSubject);
+	$user->changePasswordToken = $token;
+	$user->save();
+      });
+      return Redirect::to(URL::route("userLogin"))->with("success","An Email has been sent to your email id for change password instructions!");
     }
   }
   
   
   /**
-   * Display a listing of users
-   *
-   * @return Response
-   */
+    Function Name: 		getChangePassword
+    Author Name:		Nicolas Naresh
+    Date:			June, 02 2014
+    Parameters:	            	$token - change password token generated at time of submitting forgot password page
+    Purpose:			This function provides a change password form to user
+  */
+  public function getChangePassword($token){
+    
+    $user = User::where("changePasswordToken",$token)->get();
+    if($user->first()){
+      $user = $user->first();
+      return View::make("users.changepassword")->with("token",$token);
+    }
+    else{
+      return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
+    }
+  }
+  
+  
+  /**
+    Function Name: 		postChangePassword
+    Author Name:		Nicolas Naresh
+    Date:			June, 02 2014
+    Parameters:	            	$token - change password token generated at time of submitting forgot password page
+    Purpose:			This function updates user password
+  */
+  public function postChangePassword($token){
+    $validator = Validator::make(
+      Input::except("_token"),
+      array(
+	'password'  =>'required|between:4,8|confirmed',
+	'password_confirmation'=>'required|between:4,8',
+      )
+    );
+    if($validator->fails()){
+      return Redirect::to(URL::route("userChangePassword",array("token" => $token)))->withErrors($validator)->withInput();
+    }
+    else{
+      $user = User::where("changePasswordToken",$token);
+      if(!$user->first()){
+	return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
+      }
+      $user = $user->first();
+      $user->password = Hash::make(Input::get("password"));
+      $user->changePasswordToken = "";
+      $user->save();
+      return Redirect::to(URL::route("userLogin"))->with("success","Your password has been updated successfully!");
+    }
+  }
+  
+  
+  
+  /**
+    Function Name: 		postSearch
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function searches for the name of user in database and returns an array of
+				matching users.
+  */
+
+  public function postSearch(){
+    $users = User::where("name","LIKE", "%". Input::get("name") . "%")->get();
+    return View::make('users.listing')->with("users", $users);
+  }
+  
+  
+  /**
+    Function Name: 		index
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function acts as an action for displaying all the users in a table
+  */
   public function index()
   {
     $users = User::all();
@@ -111,93 +206,103 @@ class UsersController extends \BaseController {
   }
 
   /**
-   * Show the form for creating a new user
-   *
-   * @return Response
-   */
+    Function Name: 		create
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function acts as an action for displaying user addition form
+  */
   public function create()
   {
-    return View::make('users.create');
+    $user = new User();
+    return View::make('users.create')->with("user",$user);
   }
 
   /**
-   * Store a newly created user in storage.
-   *
-   * @return Response
-   */
+    Function Name: 		store
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function acts as an action for storing the filled information about
+				user to the database table users
+  */
   public function store()
   {
-    $validator = Validator::make($data = Input::all(), User::$rules);
-
-    if ($validator->fails())
+    $formData = Input::all();
+    $validator = User::validateRegistrationForm($formData);
+    if($validator->fails())
     {
-      return Redirect::back()->withErrors($validator)->withInput();
+      return Redirect::to(URL::route('userCreate'))->withErrors($validator)->withInput();
     }
-
-    User::create($data);
-
-    return Redirect::route('users.index');
+    else{
+      $formData = Input::except("password_confirmation","_token");
+      $formData["password"] = Hash::make($formData["password"]);
+      $user = User::create($formData);
+      $user->totalLeaves = $user->getTotalLeaves();
+      $user->save();
+      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been created successfully, Please login now!');
+    }
   }
 
   /**
-   * Display the specified user.
-   *
-   * @param  int  $id
-   * @return Response
-   */
-  public function show($id)
-  {
-    $user = User::findOrFail($id);
-
-    return View::make('users.show', compact('user'));
-  }
-
-  /**
-   * Show the form for editing the specified user.
-   *
-   * @param  int  $id
-   * @return Response
-   */
+    Function Name: 		edit
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function acts as an action for displaying edit user form, where the
+				retlated to the user can be edited
+  */
   public function edit($id)
   {
     $user = User::find($id);
-
-    return View::make('users.edit', compact('user'));
+    return View::make('users.edit')->with("user", $user);
   }
 
   /**
-   * Update the specified user in storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
+    Function Name: 		edit
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function updates the given users information to database with
+				the information updated in the edit form
+  */
   public function update($id)
   {
-    $user = User::findOrFail($id);
-
-    $validator = Validator::make($data = Input::all(), User::$rules);
-
-    if ($validator->fails())
+    $formData = Input::all();
+    $validator = User::validateRegistrationForm($formData, false);
+    if($validator->fails())
     {
-      return Redirect::back()->withErrors($validator)->withInput();
+      return Redirect::to(URL::route('userEdit',array("id" => $id)))->withErrors($validator)->withInput();
     }
-
-    $user->update($data);
-
-    return Redirect::route('users.index');
+    else{
+      $formData = Input::except("password_confirmation","_token");
+      if(!empty($formData["password"])){
+	$formData["password"] = Hash::make($formData["password"]);
+      }
+      else{
+	unset($formData["password"]);
+      }
+      
+      
+      $user = User::find($id);
+      $user->update($formData);
+      $user->totalLeaves = $user->getTotalLeaves();
+      $user->save();
+      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been created successfully, Please login now!');
+    }
   }
 
   /**
-   * Remove the specified user from storage.
-   *
-   * @param  int  $id
-   * @return Response
-   */
+    Function Name: 		destroy
+    Author Name:		Nicolas Naresh
+    Date:			June, 03 2014
+    Parameters:	            	-
+    Purpose:			This function removes the specified user from database
+  */
   public function destroy($id)
   {
     User::destroy($id);
-
-    return Redirect::route('users.index');
+    return Redirect::to(URL::route('usersListing'));
   }
 
 }
