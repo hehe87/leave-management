@@ -57,19 +57,31 @@ class LeavesController extends \BaseController {
 	
 	public function store()
 	{
-		$inputs = Leave::normalizeInput(Input::all());
 		$validator = Validator::make($data = Input::except('_token'), Leave::$rules);
 		
-		// add time rules to validation array if leave type is CSR
-		/*$validator->sometimes( array('from_time[]','to_time[]'), 'required', function($input)
+		if( Input::get('leave_type') == 'CSR' )
 		{
-			return ('CSR' == $input->leave_type);
-		});*/
+			foreach( Input::get('from_hour') as $key => $from_h )
+			{
+			// add time rules to validation array if leave type is CSR
+			$validator->sometimes( array("from_hour[$key]","to_hour[$key]") , 'between:0,24', function($input)
+			{
+				return ('CSR' == $input->leave_type);
+			});
+			
+			$validator->sometimes( array("from_min[$key]", "to_min[$key]"), 'between:0,59', function($input)
+			{
+				return ('CSR' == $input->leave_type);
+			});
+				
+			}
+		}
 		
 		if ($validator->fails())
 		{
 			return Redirect::back()->withErrors($validator)->withInput();
 		}
+		$inputs = Leave::normalizeInput(Input::all());
 		
 		// Save each leave and related approval record
 		foreach($inputs as $input)

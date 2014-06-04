@@ -13,10 +13,11 @@ class Leave extends \Eloquent {
 
 	// Validation Rules
 	public static $rules = [
-		'user_id' => 'required|integer',
-		'leave_date'  => 'date|date_format:Y-m-d',
+		'user_id' 	  => 'required|integer',
+		'leave_date'  => 'required|date|date_format:Y-m-d',
 		'leave_type'  => 'required|in:LEAVE,CSR',
-		'reason'	  => 'required'
+		'reason'	  => 'required',
+		'approver_id' => 'required'
 	];
 
 	// fillable fields

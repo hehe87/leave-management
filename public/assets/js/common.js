@@ -19,4 +19,3 @@ $('#leave_type').on('change', function(elem){
 $('#addSlot').on('click', function(e){
 	$('#timeContainer').append($('#timeSlot').html());
 });
-

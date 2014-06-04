@@ -50,7 +50,7 @@
     <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
 	{{ HTML::script('assets/js/jquery.dataTables.min.js') }}
-	{{ HTML::script('assets/js/dataTables.bootstrap.js') }}
+	{{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <!-- end including Scripts -->
   </body>

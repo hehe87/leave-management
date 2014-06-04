@@ -1,6 +1,7 @@
 @extends('layouts.login_layout')
 
 @section('content')
+
 <div class="row">
 	<div class="col-sm-8 col-sm-offset-2 well">
 		<h2>Leave Application Form</h2>
@@ -12,7 +13,7 @@
 			</ul>
 		@endif
 
-		{{ Form::open(array('action' => 'LeavesController@store', 'method' => 'post')) }}
+		{{ Form::open(array('action' => 'LeavesController@store', 'method' => 'post', 'class' => 'form-horizontal')) }}
 			{{ Form::hidden('user_id', Auth::user()->id) }}
 			<div class="form-group">
 				<div class="col-sm-12">
@@ -30,7 +31,7 @@
 				<div class="col-sm-12">
 					<div class="row">
 						<div class="col-sm-3">
-							{{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}
+							{{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}							
 						</div>
 						<div class="col-sm-6">
 							{{ Form::text('leave_date', '', array('class' => 'form-control date_control')) }}
@@ -45,19 +46,27 @@
 							<div class="col-sm-3">
 								{{ Form::label('from_time', 'Timings', array('class' => 'control-label')) }}
 							</div>
-							<div id="timeSlot">
-								<div class="col-sm-3">
-									{{ Form::label('from_hour', 'From', array('class' => 'control-label col-sm-1')) }}
-									{{ Form::select('from_hour[]', range(0,23) ,'', array('class' => 'form-control input-sm col-xs-2')) }}
-									{{ Form::select('from_min[]', range(0,59) , '', array('class' => 'form-control input-sm col-xs-2')) }}
+							<div id="timeSlot" class="col-sm-9">
+								<div class="col-sm-4">
+									{{ Form::label('from_hour', 'From', array('class' => 'control-label col-sm-2')) }}
+									<div class="input-group">
+										{{ Form::select('from_hour[]', range(0,23) ,'', array('class' => 'form-control input-sm col-sm-1')) }}
+										<span class="input-group-addon">H</span>
+										{{ Form::select('from_min[]', range(0,59,15) , '', array('class' => 'form-control input-sm col-xs-1')) }}
+										<span class="input-group-addon">M</span>
+									</div>
 								</div>
-								<div class="col-sm-3">
-									{{ Form::label('to_hour', 'To', array('class' => 'control-label col-sm-1')) }}
+								<div class="col-sm-4">
+									{{ Form::label('to_hour', 'To', array('class' => 'control-label col-sm-2')) }}
 									{{ Form::select('to_hour[]', range(0,23) , '', array('class' => 'form-control input-sm col-xs-2'))}}
-									{{ Form::select('to_min[]', range(0,59) , '', array('class' => 'form-control input-sm col-xs-2'))}}
+									<span class="input-group-addon">H</span>
+									{{ Form::select('to_min[]', range(0,59,15) , '', array('class' => 'form-control input-sm col-xs-2'))}}
+									<span class="input-group-addon">M</span>
 								</div>
 							</div>
+							<div class="col-sm-1">
 								{{ Form::button('Add Slot', array('class' => 'btn btn-success', 'id' => 'addSlot')) }}
+							</div>
 						</div>
 					</div>
 				</div>
