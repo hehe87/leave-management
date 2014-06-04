@@ -1,10 +1,16 @@
-
-/* $("#searchName").on("keyup", function(elem) {
-	$search_text = $(this).val();
-	$.get("leaves/search?name=" + $search_text, function($data){
-		console.log($data);
-	})
-}); */
-
 // Initialize the datatables
 $('#leavesTable').DataTable();
+
+// update leave request status
+$('.approved').on('change', function (e) {
+
+	$.ajax({
+	type: 'POST',
+	url: 'update-status',
+	data: $(this).closest('form').serialize(),
+	success: function(data){
+		return true;
+	},
+});
+
+});

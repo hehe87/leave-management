@@ -27,6 +27,11 @@ class Leave extends \Eloquent {
 	{
 		return $this->belongsTo('User');
 	}
+	
+	public function approvals()
+	{
+		return $this->hasMany('Approval');
+	}
 
 	/**
     Function Name	: 		normalizeInput
@@ -47,4 +52,6 @@ class Leave extends \Eloquent {
 		
 		return $row;
 	}
+	
+	
 }

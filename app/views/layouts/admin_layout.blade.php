@@ -32,6 +32,12 @@
               <a href="{{URL::route('usersListing')}}">Users</a>
             </li>
           @endif
+		  <li>
+			<a href="{{ URL::to('/pending-requests/') }}">Pending Requests</a>
+		  </li>
+		  <li>
+			<a href="{{ URL::to('/my-leaves/') }}">My Leaves</a>
+		  </li>
           <li>
             <a href="{{ URL::to('/leaves/') }}">Leaves</a>
           </li>

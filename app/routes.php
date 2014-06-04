@@ -23,10 +23,13 @@ Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersControll
 
 
 // Leave Routes
-Route::get('/leaves/search', 'LeavesController@search');
-Route::resource('/leaves', 'LeavesController');
+Route::get('/leaves/search', 'LeaveController@search');
+Route::resource('/leaves', 'LeaveController');
 Route::resource('/users', 'UsersController');
 
+Route::get('/pending-requests', 'ApprovalController@pending');
+Route::get('/my-leaves', 'LeaveController@userLeaves');
+Route::post('/update-status', 'ApprovalController@updateStatus');
 Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
 
 Route::get('/holidays/create', array('as' => 'holidayCreate', 'uses' => 'HolidaysController@create'));
