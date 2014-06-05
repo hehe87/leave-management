@@ -101,19 +101,36 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Purpose:	      	This function will take an array of registration form values and validates
 			them
   */
-  public static function validateRegistrationForm($registrationDataArr){
-    $validator = Validator::make(
-      $registrationDataArr,
-      array(
-	'name' => array('required', 'min:5'),
+  public static function validateRegistrationForm($registrationDataArr, $requiredPasswordValidation = true){
+    
+    if($requiredPasswordValidation){
+      $passwordValidation = array(
 	'password'  =>'required|between:4,8|confirmed',
 	'password_confirmation'=>'required|between:4,8',
+      );
+    }
+    else{
+      if(!empty($registrationDataArr["password"]) || !empty($registrationDataArr["password_confirmation"])){
+	$passwordValidation = array(
+	  'password'  =>'required|between:4,8|confirmed',
+	  'password_confirmation'=>'required|between:4,8',
+	);
+      }
+      else{
+	$passwordValidation = array();
+      }
+    }
+    
+    $validator = Validator::make(
+      $registrationDataArr,
+      array_merge(array(
+	'name' => array('required', 'min:5'),
 	'email' => array('required','email'),
 	'doj' => array('required','date'),
 	'dob' => array('required','date'),
 	'phone' => array('required','regex:/[0-9]{10}/'),
 	'altPhone' => array('required','regex:/[0-9]{10}/')
-      )
+      ),$passwordValidation)
     );
     return $validator;
   }
@@ -133,9 +150,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $allLeaves = $paidLeaves;
     $currentDate = new DateTime(date("Y-m-d"));
     $currentYear = (int)$currentDate->format("Y");
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where( DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
     $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $dateOfJoining = new DateTime($this->doj);
+    $joiningYear = (int)$dateOfJoining->format("Y");
     $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,1,15,$dateOfJoining->format("Y"))));
     $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
     
@@ -144,38 +163,26 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
     
     if($isJoinedInCurrentYear){
-      $joiningDateUT = strtotime($dateOfJoining);
+      $joiningDateUT = strtotime($this->doj);
       foreach($optionalHolidays as $oHoliday){
 	$oHolidayDate = new DateTime($oHoliday->holidayDate);
 	$oHolidayDateUT = strtotime($oHoliday->holidayDate);
 	if($joiningDateUT < $oHolidayDateUT){
-	  $userLeave = Leave::where("onDate", "=", $oHolidayDate->format("Y-m-d"))->where("leaveType","<>","CSR")->get();
-	  if(count(array_keys($userLeave)) == 0){
-	    $allLeaves += 1;
-	  }
+	  $allLeaves += 1;
 	}
       }
     }
     else{
       foreach($optionalHolidays as $oHoliday){
-	$oHolidayDate = new DateTime($oHoliday->holidayDate);
-	$userLeave = Leave::where("onDate", "=", $oHolidayDate->format("Y-m-d"))->where("leaveType","<>","CSR")->get();
-	if(count(array_keys($userLeave)) == 0){
-	  $allLeaves += 1;
-	}
+	$allLeaves += 1;
       }
     }
     $allLeaves += $yearsInCompany;
-    if($isJoinedBeforeLastLeaveDateOfJoiningYear){
+    if($isJoinedBeforeLastLeaveDateOfJoiningYear && ($joiningYear != $currentYear)){
       $allLeaves += 1;
-    }
-    else{
-      $allLeaves -= 1;
     }
     return $allLeaves;
   }
-  
-  
   
   
   /**

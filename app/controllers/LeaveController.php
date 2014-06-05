@@ -1,29 +1,43 @@
 <?php
 /**
+<<<<<<< HEAD:app/controllers/LeaveController.php
   Class Name					:	LeaveController
   author 						:	Jack Braj
   Date							:	June 02, 2014
   Purpose						:	Resourceful controller for leaves
+=======
+  Class Name					:	LeavesController
+  author 					:	Jack Braj
+  Date						:	June 02, 2014
+  Purpose					:	Resourceful controller for leaves
+>>>>>>> 4413632f51f4d94ab1cfb7f2c592e267f933993a:app/controllers/LeavesController.php
   Table referred				:	leaves, users, approvals
   Table updated					:	leaves, approvals
-  Most Important Related Files	:   /app/controllers/LeaveController.php
+  Most Important Related Files			:   	/app/controllers/LeaveController.php
 */
 
 
+
 class LeaveController extends \BaseController {
-
-	/**
-    Function Name	: 		index
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    none
-    Purpose			:		This function used to list all leaves
-	*/
-
+	
 	public function __construct()
 	{
-		$this->beforeFilter('auth');
+	  $this->beforeFilter('auth');
 	}
+
+
+	/**
+	Function Name				:	index
+	Author Name					:	Jack Braj
+	Date					:	June 02, 2014
+	Parameters					:	none
+	Purpose					:	This function used to list all leaves
+	*/
+
+	//public function __construct()
+	//{
+	//	$this->beforeFilter('auth');
+	//}
 	
 	
 	public function index()
@@ -34,11 +48,11 @@ class LeaveController extends \BaseController {
 	}
 
 	/**
-    Function Name	: 		create
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    none
-    Purpose			:		This function renders leave form with user data
+	Function Name		: 		create
+	Author Name		:		Jack Braj
+	Date			:		June 02, 2014
+	Parameters		:	   	none
+	Purpose			:		This function renders leave form with user data
 	*/
 	
 	public function create()
@@ -48,11 +62,11 @@ class LeaveController extends \BaseController {
 	}
 
 	/**
-    Function Name	: 		store
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    none
-    Purpose			:		This function used to create leave
+	Function Name		: 		store
+	Author Name		:		Jack Braj
+	Date			:		June 02, 2014
+	Parameters		:	    	none
+	Purpose			:		This function used to create leave
 	*/
 	
 	public function store()
@@ -115,11 +129,11 @@ class LeaveController extends \BaseController {
 	}
 
 	/**
-    Function Name	: 		edit
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    id
-    Purpose			:		This function used to render edit form with user information filled in
+	Function Name		: 		edit
+	Author Name		:		Jack Braj
+	Date			:		June 02, 2014
+	Parameters		:	    	id
+	Purpose			:		This function used to render edit form with user information filled in
 	*/
 	
 	public function edit($id)
@@ -130,11 +144,11 @@ class LeaveController extends \BaseController {
 	}
 
 	/**
-    Function Name	: 		update
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    id
-    Purpose			:		This function used to update individual leave
+	Function Name	: 			update
+	Author Name		:		Jack Braj
+	Date			:		June 02, 2014
+	Parameters		:	    	id
+	Purpose			:		This function used to update individual leave
 	*/
 	
 	public function update($id)
@@ -168,19 +182,38 @@ class LeaveController extends \BaseController {
 		return Redirect::route('leaves.index');
 	}
 	
+	
 	/**
-    Function Name	: 		userLeaves
-    Author Name		:		Jack Braj
-    Date			:		June 04, 2014
-    Parameters		:	    none
-    Purpose			:		This function used to display a logged in user's leaves
+	Function Name		: 		myLeaves
+	Author Name		:		Jack Braj
+	Date			:		June 03, 2014
+	Parameters		:	    	none
+	Purpose			:		This function is used for listing all leaves/csrs
 	*/
 	
-	public function userLeaves()
-	{
-		$leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
+	public function myLeaves(){
+		/* $myLeaves = Leave::where("user_id",Auth::user()->id)->get();
+		return View::make('leaves.myleaves')->with("leaves",$myLeaves); */
+    
+    $leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
 		return View::make('leaves.leaves')
 					->with('leaves', $leaves);
+		
+	}
+	
+	
+	/**
+	Function Name		: 		leaveRequests
+	Author Name		:		Jack Braj
+	Date			:		June 03, 2014
+	Parameters		:	    	none
+	Purpose			:		This function is used for listing all leaves/csrs
+	*/
+	
+	public function leaveRequests(){
+		$leaveRequests = Approval::where("approver_id",Auth::user()->id)->get();
+		return View::make('leaves.leaverequests')->with("leaveRequests",$leaveRequests);
+		
 	}
 	
 

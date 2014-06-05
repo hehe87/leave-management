@@ -1,0 +1,31 @@
+/**
+  Page Name:                        login.css
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page contains css used in login and forgot password pages
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:     -
+*/
+.login-well{
+  background-color: #A069D6;
+  color: #48036F;
+  border-color: #330570;
+}
+
+.button-normal:hover{
+  background-color: #48036F;
+  border-color: #330570;
+}
+
+.button-normal{
+  background-color: #7109AA;
+  color: #FFF;
+  border-color: #330570;
+  font-weight: 700;
+}
+
+
+legend{
+  color: #fff;
+}

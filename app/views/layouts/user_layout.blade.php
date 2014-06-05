@@ -1,8 +1,8 @@
 <!--
-  Page Name:                       admin_layout.blade.php
+  Page Name:                       user_layout.blade.php
   author :		            Nicolas Naresh
   Date:			            June, 03 2014
-  Purpose:		            This page acts as a layout for admin panel
+  Purpose:		            This page acts as a layout for user panel
   Table referred:		    -
   Table updated:	            -
   Most Important Related Files:      --
@@ -25,12 +25,12 @@
         <div class="col-lg-12 page_header text-center">
           <div class="row">
             <div class="text-center page_heading_text">
-              Leave Management Admin Panel
+              Leave Management
             </div>
           </div>
           <div class="row">
             <div class="col-lg-6 col-lg-offset-3">
-              <div class="link show h4-new">Welcome Administrator</div>
+              <div class="link show h4-new">Welcome {{ Auth::user()->name }}</div>
             </div>
             <div class="col-lg-3">
               <div class="text-center">
@@ -46,32 +46,29 @@
       <div class="row">
         <!-- Left Panel Menus -->
         <ul id="left-panel" class="col-lg-2">
-          @if (Route::currentRouteName() === "usersListing")
+          @if (Route::currentRouteName() === "myLeaves")
             <li class="active">
-              <a href="{{URL::route('usersListing')}}">Users</a>
+              <a href="{{ URL::route('myLeaves') }}">My Leaves</a>
             </li>
           @else
             <li>
-              <a href="{{URL::route('usersListing')}}">Users</a>
+              <a href="{{ URL::route('myLeaves') }}">My Leaves</a>
             </li>
           @endif
+          
           <li>
-            <a href="{{ URL::to('/leaves/') }}">Leaves</a>
+            <a href="{{ URL::route('leaves.create') }}">Add Leave/CSR</a>
           </li>
           
           <li>
-            <a href="">Reports</a>
+            <a href="{{ URL::route('leaveRequests') }}">Leave Requests</a>
           </li>
           
-          @if (Route::currentRouteName() === "holidaysListing")
-            <li class="active">
-              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
-            </li>
-          @else
-            <li>
-              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
-            </li>
-          @endif
+          <li>
+            <a href="#">CSR Requests</a>
+          </li>
+          
+          
           
           <li class="small-window-show">
             <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>

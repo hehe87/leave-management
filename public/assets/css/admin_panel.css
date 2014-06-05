@@ -1,3 +1,12 @@
+/**
+  Page Name:                        admin_panel.css
+  author :		            Nicolas Naresh
+  Date:			            June, 03 2014
+  Purpose:		            This page contains css used in admin panel
+  Table referred:		    -
+  Table updated:	            -
+  Most Important Related Files:     -
+*/
 body{
   color: #48036F;
 }
@@ -13,11 +22,8 @@ body{
 }
 
 .logout-link{
-  color: #fff;
   font-weight: 700;
-  text-decoration: none !important;
   border: 2px solid #fff;
-  padding: 3px;
   border-radius: 5px;
 }
 
@@ -27,11 +33,30 @@ body{
 
 #left-panel{
   /*background-color: #48036F;*/
-  border-right: 1px solid #48036F;
-  height: 571px;
   z-index: 3;
   list-style: none;
   padding: 0px;
+  border: 1px solid #48036F;
+  border-right: none;
+  border-top: none;
+  border-radius: 0px 0px 10px 10px;
+}
+
+@media screen and (max-width: 1198px){
+  #left-panel{
+    border-right: 1px solid #48036F;
+  }
+  .link{
+    display: none;
+  }
+  .small-window-show{
+    display: block !important;
+  }
+  
+}
+
+.small-window-show{
+  display: none ;
 }
 
 #left-panel li{
@@ -65,7 +90,7 @@ li.active{
   -webkit-transition: background-color 300ms linear;
   -moz-transition: background-color 300ms linear;
   -o-transition: background-color 300ms linear;
-  -ms-transition: background-color 300ms linear;
+  -ms-transitinline-blockion: background-color 300ms linear;
   transition: background-color 300ms linear;
 }
 
@@ -83,17 +108,51 @@ li.active a{
 }
 
 #content-panel{
-  height: 512px;
+  min-height: 512px;
   z-index: 1;
-  margin-top: 3px;
+  padding-top: 10px;
+  border-left: 1px solid #48036F;
 }
 
-/*#slide-handler{
-  border: 1px solid #555;
-  border-left: none;
-  float: right;
-  margin-right: -39px;
-  height: 60px;
-  width: 25px;
-  border-radius: 0px 5px 5px 0px;
-}*/
+.link{
+  color: #fff;
+  text-decoration: none !important;
+  padding: 3px;
+  margin-right: 10px;
+}
+
+.link:first-child{
+  margin-right: 0px !important;
+}
+
+.inline-block{
+  display: inline-block;
+  width: 100%;
+}
+
+
+.h4-new{
+  font-size: 20px;
+  margin-top: -9px;
+}
+
+legend{
+  color: #48036F;
+}
+
+.ui-datepicker-trigger{
+  display: none;
+}
+
+
+.normal-button:hover{
+  background-color: #48036F;
+  border-color: #330570;
+}
+
+.normal-button{
+  background-color: #7109AA;
+  color: #FFF;
+  border-color: #330570;
+  font-weight: 700;
+}

@@ -78,3 +78,19 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+Route::filter('auth.admin', function(){
+	if("ADMIN" != Auth::user()->employeeType){
+		return Redirect::to(URL::route("leaves.create"));
+	}
+});
+
+Route::filter('auth.user', function()
+{
+	if("EMPLOYEE" != Auth::user()->employeeType){
+		return Redirect::to(URL::route("usersListing"));
+	}
+});
+
+
+
