@@ -28,9 +28,15 @@ $(document).on("ready",function(){
   if($("#addSlot").length == 1){
     window.timeSlotHtml = $('#timeSlot').html();
     $('#addSlot').on('click', function(e){
+      var slotCount = $("#timeSlot").find(".row.form-group").length.toString();  
       $('#timeSlot').append(window.timeSlotHtml);
+      $("#timeSlot").find(".row.form-group").last().find('select').each(function() {
+        $name = $(this).attr('name');
+        $name = $name.replace(/[0-9]+/g,slotCount);
+        $(this).attr("name",$name);
+      });
     });
-  }
+  } 
 });
 
 
@@ -39,7 +45,7 @@ $(document).on("ready",function(){
   
   //applies datepicker on date_control class
   $(".date_control").datepicker({
-    showOn : "button",
+    showOn : "both",
     dateFormat: "yy-mm-dd",
     changeMonth: true,
     changeYear: true

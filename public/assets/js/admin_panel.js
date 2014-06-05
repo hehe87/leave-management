@@ -1,5 +1,5 @@
 /**
-  Page Name:                        admin_panel.js
+  Page Name:                admin_panel.js
   author :		            Nicolas Naresh
   Date:			            June, 03 2014
   Purpose:		            This page contains javascript used in admin_panel
@@ -10,6 +10,20 @@
 
 // Initialize the datatables
 $('#leavesTable').DataTable();
+// update leave request status
+$('.approved').on('change', function (e) {
+
+	$.ajax({
+	type: 'POST',
+	url: 'update-status',
+	data: $(this).closest('form').serialize(),
+	success: function(data){
+		return true;
+	},
+});
+
+});
+
 
 // opens datepicker calendar on click of calendar icon appended to the date control input element
 $(document).on("click",".glyphicon-calendar", function(){
@@ -34,3 +48,4 @@ $(document).on("keyup", "#user-search",function(){
     }
   });
 });
+

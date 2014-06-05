@@ -58,7 +58,6 @@
               <a href="{{URL::route('usersListing')}}">Users</a>
             </li>
           @endif
-          
           <li>
             <a href="{{ URL::to('/leaves/') }}">Leaves</a>
           </li>

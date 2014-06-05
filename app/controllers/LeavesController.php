@@ -1,22 +1,25 @@
 <?php
 /**
+
   Class Name					:	LeavesController
   author 					:	Jack Braj
   Date						:	June 02, 2014
   Purpose					:	Resourceful controller for leaves
+
   Table referred				:	leaves, users, approvals
   Table updated					:	leaves, approvals
-  Most Important Related Files			:   	/app/controllers/LeaveController.php
+  Most Important Related Files			:   	/app/models/Leave.php
 */
 
 
+
 class LeavesController extends \BaseController {
-	
 	
 	public function __construct()
 	{
 	  $this->beforeFilter('auth');
 	}
+
 
 	/**
 	Function Name				:	index
@@ -50,7 +53,8 @@ class LeavesController extends \BaseController {
 	public function create()
 	{
 		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
-		return View::make('leaves.create')->with('users', $users);
+    $leave = new Leave();
+		return View::make('leaves.create')->with('users', $users)->with('leave' , $leave);
 	}
 
 	/**
@@ -63,44 +67,77 @@ class LeavesController extends \BaseController {
 	
 	public function store()
 	{
-		$validator = Validator::make($data = Input::except('_token'), Leave::$rules);
-		
-		if( Input::get('leave_type') == 'CSR' )
-		{
-			foreach( Input::get('from_hour') as $key => $from_h )
-			{
-			// add time rules to validation array if leave type is CSR
-			$validator->sometimes( array("from_hour[$key]","to_hour[$key]") , 'between:0,24', function($input)
-			{
-				return ('CSR' == $input->leave_type);
-			});
-			
-			$validator->sometimes( array("from_min[$key]", "to_min[$key]"), 'between:0,59', function($input)
-			{
-				return ('CSR' == $input->leave_type);
-			});
-				
-			}
-		}
-		
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
-		}
-		$inputs = Leave::normalizeInput(Input::all());
-		
-		// Save each leave and related approval record
-		foreach($inputs as $input)
-		{
-			$leave = Leave::create($input);
-			// Insert related approval record
-			foreach($input['approver_id'] as $approver)
-			{
-				Approval::create(['approver_id' => $approver, 'leave_id' => $leave->id, 'approved' => 0, 'approval_note' => '']);
-			}
-		}
-		
+    $validator = [];
+    $validator_leave = [];
+    $validator_csr = [];
+    $inputs = Input::all();
+		$leave = $inputs['leave'];
+    $hasLeaveError = false;
+    $hasApprovalError = false;
+    $hasCsrError = false;
+    
 
+  	$validator_leave = Validator::make($leave, Leave::$rules);
+    
+    if($validator_leave->fails())
+      $hasLeaveError = true;
+    
+		if( 'CSR' == $inputs['leave']['leave_type'] )
+		{
+      $csrs = $inputs['csr'];
+
+      foreach($csrs as $key=>$csr)
+      {
+        $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+        $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+        $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+        
+        if($validator_csr[$key]->fails())
+          $hasCsrError = true;
+      }
+      /* $this->pre_print($csr_slots); */
+    
+		}
+    
+    // check if user has selected any approver or not
+		if( !array_key_exists('approval', $inputs) )
+      $hasApprovalError = true;
+      
+    
+    if($hasLeaveError || $hasApprovalError || $hasCsrError)
+    {
+      $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
+      $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
+      foreach($validator_csr as $vc)
+      {
+        $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
+      }
+      $this->pre_print($validator);
+      return Redirect::back()->withErrors($validator)->withInput();
+    }
+    
+    
+    $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+    $leave = Leave::create($leave);
+    
+    if( 'CSR' == $inputs['leave']['leave_type'] )
+    {
+      foreach($csr_slots as $slot)
+      {
+          $slot['leave_id'] = $leave->id;
+          Csr::create($slot);
+      }
+    }
+     $approvals = $inputs['approval'];
+     
+      foreach($approvals as $approval)
+      {
+          $approval['leave_id'] = $leave->id;
+          $approval['approved'] = 'PENDING';
+          Approval::create($approval);
+      }
+ 
+    
 		return Redirect::route('leaves.index')
 						->with('message', 'Leave successfully applied');;
 	}
@@ -174,22 +211,6 @@ class LeavesController extends \BaseController {
 		return Redirect::route('leaves.index');
 	}
 	
-	/**
-    Function Name	: 		search
-    Author Name		:		Jack Braj
-    Date			:		June 03, 2014
-    Parameters		:	    none
-    Purpose			:		This function used to search leave by user name or leave date
-	*/
-	
-	public function search()
-	{
-		$searchText = Input::get('name');
-		
-		print_r(User::where('name', 'LIKE', '%'.$searchText.'%')
-					->with('leaves'));
-	}
-	
 	
 	/**
 	Function Name		: 		myLeaves
@@ -200,8 +221,12 @@ class LeavesController extends \BaseController {
 	*/
 	
 	public function myLeaves(){
-		$myLeaves = Leave::where("user_id",Auth::user()->id)->get();
-		return View::make('leaves.myleaves')->with("leaves",$myLeaves);
+		/* $myLeaves = Leave::where("user_id",Auth::user()->id)->get();
+		return View::make('leaves.myleaves')->with("leaves",$myLeaves); */
+    
+    $leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
+		return View::make('leaves.leaves')
+					->with('leaves', $leaves);
 		
 	}
 	
