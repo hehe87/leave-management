@@ -12,12 +12,10 @@
 class Leave extends \Eloquent {
 
 	// Validation Rules
-	public static $rules = [
-		'user_id' 	  => 'required|integer',
+	public static $rules = [		
 		'leave_date'  => 'required|date|date_format:Y-m-d',
 		'leave_type'  => 'required|in:LEAVE,CSR',
-		'reason'	  => 'required',
-		'approver_id' => 'required'
+		'reason'	  => 'required',		
 	];
 
 	// fillable fields
@@ -32,6 +30,11 @@ class Leave extends \Eloquent {
 	{
 		return $this->hasMany('Approval');
 	}
+  
+  public function csrs()
+  {
+    return $this->hasMany('Csr');
+  }
 
 	/**
     Function Name	: 		normalizeInput
