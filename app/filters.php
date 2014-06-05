@@ -80,6 +80,9 @@ Route::filter('csrf', function()
 });
 
 Route::filter('auth.admin', function(){
+	if(!Auth::check()){
+		return Redirect::to(URL::route("userLogin"));
+	}
 	if("ADMIN" != Auth::user()->employeeType){
 		return Redirect::to(URL::route("leaves.create"));
 	}
@@ -87,6 +90,9 @@ Route::filter('auth.admin', function(){
 
 Route::filter('auth.user', function()
 {
+	if(!Auth::check()){
+		return Redirect::to(URL::route("userLogin"));
+	}
 	if("EMPLOYEE" != Auth::user()->employeeType){
 		return Redirect::to(URL::route("usersListing"));
 	}
