@@ -24,21 +24,32 @@ $('#leave_type').on('change', function(elem){
 
 });
 
-$('#addSlot').on('click', function(e){
-  $('#timeContainer').append($('#timeSlot').html());
+$(document).on("ready",function(){
+  if($("#addSlot").length == 1){
+    window.timeSlotHtml = $('#timeSlot').html();
+    $('#addSlot').on('click', function(e){
+      $('#timeSlot').append(window.timeSlotHtml);
+    });
+  }
 });
+
+
 
 $(document).on("ready",function(){
   
   //applies datepicker on date_control class
   $(".date_control").datepicker({
     showOn : "button",
-    dateFormat: "yy-mm-dd"
+    dateFormat: "yy-mm-dd",
+    changeMonth: true,
+    changeYear: true
   });
   
   //removes time part from date_control input value
   $(".date_control").each(function(){
-    $(this).val($(this).val().split(" ")[0]);
+    if($(this).val() != ""){
+      $(this).val($(this).val().split(" ")[0]);
+    }
   });
   
 });

@@ -14,36 +14,39 @@
 
 
 Route::get('/', array('as' => 'usersHome', 'uses' => 'HomeController@showWelcome'));
-
-Route::get('/users/login', array('as' => 'userLogin', 'uses' => 'UsersController@login'));
-Route::post('/users/login', array('as' => 'userLoginPost', 'uses' => 'UsersController@login'));
-Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
-Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
-Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
-Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));
-Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));
-Route::get('/users/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
-Route::get('/users/password/forgot', array('as' => 'userForgotPassword', 'uses' => 'UsersController@getForgotPassword'));
-Route::post('/users/password/forgot', array('as' => 'postUserForgotPassword', 'uses' => 'UsersController@postForgotPassword'));
-Route::get('/users/password/change/{token}', array('as' => 'userChangePassword', 'uses' => 'UsersController@getChangePassword'));
-Route::post('/users/password/change/{token}', array('as' => 'postUserChangePassword', 'uses' => 'UsersController@postChangePassword'));
+Route::get('/login', array('as' => 'userLogin', 'uses' => 'UsersController@getLogin'));
+Route::post('/login', array('as' => 'userLoginPost', 'uses' => 'UsersController@postLogin'));
+Route::get('/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
+Route::get('/password/forgot', array('as' => 'userForgotPassword', 'uses' => 'UsersController@getForgotPassword'));
+Route::post('/password/forgot', array('as' => 'postUserForgotPassword', 'uses' => 'UsersController@postForgotPassword'));
+Route::get('/password/change/{token}', array('as' => 'userChangePassword', 'uses' => 'UsersController@getChangePassword'));
+Route::post('/password/change/{token}', array('as' => 'postUserChangePassword', 'uses' => 'UsersController@postChangePassword'));
 
 
-Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
-Route::post('/users/search', array('as' => 'usersSearch', 'uses' => 'UsersController@postSearch'));
+Route::group(array('before' => 'auth.admin'), function(){
+	Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
+	Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
+	Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
+	Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));
+	Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));
+	Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
+	Route::post('/users/search', array('as' => 'usersSearch', 'uses' => 'UsersController@postSearch'));
+	
+	
+	Route::get('/holidays/create', array('as' => 'holidayCreate', 'uses' => 'HolidaysController@create'));
+	Route::post('/holidays/store', array('as' => 'holidayStore', 'uses' => 'HolidaysController@store'));
+	Route::get('/holidays/edit/{resource}', array('as' => 'holidayEdit', 'uses' => 'HolidaysController@edit'));
+	Route::post('/holidays/update/{resource}', array('as' => 'holidayUpdate', 'uses' => 'HolidaysController@update'));
+	Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
+	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
+});
 
-// Leave Routes
-Route::get('/leaves/search', 'LeavesController@search');
-Route::resource('/leaves', 'LeavesController');
-Route::resource('/users', 'UsersController');
 
-Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
-
-Route::get('/holidays/create', array('as' => 'holidayCreate', 'uses' => 'HolidaysController@create'));
-Route::post('/holidays/store', array('as' => 'holidayStore', 'uses' => 'HolidaysController@store'));
-Route::get('/holidays/edit/{resource}', array('as' => 'holidayEdit', 'uses' => 'HolidaysController@edit'));
-Route::post('/holidays/update/{resource}', array('as' => 'holidayUpdate', 'uses' => 'HolidaysController@update'));
-
-Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
-
-
+Route::group(array('before' => 'auth.user'),function(){
+	// Leave Routes
+	Route::get('/leaves/search', 'LeavesController@search');
+	Route::get('/leaves/myleaves', array('as' => 'myLeaves', 'uses' => 'LeavesController@myLeaves'));
+	Route::get('/leaves/requests', array('as' => 'leaveRequests', 'uses' => 'LeavesController@leaveRequests'));
+	Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
+	Route::get('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
+});

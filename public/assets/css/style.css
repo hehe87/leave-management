@@ -10,4 +10,66 @@ Purpose		: Custom styles for leave management system
 #csr-container {
 	display: none;
 }
+
+.input-xs{
+	width: 70px !important;
+}
+
+.input-group-addon-new{
+	padding: 9px 12px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1;
+	color: #555;
+	text-align: center;
+	background-color: #eee;
+	border: 1px solid #ccc;
+}
+
+.padding-right-5{
+	padding-right: 5px;
+}
+
+.slot_from{
+	width:260px;
+	float:left;
+}
+.slot_to{
+	width:260px;
+	float:right;
+}
+
+.rounded-right{
+	border-radius: 0px 5px 5px 0px !important;
+}
+
+
+.ui-datepicker-month{
+	color: #48036F;
+}
+
+.ui-datepicker-year{
+	color: #48036F;
+}
+
+.ui-datepicker-header{
+	background: #CC71ED;
+	border: #A459C1;
+}
+
+.ui-state-default{
+	color: #A447B7 !important;
+}
+
+.ui-datepicker-calendar th{
+	color: #48036F !important;
+}
+
+/*@media screen and(max-width: 800px){
+	.slot_to{
+		float:left !important;
+	}
+}*/
+
+
 /*----------------------------------*/

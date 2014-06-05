@@ -10,46 +10,71 @@
 */
 
 class UsersController extends \BaseController {
+  
+  public function __construct()
+  {
+    $this->beforeFilter('auth', array(
+	'except' => array(
+	  'getLogin',
+	  'postLogin',
+	  'getForgotPassword',
+	  'postForgotPassword',
+	  'getChangePassword',
+	  'postChangePassword'
+	)
+      )
+    );
+  }
 
   /**
-    Function Name: 		login
+    Function Name: 		getLogin
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
     Parameters:	            	username, password
-    Purpose:			This function acts as login action which on GET request displays user
-                                with login form and with POST request authenticates the credentials
+    Purpose:			This function acts as login action which displays user
+                                with login form.
   */
-  public function login(){
+  public function getLogin(){
     if(Auth::check()){
       return Redirect::to(URL::route('usersHome'));
     }
-    if(Request::isMethod('post')){
-      $formData = Input::all();
-      $email = $formData["email"];
-      $password = $formData["password"];
-      $rememberMe = false;
-      if(key_exists("rememberMe",$formData)){
-	$rememberMe = true;
-      }
-      if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
-      {
-	$employeeType = Auth::user()->employeeType;
-	if($employeeType === "EMPLOYEE"){
-	  return Redirect::to(URL::route('usersHome'));
-	}
-	else{
-	  return Redirect::to(URL::route('usersListing'));
-	}
-	
+    return View::make('users.login');
+  }
+  
+  /**
+    Function Name: 		postLogin
+    Author Name:		Nicolas Naresh
+    Date:			June, 02 2014
+    Parameters:	            	username, password
+    Purpose:			This function acts as login action which displays user
+                                with login form.
+  */
+  public function postLogin(){
+    $formData = Input::all();
+    $email = $formData["email"];
+    $password = $formData["password"];
+    $rememberMe = false;
+    if(key_exists("rememberMe",$formData)){
+      $rememberMe = true;
+    }
+    if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
+    {
+      $employeeType = Auth::user()->employeeType;
+      if($employeeType === "EMPLOYEE"){
+	return Redirect::to(URL::route('leaves.create'));
       }
       else{
-	return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
+	return Redirect::to(URL::route('usersListing'));
       }
+      
     }
     else{
-      return View::make('users.login');
+      return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
     }
   }
+  
+  
+  
   
   /**
     Function Name: 		logout
@@ -248,7 +273,7 @@ class UsersController extends \BaseController {
     Function Name: 		edit
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
-    Parameters:	            	-
+    Parameters:	            	$id
     Purpose:			This function acts as an action for displaying edit user form, where the
 				retlated to the user can be edited
   */
@@ -259,10 +284,10 @@ class UsersController extends \BaseController {
   }
 
   /**
-    Function Name: 		edit
+    Function Name: 		update
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
-    Parameters:	            	-
+    Parameters:	            	$id
     Purpose:			This function updates the given users information to database with
 				the information updated in the edit form
   */
@@ -296,7 +321,7 @@ class UsersController extends \BaseController {
     Function Name: 		destroy
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
-    Parameters:	            	-
+    Parameters:	            	$id
     Purpose:			This function removes the specified user from database
   */
   public function destroy($id)
