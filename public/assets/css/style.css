@@ -8,7 +8,7 @@ Purpose		: Custom styles for leave management system
 /*--------- Leave Module -----------*/
 
 #csr-container {
-	display: none;
+	
 }
 
 .input-xs{
@@ -63,6 +63,15 @@ Purpose		: Custom styles for leave management system
 
 .ui-datepicker-calendar th{
 	color: #48036F !important;
+}
+
+
+.padding_4{
+	padding: 4px;
+}
+
+.round-icon{
+	border-radius: 12px;
 }
 
 /*@media screen and(max-width: 800px){

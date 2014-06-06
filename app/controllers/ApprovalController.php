@@ -108,10 +108,25 @@ class ApprovalController extends \BaseController {
 	
 	public function updateStatus()
 	{
-		$approval = Approval::findOrFail(Input::get('id'));
-		$approval->approved = Input::get('approved');
-		
+		$approval = Approval::findOrFail(Input::get('approvalId'));
+		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
+		Response::json(array('status' => true));
+	}
+	
+	
+	/**
+	Function Name		:	leaveApprovals
+	Author Name		:	Nicolas Naresh
+	Date			:	06, June 2014
+	Parameters		:	$id -> id of leave
+	Purpose			:	this function provides the user with the information on
+					approvals of his/her leave/csr requests
+	*/
+	
+	public function leaveApprovals($id){
+		$leave = Leave::find($id);
+		return View::make("leaves.leaveapprovals")->with("leave", $leave);
 	}
 
 

@@ -60,13 +60,23 @@
 		{{$leaveReq->leave->reason}}
 	      </td>
 	      <td align="center">
-                @if ($leaveReq->approved == 0)
-                  <a class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-ok"></span></a>&nbsp;&nbsp;<a class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-remove"></span></a>
+                @if ($leaveReq->approved == "PENDING")
+                  <a class="btn btn-xs btn-primary approve-status-change" data-approve_status="YES" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
+		    <span class="glyphicon glyphicon-ok"></span>
+		  </a>
+		  &nbsp;&nbsp;
+		  <a class="btn btn-xs btn-primary" data-approve_status="NO" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
+		    <span class="glyphicon glyphicon-remove"></span>
+		  </a>
                 @else
-                  @if ($leaveReq->approved == 1)
-                    <span class="glyphicon glyphicon-remove btn-success">
+                  @if ($leaveReq->approved == "YES")
+                    <!--<a class="btn btn-xs btn-primary approve-status-change" data-approve_status="">-->
+		      <span class="glyphicon glyphicon-ok btn-success padding_4"></span>
+		    <!--</a>-->
                   @else
-                    <span class="glyphicon glyphicon-remove btn-danger">
+                    <!--<a class="btn btn-xs btn-primary approve-status-change" data-approve_status="">-->
+		      <span class="glyphicon glyphicon-remove btn-danger padding_4"></span>
+		    <!--</a>-->
                   @endif
                 @endif
 	      </td>

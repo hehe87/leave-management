@@ -18,14 +18,14 @@ class Approval extends \Eloquent {
 	}
 	
 	/**
-    Function Name	: 		user
+    Function Name	: 		approver
     Author Name		:		Jack Braj
     Date			:		June 04, 2014
     Parameters		:	    none
     Purpose			:		This function used to return user relationship
 	*/
 	
-	public function user()
+	public function approver()
 	{
 		return $this->belongsTo('User', 'approver_id');
 	}
