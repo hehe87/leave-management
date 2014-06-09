@@ -45,6 +45,25 @@ class Approval extends \Eloquent {
 						->get();
 						
 	}
+  
+  /**
+    Function Name	: 	isAllowed
+    Author Name		:		Jack Braj
+    Date			    :		June 09, 2014
+    Parameters		:	  leave_id
+    Purpose			  :		This function is to determine whether a leave or csr has been approved by all approvers or not
+	*/
+  
+  public static function isAllowed( $leave_id )
+  {
+    $total = self::where('leave_id', '=', $leave_id);
+    $approved = self::where('leave_id', '=', $leave_id)->where('approved', '=', 'YES');
+    
+    if( $total->count() == $approved->count() )
+      return true;
+      
+    return false;
+  }
 	
 	
 }
