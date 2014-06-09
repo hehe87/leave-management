@@ -66,13 +66,20 @@ $(document).on("ready",function(){
     var approvalStatus = $(this).data("approve_status");
     var approvalId = $(this).data("approval_id");
     var approvalUrl = $(this).data("approval_url");
+    var $this = $(this);
     $.ajax({
       type: 'post',
       url: approvalUrl,
       data: {approvalStatus: approvalStatus, approvalId: approvalId},
       dataType: "json",
       success: function(data){
-        console.log(data);
+        console.log(approvalStatus);
+        if(approvalStatus == "YES"){
+          $this.parent().html(getApprovedInfoHTML());
+        }
+        else{
+          $this.parent().html(getRejectedInfoHTML());
+        }
       }
     });
   });
@@ -87,10 +94,70 @@ $(document).on("ready",function(){
         $("#user-modal .modal-body").html(retdata);
         $("#user-modal").modal('show');
       }
-    })
-  })
+    });
+  });
+  
+  
+  if($('.multiple-select-with-checkbox').length != 0){
+    $('.multiple-select-with-checkbox').each(function(){
+      var options = $(this).find("option");
+      var $selectbox = $(this); 
+      var checkboxHtml = "<div class='row'><div class='col-lg-4'></div>";
+      checkboxHtml += "<div class='col-lg-4'></div>";
+      checkboxHtml += "<div class='col-lg-4'></div></div>";
+      $selectbox.parent().append(checkboxHtml);
+      var checkboxName = $selectbox.attr("name");
+      options.each(function(k,v){
+        currentRow = (k % 3) + 1;
+        isChecked = $(this).is(":selected");
+        $selectbox.parent().find("div.row").find("div:nth-child(" + currentRow + ")").append(getMultipleCheckboxHTML(checkboxName, $(this).val(), $(this).html(), isChecked));
+      });
+    });
+    $('.multiple-select-with-checkbox').remove();
+  }
+  
+  
+  $(".delete-myleave").on("click", function(){
+    var $this = $(this);
+    var $parentRow = $(this).closest("tr");
+    if(confirm("Are you sure you want to delete this leave")){
+      $.ajax({
+        url: $(this).data("url"),
+        type: "post",
+        dataType: "json",
+        success: function(retdata){
+          $parentRow.remove();
+        }
+      });
+    }
+  });
   
   
   
 });
+
+function getMultipleCheckboxHTML(name,key,val, checked){
+  var checkboxinput_checked = "";
+  if(checked == true){
+    checkboxinput_checked = " checked";
+  }
+  return "<input type='checkbox' name='"+name+"' value='" + key +"' " + checkboxinput_checked + "/> <span class='checkbox-text'>" + val + "</span>&nbsp;&nbsp;";
+}
+
+
+
+function getApprovedInfoHTML(){
+  return  '<a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-success">'+
+            '<span class="glyphicon glyphicon-ok" title="Leave Approved"></span>'+
+          '</a>'
+}
+
+function getRejectedInfoHTML(){
+  return  '<a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-danger">'+
+            '<span class="glyphicon glyphicon-remove btn-danger" title="Leave Rejected"></span>'+
+	  '</a>';
+}
+
+
+
 

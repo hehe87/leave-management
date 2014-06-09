@@ -74,6 +74,10 @@ Purpose		: Custom styles for leave management system
 	border-radius: 12px;
 }
 
+.checkbox-text{
+	
+}
+
 /*@media screen and(max-width: 800px){
 	.slot_to{
 		float:left !important;

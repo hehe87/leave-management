@@ -130,8 +130,8 @@ class LeavesController extends \BaseController {
 		$approval['approved'] = 'PENDING';
 		Approval::create($approval);
 	    }
-	    return Redirect::route('leaves.index')
-		  ->with('message', 'Leave successfully applied');;
+	    return Redirect::to(URL::route('myLeaves'))
+		  ->with('message', 'Leave successfully applied');
 	}
 
 	/**
@@ -145,7 +145,6 @@ class LeavesController extends \BaseController {
 	public function show($id)
 	{
 	  $leave = Leave::findOrFail($id);
-  
 	  return View::make('leaves.show', compact('leave'));
 	}
 
@@ -160,8 +159,22 @@ class LeavesController extends \BaseController {
 	public function edit($id)
 	{
 		$leave = Leave::find($id);
-
-		return View::make('leaves.edit', compact('leave'));
+		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
+		$inputCSRs = array();
+		if($leave->leave_type == "CSR"){
+		  $csrs = $leave->csrs;
+		  foreach($csrs as $csr){
+		    $from_time = new DateTime($csr->from_time);
+		    $to_time = new DateTime($csr->to_time);
+		    $from_hour = $from_time->format("h");
+		    $from_min = $from_time->format("i");
+		    $to_hour = $to_time->format("h");
+		    $to_min = $to_time->format("i");
+		    $inputCSRs[] = array("from" => array("hour" => $from_hour, "min" => $from_min), "to" => array("hour" => $to_hour, "min" => $to_min));
+		  }
+		}
+		//$this->pre_print($inputCSRs);
+		return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
 	}
 
 	/**
@@ -174,33 +187,94 @@ class LeavesController extends \BaseController {
 	
 	public function update($id)
 	{
-		$leave = Leave::findOrFail($id);
-
-		$validator = Validator::make($data = Input::all(), Leave::$rules);
-
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
-		}
-
-		$leave->update($data);
-
-		return Redirect::route('leaves.index');
+	  $validator = [];
+	  $validator_leave = [];
+	  $validator_csr = [];
+	  $inputs = Input::all();
+	  $leave = $inputs['leave'];
+	  $hasLeaveError = false;
+	  $hasApprovalError = false;
+	  $hasCsrError = false;
+	  $validator_leave = Validator::make($leave, Leave::$rules);
+    
+	  if($validator_leave->fails())
+	    $hasLeaveError = true;
+    
+	    if( 'CSR' == $inputs['leave']['leave_type'] )
+	    {
+	      $csrs = $inputs['csr'];
+	
+	      foreach($csrs as $key=>$csr)
+	      {
+		$csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+		$csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+		$validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+		
+		if($validator_csr[$key]->fails())
+		  $hasCsrError = true;
+	      }
+	    }
+    
+	    // check if user has selected any approver or not
+	    if(!array_key_exists('approval', $inputs))
+	      $hasApprovalError = true;
+      
+    
+	    if($hasLeaveError || $hasApprovalError || $hasCsrError)
+	    {
+	      $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
+	      $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
+	      foreach($validator_csr as $vc)
+	      {
+		$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
+	      }
+	      return Redirect::back()->withErrors($validator)->withInput();
+	    }
+	    
+	    $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	    $leaveObj = Leave::findOrFail($id);
+	    $leaveObj->update($leave);
+	    //$leave = Leave::create($leave);
+	    
+	    if( 'CSR' == $inputs['leave']['leave_type'] )
+	    {
+	      $leaveObj->csrs()->forceDelete();
+	      foreach($csr_slots as $slot)
+	      {
+		  $slot['leave_id'] = $leaveObj->id;
+		  Csr::create($slot);
+	      }
+	    }
+	    $approvals = $inputs['approval'];
+	    
+	    foreach($approvals as $approval)
+	    {
+	      $leaveObj->approvals()->forceDelete();
+	      $approval['leave_id'] = $leaveObj->id;
+	      $approval['approved'] = 'PENDING';
+	      Approval::create($approval);
+	    }
+	    return Redirect::to(URL::route('myLeaves'))
+		  ->with('message', 'Leave successfully applied');
 	}
 
 	/**
-    Function Name	: 		destroy
-    Author Name		:		Jack Braj
-    Date			:		June 02, 2014
-    Parameters		:	    id
-    Purpose			:		This function used to delete a single leave
+	Function Name	: 		destroy
+	Author Name		:		Jack Braj
+	Date			:		June 02, 2014
+	Parameters		:	    id
+	Purpose			:		This function used to delete a single leave
 	*/
 	
 	public function destroy($id)
 	{
-		Leave::destroy($id);
-
-		return Redirect::route('leaves.index');
+	  $leave = Leave::find($id);
+	  $leave->approvals()->forceDelete();
+	  if($leave->leave_type == "CSR"){
+	    $leave->csrs()->forceDelete();
+	  }
+	  Leave::destroy($id);
+	  return Response::json(array('status' => true));
 	}
 	
 	
@@ -213,11 +287,10 @@ class LeavesController extends \BaseController {
 	*/
 	
 	public function myLeaves(){
-		/* $myLeaves = Leave::where("user_id",Auth::user()->id)->get();
-		return View::make('leaves.myleaves')->with("leaves",$myLeaves); */
-		$leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
-		return View::make('leaves.myleaves')->with('leaves', $leaves);
-		
+	  /* $myLeaves = Leave::where("user_id",Auth::user()->id)->get();
+	  return View::make('leaves.myleaves')->with("leaves",$myLeaves); */
+	  $leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
+	  return View::make('leaves.myleaves')->with('leaves', $leaves);
 	}
 	
 	
@@ -230,10 +303,7 @@ class LeavesController extends \BaseController {
 	*/
 	
 	public function leaveRequests(){
-		$leaveRequests = Approval::where("approver_id",Auth::user()->id)->get();
-		return View::make('leaves.leaverequests')->with("leaveRequests",$leaveRequests);
-		
+	  $leaveRequests = Approval::where("approver_id",Auth::user()->id)->get();
+	  return View::make('leaves.leaverequests')->with("leaveRequests",$leaveRequests);
 	}
-	
-
 }

@@ -111,7 +111,7 @@ class ApprovalController extends \BaseController {
 		$approval = Approval::findOrFail(Input::get('approvalId'));
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
-		Response::json(array('status' => true));
+		return Response::json(array('status' => true));
 	}
 	
 	

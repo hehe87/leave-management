@@ -61,22 +61,22 @@
 	      </td>
 	      <td align="center">
                 @if ($leaveReq->approved == "PENDING")
-                  <a class="btn btn-xs btn-primary approve-status-change" data-approve_status="YES" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
+                  <a title="Approve Leave" class="btn btn-xs btn-primary approve-status-change" data-approve_status="YES" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
 		    <span class="glyphicon glyphicon-ok"></span>
 		  </a>
 		  &nbsp;&nbsp;
-		  <a class="btn btn-xs btn-primary" data-approve_status="NO" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
+		  <a title="Reject Leave" class="btn btn-xs btn-primary approve-status-change" data-approve_status="NO" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
 		    <span class="glyphicon glyphicon-remove"></span>
 		  </a>
                 @else
                   @if ($leaveReq->approved == "YES")
-                    <!--<a class="btn btn-xs btn-primary approve-status-change" data-approve_status="">-->
-		      <span class="glyphicon glyphicon-ok btn-success padding_4"></span>
-		    <!--</a>-->
+                    <a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-success">
+		      <span class="glyphicon glyphicon-ok" title="Leave Approved"></span>
+		    </a>
                   @else
-                    <!--<a class="btn btn-xs btn-primary approve-status-change" data-approve_status="">-->
-		      <span class="glyphicon glyphicon-remove btn-danger padding_4"></span>
-		    <!--</a>-->
+                    <a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-danger">
+		      <span class="glyphicon glyphicon-remove btn-danger" title="Leave Rejected"></span>
+		    </a>
                   @endif
                 @endif
 	      </td>
