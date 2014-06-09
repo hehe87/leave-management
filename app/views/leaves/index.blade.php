@@ -60,7 +60,7 @@
 		{{$leave->reason}}
 	      </td>
 	      <td align="center">
-		 -
+		<a class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}">View Approvals</a>
 	      </td>
 	    </tr>
 	  @endforeach

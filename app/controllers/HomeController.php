@@ -17,7 +17,7 @@ class HomeController extends BaseController {
 
 	public function showWelcome()
 	{
-		Redirect::to(URL::route("userLogin"));
+		return Redirect::to(URL::route("userLogin"));
 	}
 
 }

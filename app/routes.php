@@ -59,6 +59,7 @@ Route::group(array('before' => 'auth.user'),function(){
 	Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
 	Route::post('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
 	Route::post('leaves/approve',array('as' => 'approval.updateStatus', 'uses' => 'ApprovalController@updateStatus'));
-	Route::get('leaves/{resource}/approvals', array('as' => 'approval.leaveApprovals', 'uses' => 'ApprovalController@leaveApprovals'));
 });
 
+
+Route::get('leaves/{resource}/approvals', array('as' => 'approval.leaveApprovals', 'uses' => 'ApprovalController@leaveApprovals'));
