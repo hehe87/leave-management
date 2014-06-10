@@ -170,7 +170,7 @@ class ApprovalController extends \BaseController {
        $event = new Google_Service_Calendar_Event();  
        if( 'LEAVE' == $approval->leave->leave_type )
        {
-          $event->setSummary( $approval->leave->user->name . ' (Full Day)');       
+          $event->setSummary( $user->name . ' (Full Day)');       
           $startDate = $endDate = $approval->leave->leave_date;
           $start->setDate($startDate);
           $end->setDate($endDate);
@@ -182,7 +182,7 @@ class ApprovalController extends \BaseController {
        }
         elseif ('FH' == $approval->leave->leave_type)
         {
-          $event->setSummary( $approval->leave->user->name . ' (First Half)');       
+          $event->setSummary( $user->name . ' (First Half)');       
           $startTime = $approval->leave->leave_date. 'T'. $user->inTime. '.000'. Config::get('google.timezone');
           
           // Calculate End time based on user in time and out time
@@ -227,7 +227,7 @@ class ApprovalController extends \BaseController {
           
           foreach( $csrs as $csr )
           {
-            $event->setSummary( $approval->leave->user->name . ' (CSR)');       
+            $event->setSummary( $user->name . ' (CSR)');       
             $startTime = $approval->leave->leave_date. 'T'. $csr->from_time. '.000'. Config::get('google.timezone');
             $endTime = $approval->leave->leave_date. 'T'. $csr->to_time. '.000'. Config::get('google.timezone');            
             $start->setDateTime($startTime);
