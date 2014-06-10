@@ -2,6 +2,21 @@
 
 class ApprovalController extends \BaseController {
 
+  protected static $clientId = '';
+  protected static $serviceAccountName = '';
+  protected static $keyFileLocation = '';
+  
+  public function __construct()
+  {
+    require_once( base_path() . '/vendor/google/apiclient/src/Google/Client.php' );
+    require_once( base_path() . '/vendor/google/apiclient/src/Google/Service/Calendar.php' );
+    
+    self::$clientId = Config::get('google.client_id');
+    self::$serviceAccountName = Config::get('google.service_account_name');
+    self::$keyFileLocation = Config::get('google.key_file_location');
+    
+   }
+   
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -103,7 +118,7 @@ class ApprovalController extends \BaseController {
     Author Name		:		Jack Braj
     Date			:		June 04, 2014
     Parameters		:	    none
-    Purpose			:		This function used to update the leave status
+    Purpose			:		This function used to update the leave status and calendar event
 	*/
 	
 	public function updateStatus()
@@ -111,6 +126,85 @@ class ApprovalController extends \BaseController {
 		$approval = Approval::findOrFail(Input::get('approvalId'));
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
+
+    // Mark a calendar event if approved
+    if( Approval::isAllowed( $approval->leave->id ) )
+    {
+      // Check if google configurations are set properly
+      if ( self::$clientId == ''
+      || !strlen( self::$serviceAccountName )
+      || !strlen( self::$keyFileLocation )) {
+      echo 'Missing google configurations';
+  }
+
+      
+      $client = new Google_Client();
+      $client->setApplicationName("Leave Management System");
+      $service = new Google_Service_Calendar($client);
+      
+      if ( Session::has('service_token') ) {
+        $client->setAccessToken( Session::get('service_token') );
+  }
+      $key = file_get_contents( self::$keyFileLocation );
+      $cred = new Google_Auth_AssertionCredentials(
+      self::$serviceAccountName,
+      array('https://www.googleapis.com/auth/calendar'),
+      $key
+      );
+      
+      $client->setAssertionCredentials($cred);
+      if($client->getAuth()->isAccessTokenExpired()) {
+        $client->getAuth()->refreshTokenWithAssertion($cred);
+      }
+      Session::put('service_token', $client->getAccessToken());
+
+      $cal = new Google_Service_Calendar($client);
+      
+      $start = new Google_Service_Calendar_EventDateTime();
+      $end = new Google_service_Calendar_EventDateTime();
+      
+      // Mark an event
+      try {  
+       $event = new Google_Service_Calendar_Event();  
+       if( 'LEAVE' == $approval->leave->leave_type )
+       {
+          $event->setSummary( $approval->leave->user->name . ' (Full Day)');       
+          $startDate = $endDate = $approval->leave->leave_date;
+          $start->setDate($startDate);
+          $end->setDate($endDate);
+          
+          $event->setStart($start);
+          $event->setEnd($end);
+
+          $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
+       }       
+       else
+       {
+          $csrs = Csr::where('leave_id', '=', $approval->leave_id)->get();
+          
+          foreach( $csrs as $csr )
+          {
+            $event->setSummary( $approval->leave->user->name . ' (CSR)');       
+            $startTime = $approval->leave->leave_date. 'T'. $csr->from_time. '.000'. Config::get('google.timezone');
+            $endTime = $approval->leave->leave_date. 'T'. $csr->to_time. '.000'. Config::get('google.timezone');            
+            $start->setDateTime($startTime);
+            $end->setDateTime($endTime);
+            $event->setStart($start);
+            $event->setEnd($end);
+
+            $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);
+          }
+       }
+       
+       
+      }
+
+      catch (Exception $ex)
+      {
+        die($ex->getMessage());
+      }
+      
+    }
 		return Response::json(array('status' => true));
 	}
 	

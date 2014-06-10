@@ -30,7 +30,7 @@
 		{{ $leave->user->name }}
 	      </td>
 	      <td>
-		{{ date('d-m-Y', strtotime($leave->leave_date))}}
+		{{ date('d-m-Y',strtotime($leave->leave_date)) }}
 	      </td>
 	      <td>
 		{{$leave->leave_type}}

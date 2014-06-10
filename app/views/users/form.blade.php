@@ -141,6 +141,33 @@
   </div>
 </div>
 
+<div class="form-group has-feedback">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-2">
+        {{ Form::label('inTime', 'In/Out Time', array('class' => 'control-label')) }}
+      </div>
+      <div class="col-sm-3">
+        {{ Form::text('inTime', $user->inTime, array('class' => 'form-control date_control', 'placeholder' => 'In Time (hh:mm:ss)')) }}
+        <span class="glyphicon glyphicon-time form-control-feedback"></span>
+      </div>
+      <div class="col-sm-3">
+        {{ Form::text('outTime', $user->outTime, array('class' => 'form-control date_control', 'placeholder' => 'Out Time (hh:mm:ss)')) }}
+        <span class="glyphicon glyphicon-time form-control-feedback"></span>
+      </div>
+    </div>
+    @if ($errors->first('inTime'))
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-2">
+          <div class="alert alert-danger">
+            {{{ $errors->first('inTime') }}}
+          </div>
+        </div>
+      </div>
+    @endif
+  </div>
+</div>
+
 <div class="form-group">
   <div class="col-sm-12">
     <div class="row">
