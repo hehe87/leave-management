@@ -166,9 +166,9 @@ class ApprovalController extends \BaseController {
       // Mark an event
       try {  
        $event = new Google_Service_Calendar_Event();  
-       $event->setSummary($approval->leave->leave_type);       
        if( 'LEAVE' == $approval->leave->leave_type )
        {
+          $event->setSummary( $approval->leave->user->name . ' (Full Day)');       
           $startDate = $endDate = $approval->leave->leave_date;
           $start->setDate($startDate);
           $end->setDate($endDate);
@@ -184,6 +184,7 @@ class ApprovalController extends \BaseController {
           
           foreach( $csrs as $csr )
           {
+            $event->setSummary( $approval->leave->user->name . ' (CSR)');       
             $startTime = $approval->leave->leave_date. 'T'. $csr->from_time. '.000'. Config::get('google.timezone');
             $endTime = $approval->leave->leave_date. 'T'. $csr->to_time. '.000'. Config::get('google.timezone');            
             $start->setDateTime($startTime);
