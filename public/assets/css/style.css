@@ -78,6 +78,38 @@ Purpose		: Custom styles for leave management system
 	
 }
 
+#lm-autosearch{
+	
+}
+
+#lm-autosearch table{
+	width: 100%;
+}
+#lm-autosearch table tr{
+	border-bottom: 1px solid;
+	border-left: 1px solid;
+	border-right: 1px solid;
+}
+
+#lm-autosearch table tr td{
+	padding-left: 5px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+#lm-autosearch table tr td:hover{
+	background-color: #aeaeae;
+	color: #fff;
+}
+
+.margin-top-10{
+	margin-top: 10px;
+}
+
+.margin-bottom-0{
+	margin-bottom: 0px !important;
+}
+
 /*@media screen and(max-width: 800px){
 	.slot_to{
 		float:left !important;

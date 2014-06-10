@@ -212,8 +212,17 @@ class UsersController extends \BaseController {
   */
 
   public function postSearch(){
-    $users = User::where("name","LIKE", "%". Input::get("name") . "%")->get();
-    return View::make('users.listing')->with("users", $users);
+    
+    if((Input::get("onblank") && Input::get("onblank") == "nil") && (trim((Input::get('name'))) == "")) {
+      $searchFor = "%1234%";
+    }
+    else{
+      $searchFor = "%". Input::get("name") . "%";
+    }
+    
+    $users = User::where("name","LIKE", $searchFor)->get();
+    
+    return View::make(Input::get('view') ? 'users.' . Input::get('view') : 'users.listing')->with("users", $users);
   }
   
   

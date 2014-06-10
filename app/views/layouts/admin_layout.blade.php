@@ -59,11 +59,11 @@
             </li>
           @endif
           <li>
-            <a href="{{ URL::to('/leaves/') }}">Leaves</a>
+            <a href="{{ URL::route('leaves.index') }}">Leaves</a>
           </li>
           
           <li>
-            <a href="">Reports</a>
+            <a href="{{ URL::route('leaves.report') }}">Reports</a>
           </li>
           
           @if (Route::currentRouteName() === "holidaysListing")

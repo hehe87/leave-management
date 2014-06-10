@@ -15,12 +15,6 @@
 	    <th>
 	      Leave Type
 	    </th>
-	    <th class="text-center">
-	      From Time
-	    </th>
-	    <th class="text-center">
-	      To Time
-	    </th>
 	    <th>
 	      Reason
 	    </th>
@@ -33,28 +27,13 @@
 	  @foreach ($leaves as $leave)
 	    <tr>
 	      <td>
-		{{$leave->user->name}}
+		{{ $leave->user->name }}
 	      </td>
 	      <td>
-		{{$leave->leave_date}}
+		{{ date('d-m-Y', strtotime($leave->leave_date))}}
 	      </td>
 	      <td>
 		{{$leave->leave_type}}
-	      </td>
-	      <td align="center">
-		@if ($leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leave->from_time}}
-		@endif
-		
-	      </td>
-	      <td align="center">
-		@if ($leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leave->to_time}}
-		@endif
 	      </td>
 	      <td>
 		{{$leave->reason}}
