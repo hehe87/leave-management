@@ -17,7 +17,10 @@
       {{ $user->email }}
     </td>
     <td>
-      {{ $user->phone }}
+      {{date('h:i A',strtotime($user->inTime))}} / {{date('h:i A',strtotime($user->outTime))}}
+    </td>
+    <td>
+      {{$user->phone}}
     </td>
     <td class="text-center">
       {{ $user->totalLeaves }}
@@ -33,7 +36,6 @@
           <td><a href="{{ URL::route('userRemove', $user->id) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
         </tr>
       </table>
-      
     </td>
   </tr>
 @endforeach

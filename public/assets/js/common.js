@@ -49,7 +49,8 @@ $(document).on("ready",function(){
     showOn : "both",
     dateFormat: "yy-mm-dd",
     changeMonth: true,
-    changeYear: true
+    changeYear: true,
+    yearRange: "-100:+0"
   });
   
   //removes time part from date_control input value

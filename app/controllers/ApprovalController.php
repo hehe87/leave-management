@@ -127,6 +127,8 @@ class ApprovalController extends \BaseController {
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
 
+    // fetch leave applicant
+    $user = $approval->leave->user;
     // Mark a calendar event if approved
     if( Approval::isAllowed( $approval->leave->id ) )
     {
@@ -177,7 +179,48 @@ class ApprovalController extends \BaseController {
           $event->setEnd($end);
 
           $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
-       }       
+       }
+        elseif ('FH' == $approval->leave->leave_type)
+        {
+          $event->setSummary( $approval->leave->user->name . ' (First Half)');       
+          $startTime = $approval->leave->leave_date. 'T'. $user->inTime. '.000'. Config::get('google.timezone');
+          
+          // Calculate End time based on user in time and out time
+          $inTime = strtotime($user->inTime);
+          $outTime = strtotime($user->outTime);          
+          $diffTime = ($outTime - $inTime) /2;
+          
+          $outTime = date('H:i:s', ($inTime + $diffTime));          
+          $endTime = $approval->leave->leave_date. 'T'. $outTime. '.000'. Config::get('google.timezone');            
+          $start->setDateTime($startTime);
+          $end->setDateTime($endTime);
+          $event->setStart($start);
+          $event->setEnd($end);
+
+          $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
+        }
+        elseif ('SH' == $approval->leave->leave_type)
+        {
+          $event->setSummary( $approval->leave->user->name . ' (Second Half)');       
+          // Calculate Start time based on user in time and out time
+          $inTime = strtotime($user->inTime);
+          $outTime = strtotime($user->outTime);          
+          $diffTime = ($outTime - $inTime) / 2;
+          
+          $inTime = date('H:i:s',($outTime - $diffTime));
+          
+          $startTime = $approval->leave->leave_date. 'T'. $inTime. '.000'. Config::get('google.timezone');
+          
+          
+          $endTime = $approval->leave->leave_date. 'T'. $user->outTime. '.000'. Config::get('google.timezone');            
+          $start->setDateTime($startTime);
+          $end->setDateTime($endTime);
+          $event->setStart($start);
+          $event->setEnd($end);
+
+          $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
+        }
+        
        else
        {
           $csrs = Csr::where('leave_id', '=', $approval->leave_id)->get();

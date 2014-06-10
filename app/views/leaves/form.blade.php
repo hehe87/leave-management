@@ -7,7 +7,7 @@
         {{ Form::label('leave_type', 'Leave Type', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
-        {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
+        {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
       </div>
     </div>
     @if ($errors->first('leave_type'))

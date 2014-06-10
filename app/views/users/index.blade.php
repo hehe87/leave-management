@@ -37,6 +37,9 @@
               Email
             </th>
             <th>
+              IN / OUT Time
+            </th>
+            <th>
               Phone Number
             </th>
             <th class="text-center">
