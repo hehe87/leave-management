@@ -11,19 +11,19 @@
 @foreach ($users as $user)
   <tr>
     <td>
-      {{$user->name}}
+      {{ $user->name }}
     </td>
     <td>
-      {{$user->email}}
+      {{ $user->email }}
     </td>
     <td>
-      {{$user->phone}}
+      {{ $user->phone }}
     </td>
     <td class="text-center">
-      {{$user->totalLeaves}}
+      {{ $user->totalLeaves }}
     </td>
     <td class="text-center">
-      -
+      {{ $user->getRemainingLeaves() }}
     </td>
     <td align="center">
       <table>
