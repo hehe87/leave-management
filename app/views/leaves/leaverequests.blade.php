@@ -59,7 +59,7 @@
 	      <td>
 		{{$leaveReq->leave->reason}}
 	      </td>
-	      <td align="center">
+	      <td align="">
                 @if ($leaveReq->approved == "PENDING")
                   <a title="Approve Leave" class="btn btn-xs btn-primary approve-status-change" data-approve_status="YES" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
 		    <span class="glyphicon glyphicon-ok"></span>

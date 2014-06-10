@@ -18,7 +18,7 @@
         @include("users.form", array('user'=>$user))
         
         <div class="form-group">
-          <div class="col-sm-3 col-sm-offset-5">
+          <div class="col-sm-6 col-sm-offset-2">
             <a class="btn btn-danger pull-left" href="{{ URL::previous() }}">Cancel</a>
             <input class="btn btn-primary pull-right" type="submit" value="Save User">
           </div>

@@ -17,7 +17,7 @@
         <legend class="form-signin-heading">Edit holiday</legend>
         @include("holidays.form")
         <div class="form-group">
-          <div class="col-sm-3 col-sm-offset-5">
+          <div class="col-sm-6 col-sm-offset-2">
             <a class="btn btn-danger pull-left">Cancel</a>
             <input class="btn btn-primary pull-right" type="submit" value="Update Holiday">
           </div>
