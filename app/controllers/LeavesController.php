@@ -247,9 +247,9 @@ class LeavesController extends \BaseController {
 	    }
 	    $approvals = $inputs['approval'];
 	    
+	    $leaveObj->approvals()->forceDelete();
 	    foreach($approvals as $approval)
 	    {
-	      $leaveObj->approvals()->forceDelete();
 	      $approval['leave_id'] = $leaveObj->id;
 	      $approval['approved'] = 'PENDING';
 	      Approval::create($approval);
@@ -306,4 +306,51 @@ class LeavesController extends \BaseController {
 	  $leaveRequests = Approval::where("approver_id",Auth::user()->id)->get();
 	  return View::make('leaves.leaverequests')->with("leaveRequests",$leaveRequests);
 	}
+	
+	
+	
+	public function getReport(){
+	  $searchData = Input::all();
+	  $leaves = null;
+	  if(!empty($searchData)){
+	    $user = User::where("name", $searchData["employee_name"])->get()->first();
+	    $leaveType = $searchData["leave_type"];
+	    switch($searchData['date_option']){
+	      case "between-dates":
+		$leaves = Leave::where("user_id", $user->id)
+		->whereBetween("leave_date", array($searchData["from_date"], $searchData["to_date"]))
+		->where("leave_type", $leaveType)
+		->get();
+		break;
+	      case "by-date":
+		$leaves = Leave::where("user_id", $user->id)
+		->where("leave_date", $searchData["on_date"])
+		->where("leave_type", $leaveType)
+		->get();
+		break;
+	      case "by-year":
+		$leaves = Leave::where("user_id", $user->id)
+		->where(DB::raw("YEAR(leave_date)"), $searchData["year"])
+		->where("leave_type", $leaveType)
+		->get();
+		break;
+	      case "by-month":
+		$leaves = Leave::where("user_id", $user->id)
+		->where(DB::raw("YEAR(leave_date)"), date("Y"))
+		->where(DB::raw("MONTH(leave_date)"), date("m"))
+		->where("leave_type", $leaveType)
+		->get();
+		break;
+	    }
+	  }
+	  
+	  return View::make('leaves.report')->withInputs($searchData)->with("leaves",$leaves);
+	}
+	
+	public function generateReport(){
+	  
+	}
+	
+	
+	
 }

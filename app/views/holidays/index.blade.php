@@ -39,7 +39,7 @@
           @foreach ($holidays as $holiday)
             <tr>
               <td>
-                {{$holiday->holidayDate}}
+                {{ date('d-m-Y', strtotime($holiday->holidayDate)) }}
               </td>
               <td>
                 {{$holiday->holidayDescription}}

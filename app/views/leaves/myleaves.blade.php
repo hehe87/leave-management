@@ -7,21 +7,12 @@
 	<thead>
 	  <tr>
 	    <th>
-	      Name
-	    </th>
-	    <th>
 	      Leave Date
 	    </th>
 	    <th>
 	      Leave Type
 	    </th>
-	    <th class="text-center">
-	      From Time
-	    </th>
-	    <th class="text-center">
-	      To Time
-	    </th>
-	    <th width="30%">
+	    <th width="50%">
 	      Reason
 	    </th>
 	    <th class="text-center">
@@ -33,28 +24,10 @@
 	  @foreach ($leaves as $leave)
 	    <tr>
 	      <td>
-		{{$leave->user->name}}
-	      </td>
-	      <td>
 		{{$leave->leave_date}}
 	      </td>
 	      <td>
 		{{$leave->leave_type}}
-	      </td>
-	      <td align="center">
-		@if ($leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leave->from_time}}
-		@endif
-		
-	      </td>
-	      <td align="center">
-		@if ($leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leave->to_time}}
-		@endif
 	      </td>
 	      <td>
 		{{$leave->reason}}

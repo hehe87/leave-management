@@ -40,6 +40,8 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::post('/holidays/update/{resource}', array('as' => 'holidayUpdate', 'uses' => 'HolidaysController@update'));
 	Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
+	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));
+	Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
 });
 
 

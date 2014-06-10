@@ -155,32 +155,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentDate = new DateTime(date("Y-m-d"));
     $currentYear = (int)$currentDate->format("Y");
     $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
+    
+    
+    
     $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $dateOfJoining = new DateTime($this->doj);
     $joiningYear = (int)$dateOfJoining->format("Y");
     $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,1,15,$dateOfJoining->format("Y"))));
+    
     $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
     
     $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
     
     $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
     
-    if($isJoinedInCurrentYear){
-      $joiningDateUT = strtotime($this->doj);
-      foreach($optionalHolidays as $oHoliday){
-	$oHolidayDate = new DateTime($oHoliday->holidayDate);
-	$oHolidayDateUT = strtotime($oHoliday->holidayDate);
-	if($joiningDateUT < $oHolidayDateUT){
-	  $allLeaves += 1;
-	}
-      }
+    if(!$isJoinedBeforeLastLeaveDateOfJoiningYear && !$isJoinedInCurrentYear){
+      $yearsInCompany -= 1;
     }
-    else{
-      foreach($optionalHolidays as $oHoliday){
-	$allLeaves += 1;
-      }
+    foreach($optionalHolidays as $oHoliday){
+      $allLeaves += 1;
     }
+//    if($isJoinedInCurrentYear){
+//      $joiningDateUT = strtotime($this->doj);
+//      foreach($optionalHolidays as $oHoliday){
+//	$oHolidayDate = new DateTime($oHoliday->holidayDate);
+//	$oHolidayDateUT = strtotime($oHoliday->holidayDate);
+//	if($joiningDateUT < $oHolidayDateUT){
+//	  $allLeaves += 1;
+//	}
+//      }
+//    }
+//    else{
+//      foreach($optionalHolidays as $oHoliday){
+//	$allLeaves += 1;
+//      }
+//    }
+    
     $allLeaves += $yearsInCompany;
     if($isJoinedBeforeLastLeaveDateOfJoiningYear && ($joiningYear != $currentYear)){
       $allLeaves += 1;
@@ -198,20 +210,47 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			using his/her date of joining.
   */
   public function getRemainingLeaves(){
+    $currentDate = new DateTime(date("Y-m-d"));
+    $currentYear = (int)$currentDate->format("Y");
     
+    $totalLeaves = $this->totalLeaves;
+    $remainingLeaves = $totalLeaves;
+    $joiningDate = $this->doj;
+    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    foreach($optionalHolidays as $oHoliday){
+      $oh = strtotime($oHoliday->holidayDate);
+      $jd = strtotime($this->doj);
+      if($oh < $jd){
+	$remainingLeaves -= 1;
+      }
+    }
+    $userLeaves = $this->leaves()->get();
+    foreach($userLeaves as $uLeave){
+      $isApproved = true;
+      foreach($uLeave->approvals as $approval){
+	if($approval->approved != "YES"){
+	  $isApproved = false;
+	  break;
+	}
+      }
+      if($isApproved){
+	$remainingLeaves -= 1;
+      }
+    }
+    return $remainingLeaves;
   }
   
   /**
-    Function Name	: 		leaves
-    Author Name		:		Jack Braj
-    Date			:		June 03, 2014
-    Parameters		:	    none
-    Purpose			:		Return leave relationship for eloquent
-	*/
+  Function Name	: 			leaves
+  Author Name		:		Jack Braj
+  Date			:		June 03, 2014
+  Parameters		:	    	none
+  Purpose		:		Return leave relationship for eloquent
+  */
 	
-	public function leaves()
-	{
-		return $this->hasMany('Leave');
-	}
+  public function leaves()
+  {
+	  return $this->hasMany('Leave');
+  }
   
 }

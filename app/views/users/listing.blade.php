@@ -11,10 +11,10 @@
 @foreach ($users as $user)
   <tr>
     <td>
-      {{$user->name}}
+      {{ $user->name }}
     </td>
     <td>
-      {{$user->email}}
+      {{ $user->email }}
     </td>
     <td>
       {{date('h:i A',strtotime($user->inTime))}} / {{date('h:i A',strtotime($user->outTime))}}
@@ -23,10 +23,10 @@
       {{$user->phone}}
     </td>
     <td class="text-center">
-      {{$user->totalLeaves}}
+      {{ $user->totalLeaves }}
     </td>
     <td class="text-center">
-      -
+      {{ $user->getRemainingLeaves() }}
     </td>
     <td align="center">
       <table>
@@ -36,7 +36,6 @@
           <td><a href="{{ URL::route('userRemove', $user->id) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
         </tr>
       </table>
-      
     </td>
   </tr>
 @endforeach
