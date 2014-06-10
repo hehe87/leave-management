@@ -148,11 +148,11 @@
         {{ Form::label('inTime', 'In/Out Time', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-3">
-        {{ Form::text('inTime', $user->inTime, array('class' => 'form-control date_control', 'placeholder' => 'In Time (hh:mm:ss)')) }}
+        {{ Form::text('inTime', $user->inTime, array('class' => 'form-control', 'placeholder' => 'In Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
       <div class="col-sm-3">
-        {{ Form::text('outTime', $user->outTime, array('class' => 'form-control date_control', 'placeholder' => 'Out Time (hh:mm:ss)')) }}
+        {{ Form::text('outTime', $user->outTime, array('class' => 'form-control', 'placeholder' => 'Out Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
     </div>
