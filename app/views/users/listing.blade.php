@@ -17,6 +17,9 @@
       {{$user->email}}
     </td>
     <td>
+      {{date('h:i A',strtotime($user->inTime))}} / {{date('h:i A',strtotime($user->outTime))}}
+    </td>
+    <td>
       {{$user->phone}}
     </td>
     <td class="text-center">

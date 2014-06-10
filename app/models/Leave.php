@@ -14,7 +14,7 @@ class Leave extends \Eloquent {
 	// Validation Rules
 	public static $rules = [		
 		'leave_date'  => 'required|date|date_format:Y-m-d',
-		'leave_type'  => 'required|in:LEAVE,CSR',
+		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH',
 		'reason'	  => 'required',		
 	];
 
