@@ -37,7 +37,7 @@
             </div>
             <div class="col-lg-3">
               <div class="text-center">
-                <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
+                <span class="link">Logged in as <b>{{ Auth::user()->name }}</b></span>
                 <a class="link logout-link" href="{{ URL::route('userLogout') }}">
                   Logout
                 </a>
@@ -50,7 +50,7 @@
         <!-- Left Panel Menus -->
         <ul id="left-panel" class="col-lg-2">
           @if (Route::currentRouteName() === "usersListing")
-            <li class="active">
+            <li class="lms-active">
               <a href="{{URL::route('usersListing')}}">Users</a>
             </li>
           @else
@@ -67,7 +67,7 @@
           </li>
           
           @if (Route::currentRouteName() === "holidaysListing")
-            <li class="active">
+            <li class="lms-active">
               <a href="{{URL::route('holidaysListing')}}">Holidays</a>
             </li>
           @else
@@ -75,7 +75,9 @@
               <a href="{{URL::route('holidaysListing')}}">Holidays</a>
             </li>
           @endif
-          
+          <li>
+              <a href="{{URL::route('users.settings')}}">Settings</a>
+            </li>
           <li class="small-window-show">
             <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
           </li>

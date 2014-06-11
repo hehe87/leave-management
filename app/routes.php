@@ -42,6 +42,8 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
 	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));
 	Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
+	Route::get('/settings', array('as' => 'users.settings', 'uses' => 'UsersController@getSettings'));
+	Route::post('/settings', array('as' => 'users.postSettings', 'uses' => 'UsersController@postSettings'));
 });
 
 

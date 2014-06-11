@@ -71,7 +71,7 @@ body{
   transition: background-color 300ms linear;
 }
 
-li.active{
+li.lms-active{
   background-color: #7109AA !important;
 }
 #left-panel li a{
@@ -103,7 +103,7 @@ li.active{
   transition: color 300ms linear;
 }
 
-li.active a{
+li.lms-active a{
   color: #fff !important;
 }
 

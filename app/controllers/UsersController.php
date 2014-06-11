@@ -249,6 +249,7 @@ class UsersController extends \BaseController {
   public function create()
   {
     $user = new User();
+    $user->employeeType = "EMPLOYEE";
     return View::make('users.create')->with("user",$user);
   }
 
@@ -338,5 +339,91 @@ class UsersController extends \BaseController {
     User::destroy($id);
     return Redirect::to(URL::route('usersListing'));
   }
+  
+  
+  /**
+  Function Name:	getSettings
+  Author Name:		Nicolas Naresh
+  Date:			June, 10 2014
+  Parameters:		-
+  Purpose:		Display tabbed settings page for admin
+  */
+  
+  public function getSettings(){
+    return View::make("users.settings");
+  }
+  
+  /**
+  Function Name:	postSettings
+  Author Name:		Nicolas Naresh
+  Date:			June, 10 2014
+  Parameters:		-
+  Purpose:		Saves/Updates various setting values
+  */
+  
+  public function postSettings(){
+    $allSettings = Input::all();
+    if(key_exists("gapi",$allSettings)){
+      $showTab = "#gapi";
+      $validationRules = array(
+	'client_id' => array('required'),
+	'service_account_name'  =>'required',
+	'key_file_location' => 'required',
+	'timezone' => 'required',
+	'calendar_id' => 'required'
+      );
+      
+      $validator = Validator::make(
+	$allSettings["gapi"],
+	$validationRules
+      );
+      
+      if($validator->fails()){
+	return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+      }
+      else{
+	$googleSettings = htmlspecialchars('<?php ' . 
+	  'return array(
+	  "client_id" => "' . $allSettings["gapi"]["client_id"] . '",
+	  "service_account_name" => "' . $allSettings["gapi"]["service_account_name"] . '",
+	  "key_file_location" => base_path() . "' . $allSettings["gapi"]["key_file_location"] . '",
+	  "timezone" => "' . $allSettings["gapi"]["timezone"] . '",
+	  "calendar_id" => "' . $allSettings["gapi"]["calendar_id"] . '",
+	  );'
+	);
+	File::put(base_path() . '/app/config/google.php',htmlspecialchars_decode($googleSettings));
+      }
+    }
+    else{
+      if(key_exists("admin_account",$allSettings)){
+	$showTab = "#account";
+	$validationRules = array(
+	  'email' => array('required','email'),
+	  'password'  =>'required|between:4,8|confirmed',
+	  'password_confirmation'=>'required|between:4,8',
+	);
+	
+	$validator = Validator::make(
+	  $allSettings["admin_account"],
+	  $validationRules
+	);
+	
+	if($validator->fails()){
+	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+	}
+	else{
+	  $user = Auth::user();
+	  $user->email = $allSettings["admin_account"]["email"];
+	  $user->password = Hash::make($allSettings["admin_account"]["password"]);
+	  $user->save();
+	}
+      }
+    }
+    return Redirect::to(URL::route('users.settings') . $showTab);
+  }
+  
+  
+  
+  
 
 }

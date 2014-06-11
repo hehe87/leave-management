@@ -95,6 +95,29 @@
   </div>
 </div>
 
+<div class="form-group">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-2">
+        {{ Form::label('employeeType', 'User Type', array('class' => 'control-label')) }}
+      </div>
+      <div class="col-sm-6">
+        {{ Form::select('employeeType', array('ADMIN' => 'ADMIN','EMPLOYEE' => 'EMPLOYEE'),(null !== Input::old('employeeType')) ? Input::old('employeeType') : $user->employeeType,array('class' => 'form-control')) }}
+      </div>
+    </div>
+    @if ($errors->first('employeeType'))
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+          <div class="alert alert-danger">
+            {{{ $errors->first('employeeType') }}}
+          </div>
+        </div>
+      </div>
+    @endif
+  </div>
+</div>
+        
+
 <div class="form-group has-feedback">
   <div class="col-sm-12">
     <div class="row">

@@ -139,3 +139,16 @@ function getByDateInputHTML(){
   return htm;
 }
 
+
+$(document).on("click", ".settings-tab-links li a", function (e) {
+  e.preventDefault()
+  $(this).tab('show');
+})
+
+$(document).on("ready",function(e){
+  var tabID = location.href.split("#")[1];
+  if(typeof tabID != "undefined"){
+    $("a[href='#"+tabID+"']").tab('show');
+  }
+});
+

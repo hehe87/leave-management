@@ -23,6 +23,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'name',
     'email',
     'password',
+    'employeeType',
     'inTime',
     'outTime',
     'doj',
@@ -130,8 +131,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	'email' => array('required','email'),
 	'doj' => array('required','date'),
 	'dob' => array('required','date'),
-  'inTime' => array('required', 'date_format:H:i'),
-  'outTime' => array('required', 'date_format:H:i'),
+	'inTime' => array('required', 'date_format:H:i'),
+	'outTime' => array('required', 'date_format:H:i'),
 	'phone' => array('required','regex:/[0-9]{10}/'),
 	'altPhone' => array('required','regex:/[0-9]{10}/')
       ),$passwordValidation)
