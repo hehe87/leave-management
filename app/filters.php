@@ -98,5 +98,13 @@ Route::filter('auth.user', function()
 	}
 });
 
+Route::filter('leaves.editable', function($route){
+	$leaveId = $route->getParameter('id');
+	$leave = Leave::find($leaveId);
+	if($leave->approvalStatus(Leave::APPROVED_BY_SOME) || $leave->approvalStatus(Leave::REJECTED_BY_SOME)){
+		return Redirect::to(URL::route("myLeaves"));
+	}
+});
+
 
 

@@ -15,6 +15,10 @@
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/ui-lightness/jquery-ui-1.10.4.css')}}}">
     {{ HTML::style('assets/css/jquery.dataTables.min.css') }}
     {{ HTML::style('assets/css/dataTables.bootstrap.css') }}
+    {{ HTML::style('assets/css/bootstrap-multiselect.css') }}
+    {{ HTML::style('assets/css/mdp.css') }}
+    {{ HTML::style('assets/css/pepper-ginder-custom.css') }}
+    {{ HTML::style('assets/css/prettify.css') }}
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
@@ -112,6 +116,9 @@
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
     {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
     {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
+    {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
+    {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
+    {{ HTML::script('assets/js/prettify.js') }}
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
     <!-- End including Scripts -->

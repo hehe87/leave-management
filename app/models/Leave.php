@@ -10,16 +10,21 @@
 */
 
 class Leave extends \Eloquent {
+	const APPROVED_BY_NONE = 0;
+	const APPROVED_BY_SOME = 1;
+	const REJECTED_BY_SOME = 2;
+	const APPROVED_BY_ALL  = 3;
+	const REJECTED_BY_ALL  = 4;
 
 	// Validation Rules
 	public static $rules = [		
-		'leave_date'  => 'required|date|date_format:Y-m-d',
-		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH',
+		'leave_date'  => 'required',
+		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH,LONG,MULTI',
 		'reason'	  => 'required',		
 	];
 
 	// fillable fields
-	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'from_time', 'to_time', 'reason'];
+	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'leave_to', 'from_time', 'to_time', 'reason'];
 	
 	public function user()
 	{
@@ -37,11 +42,11 @@ class Leave extends \Eloquent {
   }
 
 	/**
-    Function Name	: 		normalizeInput
-    Author Name		:		Jack Braj
-    Date			:		June 03, 2014
-    Parameters		:	    array of inputs
-    Purpose			:		This function used to normalize time slots to save into database
+	Function Name	: 		normalizeInput
+	Author Name		:		Jack Braj
+	Date			:		June 03, 2014
+	Parameters		:	    array of inputs
+	Purpose			:		This function used to normalize time slots to save into database
 	*/
 	
 	public static function normalizeInput($inputs)
@@ -54,6 +59,37 @@ class Leave extends \Eloquent {
 		}
 		
 		return $row;
+	}
+	
+	
+	/**
+	Function Name	: 		isApproved
+	Author Name		:	Jack Braj
+	Date			:	June 03, 2014
+	Parameters		:	-
+	Purpose			:	This function returns boolean value based on $approveStage parameter value
+	Return			:	one of following values: APPROVED_BY_ALL, REJECTED_BY_ALL, APPROVED_BY_SOME, APPROVED_BY_NONE
+	*/
+	
+	public function approvalStatus($requiredStatus)
+	{
+		$allApprovals = $this->approvals->toArray();
+		$approvedApprovals = Approval::where("leave_id",$this->id)->where("approved", "YES")->get()->toArray();
+		$rejectedApprovals = Approval::where("leave_id",$this->id)->where("approved", "NO")->get()->toArray();
+		
+		
+		switch($requiredStatus){
+			case Leave::APPROVED_BY_SOME:
+				return count($approvedApprovals) >= 1;
+			case Leave::APPROVED_BY_ALL:
+				return count($allApprovals) == count($approvedApprovals);
+			case Leave::APPROVED_BY_NONE:
+				return count($approvedApprovals) == 0;
+			case Leave::REJECTED_BY_ALL:
+				return count($allApprovals) == count($rejectedApprovals);
+			case Leave::REJECTED_BY_SOME:
+				return count($rejectedApprovals) > 0;
+		}
 	}
 	
 	
