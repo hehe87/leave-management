@@ -24,7 +24,7 @@
 	  @foreach ($leaves as $leave)
 	    <tr>
 	      <td>
-		{{$leave->leave_date}}
+		{{date('d-m-Y', strtotime($leave->leave_date))}}
 	      </td>
 	      <td>
     @if( "LEAVE" == $leave->leave_type )
@@ -35,6 +35,10 @@
       First Half
     @elseif( "SH" == $leave->leave_type )
       Second Half
+    @elseif( "LONG" == $leave->leave_type )
+      Long Leaves
+    @elseif( "MULTI" == $leave->leave_type )
+      Multi Leaves
     @endif
 	      </td>
 	      <td>

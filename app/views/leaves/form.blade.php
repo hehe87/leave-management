@@ -1,5 +1,4 @@
 {{ Form::hidden('user_id', Auth::user()->id) }}
-{{ Input::old('leave.leave_type') }}
 <div class="form-group">
   <div class="col-sm-12">
     <div class="row">
@@ -28,7 +27,7 @@
         {{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}							
       </div>
       <div class="col-sm-6" id="leaveDateFrom">
-        {{ Form::text('leave[leave_date]', $leave->leave_date, array('class' => 'form-control date_control', 'id' => 'date-control')) }}
+        {{ Form::text('leave[leave_date]',$leave->leave_date, array('class' => 'form-control date_control ' . ((Input::old('leave.leave_type') == 'LONG') ? 'date-long' : ((Input::old('leave.leave_type') == 'MULTI') ? 'date-multiple' : 'date-single')), 'id' => 'date-control')) }}
         <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
       </div>
     </div>
@@ -103,8 +102,9 @@
       <div class="col-sm-2">
         {{ Form::label('approver_id', 'Approval', array('class' => 'control-label')) }}
       </div>
-      <div class="col-sm-6">
-        {{ Form::select('approval[][approver_id]', $users, array_values(array_map(function($approver){return $approver['approver_id']; },$leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple')) }}
+      <div class="col-sm-6">        
+        {{ Form::select('approval[][approver_id]', $users, array_map(function($approver){return $approver['approver_id']; },(is_array(Input::old('approval')) ? Input::old('approval') : $leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple')) }}
+        
       </div>
     </div>
     @if ($errors->first('approval'))

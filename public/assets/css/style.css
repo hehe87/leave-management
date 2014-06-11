@@ -109,7 +109,22 @@ Purpose		: Custom styles for leave management system
 .margin-bottom-0{
 	margin-bottom: 0px !important;
 }
-
+.btn-group
+{
+  width:100%;
+}
+.btn-group>.btn:first-child
+{
+ display: block;
+width: 100%;
+  text-align: left;
+}
+.btn-group>.btn:first-child >b.caret
+{
+  float: right;
+  margin-top: 8px;
+  
+}
 /*@media screen and(max-width: 800px){
 	.slot_to{
 		float:left !important;

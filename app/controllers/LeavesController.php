@@ -76,18 +76,19 @@ class LeavesController extends \BaseController {
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
     
-    // grab all leave dates in an array
-    $leave_dates = explode(",", $leave['leave_date']);
-    
-    // check if leave type is long
-    if( 'LONG' == $leave['leave_type'] )
-    {
-      $from_leave_date = first($leave_dates);
-      $to_leave_date = last($leave_dates);
-      
-    }
-    
 	  $validator_leave = Validator::make($leave, Leave::$rules);
+    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
+      return $input->leave_type === "MULTI";
+    });
+    
+    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
+      return $input->leave_type === "LONG";
+    });
+    
+    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
+      $ltypes = array('FH','SH','LEAVE','CSR');
+      return in_array($input->leave_type, $ltypes);
+    });
     
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
@@ -120,28 +121,67 @@ class LeavesController extends \BaseController {
 	      {
 		$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	      }
+        
+        
 	      return Redirect::back()->withErrors($validator)->withInput();
 	    }
-	    
-	    $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-	    $leave = Leave::create($leave);
-	    
+	    $tempLeave = $leave;
+      
+      $addedLeaves = [];
+      
+      
+      // grab all leave dates in an array
+      $leave_dates = explode(",", $leave['leave_date']);
+            
+      
+      if($tempLeave["leave_type"] == "MULTI"){
+        foreach($leave_dates as $leave_date){
+          $leave = $tempLeave;
+          $leave["leave_date"] = $leave_date;
+          $leave["leave_type"] = "LEAVE";
+          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+          $leave = Leave::create($leave);
+          $addedLeaves[] = $leave;
+        }
+      }
+      else{
+        if($tempLeave["leave_type"] == "LONG"){
+          $leave = $tempLeave;
+          $leave["leave_date"] = $leave_dates[0];
+          $leave["leave_to"] = $leave_dates[1];
+          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+          $leave = Leave::create($leave);
+          $addedLeaves[] = $leave;
+        }
+        else{
+          $leave = $tempLeave;
+          $leave["leave_date"] = $leave_dates[0];
+          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+          $leave = Leave::create($leave);
+          $addedLeaves[] = $leave;
+          
+        }
+      }
+      
 	    if( 'CSR' == $inputs['leave']['leave_type'] )
-	    {
-	      foreach($csr_slots as $slot)
-	      {
-		  $slot['leave_id'] = $leave->id;
-		  Csr::create($slot);
-	      }
-	    }
-	    $approvals = $inputs['approval'];
+      {
+        foreach($csr_slots as $slot)
+        {
+          $slot['leave_id'] = $addedLeaves[0]->id;
+          Csr::create($slot);
+        }
+      }
 	    
-	    foreach($approvals as $approval)
-	    {
-		$approval['leave_id'] = $leave->id;
-		$approval['approved'] = 'PENDING';
-		Approval::create($approval);
-	    }
+	    
+	    $approvals = $inputs['approval'];
+	    foreach($addedLeaves as $addedLeave){
+        foreach($approvals as $approval)
+        {
+          $approval['leave_id'] = $addedLeave->id;
+          $approval['approved'] = 'PENDING';
+          Approval::create($approval);
+        }
+      }	    
 	    return Redirect::to(URL::route('myLeaves'))
 		  ->with('message', 'Leave successfully applied');
 	}
@@ -171,6 +211,9 @@ class LeavesController extends \BaseController {
 	public function edit($id)
 	{
 		$leave = Leave::find($id);
+    if( 'LONG' == $leave->leave_type ) {
+      $leave->leave_date .= ','. $leave->leave_to;      
+    }
 		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
 		$inputCSRs = array();
 		if($leave->leave_type == "CSR"){

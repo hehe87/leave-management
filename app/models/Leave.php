@@ -13,13 +13,13 @@ class Leave extends \Eloquent {
 
 	// Validation Rules
 	public static $rules = [		
-		'leave_date'  => 'required|date|date_format:Y-m-d',
-		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH',
+		'leave_date'  => 'required',
+		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH,LONG,MULTI',
 		'reason'	  => 'required',		
 	];
 
 	// fillable fields
-	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'from_time', 'to_time', 'reason'];
+	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'leave_to', 'from_time', 'to_time', 'reason'];
 	
 	public function user()
 	{
