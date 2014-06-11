@@ -36,7 +36,12 @@ class UserController extends \BaseController {
   */
   public function getLogin(){
     if(Auth::check()){
-      return Redirect::to(URL::route('usersHome'));
+      if(Auth::user()->employeeType == "ADMIN"){
+        return Redirect::to(URL::route('leaves.index'));
+      }
+      else{
+        return Redirect::to(URL::route('leaves.create'));
+      } 
     }
     return View::make('users.login');
   }

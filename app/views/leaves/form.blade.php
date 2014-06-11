@@ -7,7 +7,7 @@
         {{ Form::label('leave_type', 'Leave Type', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
-        {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
+        {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leave', 'MULTI' => 'Multiple Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
       </div>
     </div>
     @if ($errors->first('leave_type'))
@@ -28,7 +28,7 @@
         {{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}							
       </div>
       <div class="col-sm-6" id="leaveDateFrom">
-        {{ Form::text('leave[leave_date]', $leave->leave_date, array('class' => 'form-control date_control')) }}
+        {{ Form::text('leave[leave_date]', $leave->leave_date, array('class' => 'form-control date_control', 'id' => 'date-control')) }}
         <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
       </div>
     </div>
