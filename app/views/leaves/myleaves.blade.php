@@ -27,7 +27,15 @@
 		{{$leave->leave_date}}
 	      </td>
 	      <td>
-		{{$leave->leave_type}}
+    @if( "LEAVE" == $leave->leave_type )
+      Leave
+    @elseif( "CSR" == $leave->leave_type )
+      CSR
+    @elseif( "FH" == $leave->leave_type )
+      First Half
+    @elseif( "SH" == $leave->leave_type )
+      Second Half
+    @endif
 	      </td>
 	      <td>
 		{{$leave->reason}}

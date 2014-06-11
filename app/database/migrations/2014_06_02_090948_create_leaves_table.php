@@ -20,7 +20,7 @@ class CreateLeavesTable extends Migration {
 			$table->date('leave_date');
 			$table->time('from_time')->nullable();
 			$table->time('to_time')->nullable();
-			$table->enum('leave_type', array('LEAVE', 'CSR', 'FH', 'SH'));
+			$table->enum('leave_type', array('LEAVE', 'CSR', 'FH', 'SH', 'LONG'));
 			$table->text('reason');
 			$table->timestamps();
 		});

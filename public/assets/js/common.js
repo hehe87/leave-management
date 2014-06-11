@@ -44,6 +44,14 @@ $(document).on("ready",function(){
 
 $(document).on("ready",function(){
   
+  // applies multiselect
+  $('.multiselect').multiselect(
+  { enableFiltering: true,
+  filterBehavior : 'text',
+  enableCaseInsensitiveFiltering: true
+  }
+  );
+  
   //applies datepicker on date_control class
   $(".date_control").datepicker({
     showOn : "both",
@@ -74,7 +82,6 @@ $(document).on("ready",function(){
       data: {approvalStatus: approvalStatus, approvalId: approvalId},
       dataType: "json",
       success: function(data){
-        console.log(approvalStatus);
         if(approvalStatus == "YES"){
           $this.parent().html(getApprovedInfoHTML());
         }
@@ -133,7 +140,7 @@ $(document).on("ready",function(){
     }
   });
   
-  
+ 
   
 });
 
