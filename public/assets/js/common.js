@@ -82,12 +82,15 @@ $(document).on("ready",function(){
 
 $(document).on("ready",function(){
   // applies multiselect
-  $('.multiselect').multiselect(
-  { enableFiltering: true,
-  filterBehavior : 'text',
-  enableCaseInsensitiveFiltering: true
+  if( $('.multiselect').length !== 0)
+  {
+    $('.multiselect').multiselect(
+    { enableFiltering: true,
+    filterBehavior : 'text',
+    enableCaseInsensitiveFiltering: true
+    }
+    );
   }
-  );
   var leave_type = $('#leave_type');
   if( 'CSR' == leave_type )
   {
@@ -107,95 +110,96 @@ $(document).on("ready",function(){
     $("#date-control").removeClass("date-single").addClass("date-multiple").removeClass("date-long");
   }
   
-  
-  var date_control_val = '';
-  if($("#date-control").length == 1){
-    date_control_val = $("#date-control").val();
-  }
-  
-  
-  if($(".date_control").hasClass("date-long")){
-    var dts = [];
-    if(date_control_val == ""){
-      $(".date-long").multiDatesPicker({
-        maxPicks: 2,
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0"
-      });
-    }
-    else{
-      $.each(date_control_val.split(","),function(k,v){
-        console.log(v);
-        dts.push(new Date(v.split('-')[0], parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
-      });
-      $(".date-long").multiDatesPicker({
-        maxPicks: 2,
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0",
-        addDates: dts
-      });
-    }
-
-  }
-  else if($(".date_control").hasClass("date-multiple")){
-    var dts = [];
-    if(date_control_val == ""){
-      $(".date-multiple").multiDatesPicker({
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0"
-      });
-    }
-    else{
-      $.each(date_control_val.split(","),function(k,v){
-        dts.push(new Date(v.split('-')[0],parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
-      });
-      $(".date-multiple").multiDatesPicker({
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0",
-        addDates: dts
-      });
-    }
-  }
-  else{
-    var dt;
-    if(date_control_val == ""){
-      $(".date_control").multiDatesPicker({
-        maxPicks: 1,
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0"
-      });
-    }
-    else{
-      dt = new Date(date_control_val.split("-")[0],parseInt(date_control_val.split("-")[1]) - 1,date_control_val.split("-")[2]);
-      $(".date_control").multiDatesPicker({
-        maxPicks: 1,
-        showOn : "both",
-        dateFormat: "yy-mm-dd",
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "-100:+0",
-        addDates: [dt]
-      });
+ if( $(".date_control").length !==0 )
+ {
+    var date_control_val = '';
+    if($("#date-control").length == 1){
+      date_control_val = $("#date-control").val();
     }
     
+    
+    if($(".date_control").hasClass("date-long")){
+      var dts = [];
+      if(date_control_val == ""){
+        $(".date-long").multiDatesPicker({
+          maxPicks: 2,
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0"
+        });
+      }
+      else{
+        $.each(date_control_val.split(","),function(k,v){
+          console.log(v);
+          dts.push(new Date(v.split('-')[0], parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
+        });
+        $(".date-long").multiDatesPicker({
+          maxPicks: 2,
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0",
+          addDates: dts
+        });
+      }
+
+    }
+    else if($(".date_control").hasClass("date-multiple")){
+      var dts = [];
+      if(date_control_val == ""){
+        $(".date-multiple").multiDatesPicker({
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0"
+        });
+      }
+      else{
+        $.each(date_control_val.split(","),function(k,v){
+          dts.push(new Date(v.split('-')[0],parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
+        });
+        $(".date-multiple").multiDatesPicker({
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0",
+          addDates: dts
+        });
+      }
+    }
+    else{
+      var dt;
+      if(date_control_val == ""){
+        $(".date_control").multiDatesPicker({
+          maxPicks: 1,
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0"
+        });
+      }
+      else{
+        dt = new Date(date_control_val.split("-")[0],parseInt(date_control_val.split("-")[1]) - 1,date_control_val.split("-")[2]);
+        $(".date_control").multiDatesPicker({
+          maxPicks: 1,
+          showOn : "both",
+          dateFormat: "yy-mm-dd",
+          changeMonth: true,
+          changeYear: true,
+          yearRange: "-100:+0",
+          addDates: [dt]
+        });
+      }
+      
+    }
   }
-  
-  
+    
   ////applies datepicker on date_control class
   //$(".date_control").datepicker({
   //  showOn : "both",

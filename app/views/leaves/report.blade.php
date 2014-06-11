@@ -9,6 +9,9 @@
             <select class="form-control required" name="leave_type">
               <option value="CSR" {{  Input::get("leave_type") === "CSR" ? "selected" : "" }}>CSR</option>
               <option value="LEAVE" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Leave</option>
+              <option value="FH" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>First Half</option>
+              <option value="SH" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Second Half</option>
+              <option value="LONG" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Long Leave</option>              
             </select>
           </div>
           <div class="col-lg-2">
@@ -21,7 +24,7 @@
           </div>
           <div class="col-lg-3">
             <div class="row" id="date_option_inputs">
-              @if(empty(Input::get("date_option")) || (Input::get("date_option") === "between-dates"))
+              @if(Input::get("date_option")== NULL || (Input::get("date_option") === "between-dates"))
                 <div class="col-sm-6"><input type="text" name="from_date" value="{{ Input::get('from_date') }}" class="form-control date_control required" placeholder="From"/></div>
                 <div class="col-sm-6"><input type="text" name="to_date" value="{{ Input::get('to_date') }}" class="form-control date_control required" placeholder="To"/></div>
               @else
@@ -70,7 +73,7 @@
     </div>
   </div>
   <div class="row margin-top-10 {{ !is_null($leaves) ? 'show' : 'hide' }}">
-    @if(isset($leaves) && !empty($leaves->toArray()))
+    @if(isset($leaves) && (count($leaves->toArray())!=0))
       <table class="table table-striped table-bordered table-hover ">
         <thead>
           <tr>
