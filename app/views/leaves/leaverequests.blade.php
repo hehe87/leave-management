@@ -36,10 +36,18 @@
 		{{$leaveReq->leave->user->name}}
 	      </td>
 	      <td>
-		{{$leaveReq->leave->leave_date}}
+		{{date('d-m-Y', strtotime($leaveReq->leave->leave_date))}}
 	      </td>
 	      <td>
-		{{$leaveReq->leave->leave_type}}
+		@if( "LEAVE" == $leaveReq->leave->leave_type )
+      Leave
+    @elseif( "CSR" == $leaveReq->leave->leave_type )
+      CSR
+    @elseif( "FH" == $leaveReq->leave->leave_type )
+      First Half
+    @elseif( "SH" == $leaveReq->leave->leave_type )
+      Second Half
+    @endif
 	      </td>
 	      <td align="center">
 		@if ($leaveReq->leave->leave_type === "LEAVE")

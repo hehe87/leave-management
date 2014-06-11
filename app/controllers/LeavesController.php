@@ -75,6 +75,18 @@ class LeavesController extends \BaseController {
 	  $hasLeaveError = false;
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
+    
+    // grab all leave dates in an array
+    $leave_dates = explode(",", $leave['leave_date']);
+    
+    // check if leave type is long
+    if( 'LONG' == $leave['leave_type'] )
+    {
+      $from_leave_date = first($leave_dates);
+      $to_leave_date = last($leave_dates);
+      
+    }
+    
 	  $validator_leave = Validator::make($leave, Leave::$rules);
     
 	  if($validator_leave->fails())
