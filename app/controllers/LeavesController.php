@@ -77,113 +77,113 @@ class LeavesController extends \BaseController {
 	  $hasCsrError = false;
     
 	  $validator_leave = Validator::make($leave, Leave::$rules);
-    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
-      return $input->leave_type === "MULTI";
-    });
-    
-    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
-      return $input->leave_type === "LONG";
-    });
-    
-    $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
-      $ltypes = array('FH','SH','LEAVE','CSR');
-      return in_array($input->leave_type, $ltypes);
-    });
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
+	    return $input->leave_type === "MULTI";
+	  });
+	  
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
+	    return $input->leave_type === "LONG";
+	  });
+	  
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
+	    $ltypes = array('FH','SH','LEAVE','CSR');
+	    return in_array($input->leave_type, $ltypes);
+	  });
     
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
     
-	    if( 'CSR' == $inputs['leave']['leave_type'] )
+	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  {
+	    $csrs = $inputs['csr'];
+      
+	    foreach($csrs as $key=>$csr)
 	    {
-	      $csrs = $inputs['csr'];
-	
-	      foreach($csrs as $key=>$csr)
-	      {
-		$csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
-		$csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
-		$validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
-		
-		if($validator_csr[$key]->fails())
-		  $hasCsrError = true;
-	      }
+	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+	      
+	      if($validator_csr[$key]->fails())
+		$hasCsrError = true;
 	    }
+	  }
     
 	    // check if user has selected any approver or not
-	    if(!array_key_exists('approval', $inputs))
-	      $hasApprovalError = true;
-      
+	  if(!array_key_exists('approval', $inputs))
+	    $hasApprovalError = true;
     
-	    if($hasLeaveError || $hasApprovalError || $hasCsrError)
+  
+	  if($hasLeaveError || $hasApprovalError || $hasCsrError)
+	  {
+	    $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
+	    $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
+	    foreach($validator_csr as $vc)
 	    {
-	      $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
-	      $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
-	      foreach($validator_csr as $vc)
-	      {
-		$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
-	      }
-        
-        
-	      return Redirect::back()->withErrors($validator)->withInput();
+	      $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	    }
-	    $tempLeave = $leave;
-      
-      $addedLeaves = [];
       
       
-      // grab all leave dates in an array
-      $leave_dates = explode(",", $leave['leave_date']);
-            
-      
-      if($tempLeave["leave_type"] == "MULTI"){
-        foreach($leave_dates as $leave_date){
-          $leave = $tempLeave;
-          $leave["leave_date"] = $leave_date;
-          $leave["leave_type"] = "LEAVE";
-          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-          $leave = Leave::create($leave);
-          $addedLeaves[] = $leave;
-        }
-      }
-      else{
-        if($tempLeave["leave_type"] == "LONG"){
-          $leave = $tempLeave;
-          $leave["leave_date"] = $leave_dates[0];
-          $leave["leave_to"] = $leave_dates[1];
-          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-          $leave = Leave::create($leave);
-          $addedLeaves[] = $leave;
-        }
-        else{
-          $leave = $tempLeave;
-          $leave["leave_date"] = $leave_dates[0];
-          $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-          $leave = Leave::create($leave);
-          $addedLeaves[] = $leave;
-          
-        }
-      }
-      
-	    if( 'CSR' == $inputs['leave']['leave_type'] )
-      {
-        foreach($csr_slots as $slot)
-        {
-          $slot['leave_id'] = $addedLeaves[0]->id;
-          Csr::create($slot);
-        }
-      }
-	    
-	    
-	    $approvals = $inputs['approval'];
-	    foreach($addedLeaves as $addedLeave){
-        foreach($approvals as $approval)
-        {
-          $approval['leave_id'] = $addedLeave->id;
-          $approval['approved'] = 'PENDING';
-          Approval::create($approval);
-        }
-      }	    
-	    return Redirect::to(URL::route('myLeaves'))
-		  ->with('message', 'Leave successfully applied');
+	    return Redirect::back()->withErrors($validator)->withInput();
+	  }
+	  $tempLeave = $leave;
+    
+	  $addedLeaves = [];
+	  
+	  
+	  // grab all leave dates in an array
+	  $leave_dates = explode(",", $leave['leave_date']);
+		
+	  
+	  if($tempLeave["leave_type"] == "MULTI"){
+	    foreach($leave_dates as $leave_date){
+	      $leave = $tempLeave;
+	      $leave["leave_date"] = $leave_date;
+	      $leave["leave_type"] = "LEAVE";
+	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = Leave::create($leave);
+	      $addedLeaves[] = $leave;
+	    }
+	  }
+	  else{
+	    if($tempLeave["leave_type"] == "LONG"){
+	      $leave = $tempLeave;
+	      $leave["leave_date"] = $leave_dates[0];
+	      $leave["leave_to"] = $leave_dates[1];
+	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = Leave::create($leave);
+	      $addedLeaves[] = $leave;
+	    }
+	    else{
+	      $leave = $tempLeave;
+	      $leave["leave_date"] = $leave_dates[0];
+	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = Leave::create($leave);
+	      $addedLeaves[] = $leave;
+	      
+	    }
+	  }
+	  
+		if( 'CSR' == $inputs['leave']['leave_type'] )
+	  {
+	    foreach($csr_slots as $slot)
+	    {
+	      $slot['leave_id'] = $addedLeaves[0]->id;
+	      Csr::create($slot);
+	    }
+	  }
+		
+		
+	  $approvals = $inputs['approval'];
+	  foreach($addedLeaves as $addedLeave){
+	    foreach($approvals as $approval)
+	    {
+	      $approval['leave_id'] = $addedLeave->id;
+	      $approval['approved'] = 'PENDING';
+	      Approval::create($approval);
+	    }
+	  }	    
+	  return Redirect::to(URL::route('myLeaves'))
+		->with('message', 'Leave successfully applied');
 	}
 
 	/**
@@ -210,26 +210,26 @@ class LeavesController extends \BaseController {
 	
 	public function edit($id)
 	{
-		$leave = Leave::find($id);
-    if( 'LONG' == $leave->leave_type ) {
-      $leave->leave_date .= ','. $leave->leave_to;      
-    }
-		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
-		$inputCSRs = array();
-		if($leave->leave_type == "CSR"){
-		  $csrs = $leave->csrs;
-		  foreach($csrs as $csr){
-		    $from_time = new DateTime($csr->from_time);
-		    $to_time = new DateTime($csr->to_time);
-		    $from_hour = $from_time->format("h");
-		    $from_min = $from_time->format("i");
-		    $to_hour = $to_time->format("h");
-		    $to_min = $to_time->format("i");
-		    $inputCSRs[] = array("from" => array("hour" => $from_hour, "min" => $from_min), "to" => array("hour" => $to_hour, "min" => $to_min));
-		  }
-		}
-		//$this->pre_print($inputCSRs);
-		return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
+	  $leave = Leave::find($id);
+	  if( 'LONG' == $leave->leave_type ) {
+	    $leave->leave_date .= ','. $leave->leave_to;      
+	  }
+	  $users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
+	  $inputCSRs = array();
+	  if($leave->leave_type == "CSR"){
+	    $csrs = $leave->csrs;
+	    foreach($csrs as $csr){
+	      $from_time = new DateTime($csr->from_time);
+	      $to_time = new DateTime($csr->to_time);
+	      $from_hour = $from_time->format("h");
+	      $from_min = $from_time->format("i");
+	      $to_hour = $to_time->format("h");
+	      $to_min = $to_time->format("i");
+	      $inputCSRs[] = array("from" => array("hour" => $from_hour, "min" => $from_min), "to" => array("hour" => $to_hour, "min" => $to_min));
+	    }
+	  }
+	  //$this->pre_print($inputCSRs);
+	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
 	}
 
 	/**
@@ -251,66 +251,90 @@ class LeavesController extends \BaseController {
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
 	  $validator_leave = Validator::make($leave, Leave::$rules);
+	  
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
+	    return $input->leave_type === "MULTI";
+	  });
+	  
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
+	    return $input->leave_type === "LONG";
+	  });
+	  
+	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
+	    $ltypes = array('FH','SH','LEAVE','CSR');
+	    return in_array($input->leave_type, $ltypes);
+	  });
+	  
     
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
     
-	    if( 'CSR' == $inputs['leave']['leave_type'] )
-	    {
-	      $csrs = $inputs['csr'];
-	
-	      foreach($csrs as $key=>$csr)
-	      {
-		$csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
-		$csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
-		$validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
-		
-		if($validator_csr[$key]->fails())
-		  $hasCsrError = true;
-	      }
-	    }
-    
-	    // check if user has selected any approver or not
-	    if(!array_key_exists('approval', $inputs))
-	      $hasApprovalError = true;
+	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  {
+	    $csrs = $inputs['csr'];
       
+	    foreach($csrs as $key=>$csr)
+	    {
+	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+	      
+	      if($validator_csr[$key]->fails())
+		$hasCsrError = true;
+	    }
+	  }
+  
+	  // check if user has selected any approver or not
+	  if(!array_key_exists('approval', $inputs))
+	    $hasApprovalError = true;
     
-	    if($hasLeaveError || $hasApprovalError || $hasCsrError)
+  
+	  if($hasLeaveError || $hasApprovalError || $hasCsrError)
+	  {
+	    $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
+	    $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
+	    foreach($validator_csr as $vc)
 	    {
-	      $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
-	      $validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
-	      foreach($validator_csr as $vc)
-	      {
-		$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
-	      }
-	      return Redirect::back()->withErrors($validator)->withInput();
+	      $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	    }
-	    
-	    $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-	    $leaveObj = Leave::findOrFail($id);
-	    $leaveObj->update($leave);
-	    //$leave = Leave::create($leave);
-	    
-	    if( 'CSR' == $inputs['leave']['leave_type'] )
+	    return Redirect::back()->withErrors($validator)->withInput();
+	  }
+	  
+	  $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	  $leaveObj = Leave::findOrFail($id);
+	  
+	  if($leaveObj->leave_type === "LONG" || $leave["leave_type"] === "LONG"){
+	    $ldates = explode(",",$leave["leave_date"]);
+	    $leave_date = $ldates[0];
+	    $leave_to = $ldates[1];
+	    $leave["leave_date"] = $leave_date;
+	    $leave["leave_to"] = $leave_to;
+	  }
+	  
+	  
+	  $leaveObj->update($leave);
+	  //$leave = Leave::create($leave);
+	  
+	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  {
+	    $leaveObj->csrs()->forceDelete();
+	    foreach($csr_slots as $slot)
 	    {
-	      $leaveObj->csrs()->forceDelete();
-	      foreach($csr_slots as $slot)
-	      {
-		  $slot['leave_id'] = $leaveObj->id;
-		  Csr::create($slot);
-	      }
+		$slot['leave_id'] = $leaveObj->id;
+		Csr::create($slot);
 	    }
-	    $approvals = $inputs['approval'];
-	    
-	    $leaveObj->approvals()->forceDelete();
-	    foreach($approvals as $approval)
-	    {
-	      $approval['leave_id'] = $leaveObj->id;
-	      $approval['approved'] = 'PENDING';
-	      Approval::create($approval);
-	    }
-	    return Redirect::to(URL::route('myLeaves'))
-		  ->with('message', 'Leave successfully applied');
+	  }
+	  $approvals = $inputs['approval'];
+	  
+	  $leaveObj->approvals()->forceDelete();
+	  foreach($approvals as $approval)
+	  {
+	    $approval['leave_id'] = $leaveObj->id;
+	    $approval['approved'] = 'PENDING';
+	    Approval::create($approval);
+	  }
+	  return Redirect::to(URL::route('myLeaves'))
+		->with('message', 'Leave successfully applied');
 	}
 
 	/**

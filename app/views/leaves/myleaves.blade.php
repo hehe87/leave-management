@@ -27,27 +27,29 @@
 		{{date('d-m-Y', strtotime($leave->leave_date))}}
 	      </td>
 	      <td>
-    @if( "LEAVE" == $leave->leave_type )
-      Leave
-    @elseif( "CSR" == $leave->leave_type )
-      CSR
-    @elseif( "FH" == $leave->leave_type )
-      First Half
-    @elseif( "SH" == $leave->leave_type )
-      Second Half
-    @elseif( "LONG" == $leave->leave_type )
-      Long Leaves
-    @elseif( "MULTI" == $leave->leave_type )
-      Multi Leaves
-    @endif
+		@if( "LEAVE" == $leave->leave_type )
+		  Leave
+		@elseif( "CSR" == $leave->leave_type )
+		  CSR
+		@elseif( "FH" == $leave->leave_type )
+		  First Half
+		@elseif( "SH" == $leave->leave_type )
+		  Second Half
+		@elseif( "LONG" == $leave->leave_type )
+		  Long Leaves
+		@elseif( "MULTI" == $leave->leave_type )
+		  Multi Leaves
+		@endif
 	      </td>
 	      <td>
 		{{$leave->reason}}
 	      </td>
-	      <td align="center">
+	      <td align="left">
 		<a class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}" title="View Approvals"><span class="glyphicon glyphicon-eye-open"></span></a>
-		<a class="btn btn-primary normal-button btn-xs" href="{{ URL::Route('leaves.edit', array($leave->id)) }}"><span class="glyphicon glyphicon-edit" title="Edit Leave"></span></a>
-		<a class="btn btn-danger normal-button btn-xs delete-myleave" data-url="{{ URL::Route('leaves.destroy', array($leave->id)) }}"><span class="glyphicon glyphicon-remove" title="Delete Leave"></span></a>
+		@if (!$leave->approvalStatus(Leave::APPROVED_BY_SOME) && !$leave->approvalStatus(Leave::REJECTED_BY_SOME))
+		  <a class="btn btn-primary normal-button btn-xs" href="{{ URL::Route('leaves.edit', array($leave->id)) }}"><span class="glyphicon glyphicon-edit" title="Edit Leave"></span></a>
+		  <a class="btn btn-danger normal-button btn-xs delete-myleave" data-url="{{ URL::Route('leaves.destroy', array($leave->id)) }}"><span class="glyphicon glyphicon-remove" title="Delete Leave"></span></a>
+		@endif
 	      </td>
 	    </tr>
 	  @endforeach
