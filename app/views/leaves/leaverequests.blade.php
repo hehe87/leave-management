@@ -78,11 +78,11 @@
 		  </a>
                 @else
                   @if ($leaveReq->approved == "YES")
-                    <a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-success">
+                    <a href="javascript: void(0);" class="btn btn-xs btn-primary btn-success">
 		      <span class="glyphicon glyphicon-ok" title="Leave Approved"></span>
 		    </a>
                   @else
-                    <a href="javascript: void(0);" class="btn btn-xs btn-primary approve-status-change btn-danger">
+                    <a href="javascript: void(0);" class="btn btn-xs btn-primary btn-danger">
 		      <span class="glyphicon glyphicon-remove btn-danger" title="Leave Rejected"></span>
 		    </a>
                   @endif
