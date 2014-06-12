@@ -6,7 +6,12 @@
         {{ Form::label('leave_type', 'Leave Type', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
-        {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leave', 'MULTI' => 'Multiple Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
+        @if (isset($formFor) && $formFor == "edit")
+          {{ Form::text('leave[leave_type]', $leave->leave_type, array("class" => "form-control", "readonly" => true)) }}
+        @else
+          {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leave', 'MULTI' => 'Multiple Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
+        @endif
+        
       </div>
     </div>
     @if ($errors->first('leave_type'))

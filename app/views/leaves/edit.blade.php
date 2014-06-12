@@ -6,7 +6,7 @@
   <div class="col-sm-12">
     {{ Form::open(array('url' => URL::route('leaves.update', $leave->id), 'method' => 'post', 'class' => 'form-horizontal')) }}
       <legend class="form-signin-heading">Apply for Leave</legend>
-      @include("leaves.form", array("leave" => $leave))
+      @include("leaves.form", array("leave" => $leave, "formFor" => "edit"))
       <div class="form-group">
         <div class="col-sm-12">
           <div class="row">
