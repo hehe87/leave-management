@@ -23,7 +23,7 @@
       {{$user->phone}}
     </td>
     <td class="text-center">
-      {{ $user->totalLeaves }}
+      {{ $user->getTotalLeaves() }}
     </td>
     <td class="text-center">
       {{ $user->getRemainingLeaves() }}

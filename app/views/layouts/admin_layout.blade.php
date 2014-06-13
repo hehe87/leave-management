@@ -25,6 +25,10 @@
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
+    
+    <script type="text/javascript">
+      window.currentYear = "{{ date('Y') }}";
+    </script>
   </head>
   <body>
     <div class="container-fluid">

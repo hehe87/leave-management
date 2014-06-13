@@ -56,9 +56,9 @@
             </div>
           </div>
           <div class="col-lg-3">
-            <input type="text" class="form-control" placeholder="Employee Name" value="{{ Input::get('employee_name') }}" name="employee_name" id="user-search"  data-search_url="{{ URL::route('usersSearch') }}" data-view="singleColumnList" data-onblank="nil"/>
+            <input type="text" class="form-control" placeholder="Employee Name" value="{{ Input::get('employee_name') }}" name="employee_name" autocomplete="off" id="user-search"  data-search_url="{{ URL::route('usersSearch') }}" data-view="singleColumnList" data-onblank="nil"/>
             <div id="lm-autosearch">
-              <table>
+              <table class="table">
                 <tbody id="user-listing-tbody">
                   
                 </tbody>

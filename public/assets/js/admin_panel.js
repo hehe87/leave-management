@@ -20,30 +20,86 @@ $(document).on("click",".glyphicon-calendar", function(){
 
 
 // on keyup of input element with id user-search, makes an ajax call to search for input value
-$(document).on("keyup", "#user-search",function(){
+$(document).on("keyup", "#user-search",function(e){
+  if(e.keyCode == 13){
+    e.preventDefault();
+    return;
+  }
+  if((e.keyCode != 40) && (e.keyCode != 38)){
+    var $this = $(this);
+    var view = $(this).data("view");
+    if(typeof view == "undefined"){
+      view = null;
+    }
+    var value = $this.val();
+    var onBlank = $(this).data("onblank");
+    if(typeof onBlank == "undefined"){
+      onBlank = "";
+    }
+    if(window.xhr){
+      window.xhr.abort();
+    }
+    
+    window.xhr = $.ajax({
+      url: $this.data("search_url"),
+      data: {name: value, view: view, onblank: onBlank},
+      type: "post",
+      success: function(retdata){
+        $("#user-listing-tbody").html(retdata);
+        $("#user-listing-tbody").closest("table").removeClass("hide");
+      }
+    });
+  }
+});
+
+$(document).on("keydown", "#user-search",function(e){
+  
   var $this = $(this);
-  var view = $(this).data("view");
-  if(typeof view == "undefined"){
-    view = null;
+  if(e.keyCode == 13){
+    if(!$("#user-listing-tbody").closest("table").hasClass("hide")){
+      e.preventDefault();
+      $("#user-search").val($.trim($("#user-listing-tbody tr.active td").text()));
+      $("#user-listing-tbody").closest("table").addClass("hide");
+      
+      if(typeof $("#user-search").data("onselect") != "undefined"){
+        window[$("#user-search").data("onselect")]($("#user-search").data("onselectajaxurl"),$("#user-search").val(), window.currentYear);
+      }
+    }
   }
-  var value = $this.val();
-  var onBlank = $(this).data("onblank");
-  if(typeof onBlank == "undefined"){
-    onBlank = "";
-  }
-  if(window.xhr){
-    window.xhr.abort();
+  if(e.keyCode == 40 || e.keyCode == 38){
+    e.preventDefault();
+    if(e.keyCode == 40){
+      var currIndex = $("#user-listing-tbody tr.active").index();
+      if(currIndex == -1){
+        $("#user-listing-tbody tr").first().addClass("active");
+      }
+      else{
+        if(currIndex == ($("#user-listing-tbody tr").length - 1)){
+          $("#user-listing-tbody tr.active").removeClass("active");
+          $("#user-listing-tbody tr").first().addClass("active");
+        }
+        else{
+          $("#user-listing-tbody tr.active").next().addClass("active");
+          $("#user-listing-tbody tr.active").first().removeClass("active");
+        }
+        
+      }
+      
+      
+    }
+    else{
+      var currIndex = $("#user-listing-tbody tr.active").index();
+      if(currIndex == 0){
+        $("#user-listing-tbody tr").removeClass("active");
+        $("#user-listing-tbody tr").last().addClass("active");
+      }
+      else{
+        $("#user-listing-tbody tr.active").prev().addClass("active");
+        $("#user-listing-tbody tr.active").last().removeClass("active");
+      }
+    }
   }
   
-  window.xhr = $.ajax({
-    url: $this.data("search_url"),
-    data: {name: value, view: view, onblank: onBlank},
-    type: "post",
-    success: function(retdata){
-      $("#user-listing-tbody").html(retdata);
-      $("#user-listing-tbody").closest("table").show();
-    }
-  });
 });
 
 
@@ -103,11 +159,41 @@ $(document).on("change", "#date-option", function(){
 
 
 $(document).on("click","#lm-autosearch table tr td", function(){
-  $(this).closest("table").hide();
+  $(this).closest("table").addClass("hide");
   var name = $(this).html();
-  $(this).parent().parent().parent().parent().prev().val($.trim(name));
+  var $input = $(this).closest("#lm-autosearch").prev();
+  $input.val($.trim(name));
+  if(typeof $input.data("onselect") != "undefined"){
+    window[$input.data("onselect")]($input.data("onselectajaxurl"),$input.val(), window.currentYear);
+  }
 });
 
+function getExtraLeaves(ajaxurl, username, year){
+  $.ajax({
+    url: ajaxurl,
+    data: {name : username, year: year},
+    type: "post",
+    success: function(retdata){
+      $("#extra_leave .row .col-sm-12").html(retdata);
+      $(".date_control").datepicker({
+        showOn : "both",
+        dateFormat: "yy-mm-dd",
+        changeMonth: true,
+        changeYear: true
+      });
+    }
+  });
+}
+
+$(document).on("change","input[name='extra_leaves[leave_type]']", function(){
+  if($(this).hasClass("extra-leave-leave_type")){
+    $(".extra-leave-description").addClass("in");
+  }
+  else{
+    $(".extra-leave-description").removeClass("in");
+  }
+  $("#extra-leave-fromdate").addClass("in");
+});
 
 
 function getMonthInputHTML(){

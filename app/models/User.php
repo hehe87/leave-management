@@ -151,7 +151,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			using his/her date of joining.
   */
   public function getTotalLeaves(){
-    $paidLeaves = 11;
+    $paidLeaves = Config::get("leave_config.paid_leaves");
     $allLeaves = $paidLeaves;
     $currentDate = new DateTime(date("Y-m-d"));
     $currentYear = (int)$currentDate->format("Y");
@@ -164,10 +164,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $dateOfJoining = new DateTime($this->doj);
     $joiningYear = (int)$dateOfJoining->format("Y");
-    $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,1,15,$dateOfJoining->format("Y"))));
+    $joiningYearStart = YearStart::where("year", $joiningYear)->first();
+    if($joiningYearStart){
+      $joiningYearStartDay = $joiningYearStart->startDay;
+      $joiningYearStartMonth = $joiningYearStart->startMonth;
+    }
+    else{
+      $joiningYearStartDay = 15;
+      $joiningYearStartMonth = 1;
+    }
+    //$config_last_leave_date = Config::get("leave_config.new_official_year_date");
+    //$config_last_leave_date = explode("-",$config_last_leave_date);
+    //$allMonths = array("Jan" => 1, "Feb" => 2, "Mar" => 3, "Apr" => 4,
+    //  "May" => 5, "Jun" => 6, "Jul" => 7, "Aug" => 8, "Sep" => 9, "Oct" => 10, "Nov" => 11, "Dec" => 12);
+    //$mon = $allMonths[$config_last_leave_date[1]]
+    //$d = $config_last_leave_date[0];
+    $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,$joiningYearStartMonth,$joiningYearStartDay,$joiningYear)));
     
     $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
-    
     $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
     
     $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
@@ -195,9 +209,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 //    }
     
     $allLeaves += $yearsInCompany;
-    if($isJoinedBeforeLastLeaveDateOfJoiningYear && ($joiningYear != $currentYear)){
-      $allLeaves += 1;
-    }
     return $allLeaves;
   }
   

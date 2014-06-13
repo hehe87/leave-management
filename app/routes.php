@@ -44,6 +44,7 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
 	Route::get('/settings', array('as' => 'users.settings', 'uses' => 'UsersController@getSettings'));
 	Route::post('/settings', array('as' => 'users.postSettings', 'uses' => 'UsersController@postSettings'));
+	Route::post('/users/getextraleaves', array('as' => 'users.getExtraLeaves', 'uses' => 'UsersController@getExtraLeaves'));
 });
 
 

@@ -43,6 +43,30 @@
 	      </td>
 	    </tr>
 	  @endforeach
+	  
+	  @foreach ($extraLeaves as $leave)
+	    <tr>
+	      <td>
+		{{ $leave->user->name }}
+	      </td>
+	      <td>
+		{{ date('d-m-Y',strtotime($leave->from_date)) }} - {{ date('d-m-Y',strtotime($leave->to_date)) }}
+	      </td>
+	      <td>
+		@if (preg_match("/Paternity/", $leave->description))
+		  {{ $leave->description }}
+		@else
+		  Extra Leave
+		@endif
+	      </td>
+	      <td>
+		{{$leave->description}}
+	      </td>
+	      <td align="center">
+		--
+	      </td>
+	    </tr>
+	  @endforeach
 	</tbody>
       </table>
     </div>

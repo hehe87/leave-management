@@ -70,6 +70,10 @@ Purpose		: Custom styles for leave management system
 	padding: 4px;
 }
 
+.padding_10{
+	padding: 10px;
+}
+
 .round-icon{
 	border-radius: 12px;
 }
@@ -98,7 +102,7 @@ Purpose		: Custom styles for leave management system
 }
 
 #lm-autosearch table tr td:hover{
-	background-color: #aeaeae;
+	background-color: #08C;
 	color: #fff;
 }
 
@@ -125,6 +129,21 @@ width: 100%;
   margin-top: 8px;
   
 }
+
+.form-horizontal, .table.table-striped{
+	border-radius: 10px 10px 10px 10px;
+	border: 1px solid #ddd;
+	padding: 10px;
+	margin-top: 10px;
+	border-collapse: separate;
+}
+
+.border-round-5{
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}
+
+
 /*@media screen and(max-width: 800px){
 	.slot_to{
 		float:left !important;

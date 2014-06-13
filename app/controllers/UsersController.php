@@ -295,6 +295,8 @@ class UsersController extends \BaseController {
   public function edit($id)
   {
     $user = User::find($id);
+    $user->inTime = preg_replace("/:00$/", "", $user->inTime);
+    $user->outTime = preg_replace("/:00$/", "", $user->outTime);
     return View::make('users.edit')->with("user", $user);
   }
 
@@ -355,7 +357,16 @@ class UsersController extends \BaseController {
   */
   
   public function getSettings(){
-    return View::make("users.settings");
+    //$this->pre_print(array_combine(range(1,31), array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
+    $currYear = date("Y");
+    $yearStart = YearStart::where("year", $currYear)->first();
+    $dayList = array_combine(array_merge(array("" => ""), range(1,31)), array_merge(array("" => "Select Day"),array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
+    //$this->pre_print($dayList);
+    $monList = array_combine(array_merge(array("" => ""), range(1,12)), array_merge(array("" => "Select Month"),array_map(function($d){return sprintf("%02s",$d); }, range(1,12))));
+    if(!$yearStart){
+      $yearStart = new YearStart();
+    }
+    return View::make("users.settings")->with("yearStart", $yearStart)->with("dayList", $dayList)->with("monList", $monList);
   }
   
   /**
@@ -367,6 +378,7 @@ class UsersController extends \BaseController {
   */
   
   public function postSettings(){
+    
     $allSettings = Input::all();
     if(key_exists("gapi",$allSettings)){
       $showTab = "#gapi";
@@ -423,8 +435,116 @@ class UsersController extends \BaseController {
 	  $user->save();
 	}
       }
+      else{
+	if(key_exists("leave_setting", $allSettings)){
+	  $showTab = "#leave";
+	  
+	  $allSettings["leave_setting"]["new_official_year_date"] = sprintf("%02s", $allSettings["leave_setting"]["official_year_day"]) . "-" . sprintf("%02s", $allSettings["leave_setting"]["official_year_month"]);
+	  
+	  $validationRules = array(
+	    'carry_forward_leaves' => 'required|numeric',
+	    'paternity_leaves'  =>'required|numeric',
+	    'maternity_leaves'=>'required|numeric',
+	    'paid_leaves'=>'required|numeric',
+	    'new_official_year_date' => "required|regex:^[\d]{2}-[\d]{2}^"
+	  );
+	  
+	  $validator = Validator::make(
+	    $allSettings["leave_setting"],
+	    $validationRules
+	  );
+	  
+	  if($validator->fails()){
+	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+	  }
+	  else{
+	    $leaveSettings = htmlspecialchars('<?php return array(
+	      "carry_forward_leaves" => "' . $allSettings["leave_setting"]["carry_forward_leaves"] . '",
+	      "paternity_leaves" => "' . $allSettings["leave_setting"]["paternity_leaves"] . '",
+	      "maternity_leaves" => "' . $allSettings["leave_setting"]["maternity_leaves"] . '",
+	      "paid_leaves" => "' . $allSettings["leave_setting"]["paid_leaves"] . '"
+	    );');
+	    File::put(base_path() . '/app/config/leave_config.php',htmlspecialchars_decode($leaveSettings));
+	    $official_year_month = $allSettings["leave_setting"]["official_year_month"];
+	    $official_year_day = $allSettings["leave_setting"]["official_year_day"];
+	    
+	    $currYear = date("Y");
+	    $yearStart = YearStart::where("year", $currYear)->first();
+	    if($yearStart){
+	      $yearStart->startDay = $official_year_day;
+	      $yearStart->startMonth = $official_year_month;
+	      $yearStart->year = $currYear;
+	      $yearStart->save();
+	    }
+	    else{
+	      $yearStart = new YearStart();
+	      $yearStart->startDay = $official_year_day;
+	      $yearStart->startMonth = $official_year_month;
+	      $yearStart->year = $currYear;
+	      $yearStart->save();
+	    }
+	  }
+	}
+	else{
+	  if(key_exists("extra_leaves",$allSettings)){
+	    $showTab = "#extra_leave";
+	    $empName = $allSettings["extra_leaves"]["employee_name"];
+	    $extraLeaveType = $allSettings["extra_leaves"]["leave_type"];
+	    switch($extraLeaveType){
+	      case "paternity":
+		$noOfLeaves = Config::get("leave_config.paternity_leaves");
+		$description = "Paternity";
+		break;
+	      case "maternity":
+		$noOfLeaves = Config::get("leave_config.maternity_leaves");
+		$description = "Maternity";
+		break;
+	      case "extra":
+		$noOfLeaves = $allSettings["extra_leaves"]["leaves_count"];
+		$description = $allSettings["extra_leaves"]["description"];
+		break;
+	    }
+	    
+	    $user = User::where("name",$empName)->first();
+	    $userId = $user->id;
+	    $forYear = date("Y");
+	    $fromDate = $allSettings["extra_leaves"]["from_date"];
+	    $fromDate_timestamp = strtotime($fromDate);
+	    $toDate_timestamp = $fromDate_timestamp + (((int)$noOfLeaves - 1) * 24 * 60 * 60);
+	    
+	    $toDate = date("Y-m-d",$toDate_timestamp);
+	    
+	    $extraLeave = new Extraleave();
+	    $extraLeave->user_id = $userId;
+	    $extraLeave->leaves_count = $noOfLeaves;
+	    $extraLeave->for_year = date("Y");
+	    $extraLeave->from_date = $fromDate;
+	    $extraLeave->to_date = $toDate;
+	    $extraLeave->description = $description;
+	    $extraLeave->save();
+	  }
+	}
+      }
     }
     return Redirect::to(URL::route('users.settings') . $showTab);
+  }
+  
+  
+  public function getExtraLeaves(){
+    $inputs = Input::all();
+    $username = $inputs["name"];
+    $year = $inputs["year"];
+    $user = User::where("name", "LIKE", "%" . $username . "%")->first();
+    $paternityLeave = Extraleave::getPaternityLeaveInfo($user->id, $year);
+    $maternityLeave = Extraleave::getMaternityLeaveInfo($user->id, $year);
+    if(!$paternityLeave){
+      $paternityLeave = null;
+    }
+    if(!$maternityLeave){
+      $maternityLeave = null;
+    }
+    $extraLeaves = Extraleave::getExtraLeavesInfo($user->id, $year);
+    return View::make("users.extra_leaves")->with("data", array("paternityLeave" => $paternityLeave, "maternityLeave" => $maternityLeave, "extraLeaves" => $extraLeaves, "username" => $username));
   }
   
   

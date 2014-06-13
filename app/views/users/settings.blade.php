@@ -16,6 +16,8 @@
       <ul class="nav nav-tabs settings-tab-links">
         <li class="active"><a href="#account">Account Settings</a></li>
         <li><a href="#gapi">Google API Settings</a></li>
+        <li><a href="#leave">Leave Settings</a></li>
+        <li><a href="#extra_leave">Add Extra Leaves</a></li>
       </ul>
       
       <div class="tab-content">
@@ -30,6 +32,20 @@
           <div class="row">
             <div class="col-sm-12">
               @include("users.google_api_settings")
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="leave">
+          <div class="row">
+            <div class="col-sm-12">
+              @include("users.leave_settings")
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="extra_leave">
+          <div class="row">
+            <div class="col-sm-12">
+              @include("users.extra_leaves")
             </div>
           </div>
         </div>

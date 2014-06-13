@@ -36,7 +36,7 @@ body{
   z-index: 3;
   list-style: none;
   padding: 0px;
-  border: 1px solid #48036F;
+  border: 1px solid #ddd;
   border-right: none;
   border-top: none;
   border-radius: 0px 0px 10px 10px;
@@ -44,7 +44,7 @@ body{
 
 @media screen and (max-width: 1198px){
   #left-panel{
-    border-right: 1px solid #48036F;
+    border-right: 1px solid #ddd;
   }
   .link{
     display: none;
@@ -60,9 +60,9 @@ body{
 }
 
 #left-panel li{
-  border: 1px solid #48036F;
+  border: 1px solid #ddd;
   background-color: #fff;
-  border-radius: 10px;
+  border-radius: 10px 10px 10px 10px;
   margin:1px;
   -webkit-transition: background-color 1ms linear;
   -moz-transition: background-color 1ms linear;
@@ -111,7 +111,7 @@ li.lms-active a{
   min-height: 512px;
   z-index: 1;
   padding-top: 10px;
-  border-left: 1px solid #48036F;
+  border-left: 1px solid #ddd;
 }
 
 .link{

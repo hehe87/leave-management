@@ -38,8 +38,10 @@ class LeavesController extends \BaseController {
 	public function index()
 	{
 		$leaves = Leave::all();
+		
+		$extraLeaves = Extraleave::all();
 
-		return View::make('leaves.index', compact('leaves'));
+		return View::make('leaves.index')->with("leaves", $leaves)->with('extraLeaves', $extraLeaves);
 	}
 
 	/**
