@@ -9,7 +9,9 @@
 */
 
 // Initialize the datatables
-$('#leavesTable').DataTable();
+$('#leavesTable').DataTable( {
+        "order": [[ 4, "asc" ]]
+    } );
 
 
 

@@ -221,6 +221,26 @@ class ApprovalController extends \BaseController {
           $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
         }
         
+        elseif ('LONG' == $approval->leave->leave_type)
+        {
+          $event->setSummary( $approval->leave->user->name . ' ('. date('d-M-Y', strtotime($approval->leave->leave_date)) .' - '. date('d-M-Y',strtotime($approval->leave->leave_to)) .')');       
+          $startDate =  $approval->leave->leave_date;
+          $endDate = $approval->leave->leave_to;
+          $start->setDate($startDate);
+          
+          // Add one day to end date since google doesn't mark event for a day when any time is not provided after midnight
+          $tempDate = new DateTime($endDate);
+          $tempDate->add(new DateInterval('P1D')); // PID means a period of 1 day
+          $endDate = $tempDate->format('Y-m-d');
+          
+          $end->setDate($endDate);
+          $event->setStart($start);
+          $event->setEnd($end);
+
+
+          $createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);   
+        }
+        
        else
        {
           $csrs = Csr::where('leave_id', '=', $approval->leave_id)->get();

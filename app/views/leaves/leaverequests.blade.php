@@ -14,13 +14,7 @@
 	    </th>
 	    <th>
 	      Leave Type
-	    </th>
-	    <th class="text-center">
-	      From Time
-	    </th>
-	    <th class="text-center">
-	      To Time
-	    </th>
+	    </th>	   
 	    <th>
 	      Reason
 	    </th>
@@ -42,27 +36,20 @@
 		@if( "LEAVE" == $leaveReq->leave->leave_type )
       Leave
     @elseif( "CSR" == $leaveReq->leave->leave_type )
-      CSR
+      CSR -
+      <table>
+        @foreach($leaveReq->leave->csrs as $csr)
+            <tr><td>{{ date('H:i A',strtotime($csr['from_time'])) }} to {{ date('H:i A', strtotime($csr['to_time'])) }}</td></tr>
+        @endforeach
+      </table>
     @elseif( "FH" == $leaveReq->leave->leave_type )
       First Half
     @elseif( "SH" == $leaveReq->leave->leave_type )
       Second Half
+    @elseif( "LONG" == $leaveReq->leave->leave_type )
+      
+      Long Leaves - {{ (Carbon::createFromFormat('Y-m-d',$leaveReq->leave->leave_date)->diffInDays(Carbon::createFromFormat('Y-m-d',$leaveReq->leave->leave_to))) + 1 }} day(s) 
     @endif
-	      </td>
-	      <td align="center">
-		@if ($leaveReq->leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leaveReq->leave->from_time}}
-		@endif
-		
-	      </td>
-	      <td align="center">
-		@if ($leaveReq->leave->leave_type === "LEAVE")
-		  --
-		@else
-		  {{$leaveReq->leave->to_time}}
-		@endif
 	      </td>
 	      <td>
 		{{$leaveReq->leave->reason}}
