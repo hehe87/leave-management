@@ -8,11 +8,10 @@
   Most Important Related Files:     -
 */
 body{
-  color: #48036F;
+  color: #8e8e8e;
 }
 .page_header{
-  background-color: #48036F;
-  padding-top: 20px;
+  background-color: #991B1E;
   padding-bottom: 3px;
 }
 
@@ -32,7 +31,7 @@ body{
 }
 
 #left-panel{
-  /*background-color: #48036F;*/
+  /*background-color: #991B1E;*/
   z-index: 3;
   list-style: none;
   padding: 0px;
@@ -72,11 +71,11 @@ body{
 }
 
 li.lms-active{
-  background-color: #7109AA !important;
+  background-color: #991B1E !important;
 }
 #left-panel li a{
   font-weight: 700;
-  color: #48036F;
+  color: #991B1E;
   padding: 10px;
   padding-left: 40px;
   display: inline-block;
@@ -86,7 +85,7 @@ li.lms-active{
 
 
 #left-panel li:hover{
-  background-color: #9f3ed5;
+  background-color: #991B1E;
   -webkit-transition: background-color 300ms linear;
   -moz-transition: background-color 300ms linear;
   -o-transition: background-color 300ms linear;
@@ -137,7 +136,7 @@ li.lms-active a{
 }
 
 legend{
-  color: #48036F;
+  color: #991B1E;
 }
 
 .ui-datepicker-trigger{
@@ -146,13 +145,22 @@ legend{
 
 
 .normal-button:hover{
-  background-color: #48036F;
-  border-color: #330570;
+  background-color: #991B1E;
+  border-color: #991B1E;
 }
 
 .normal-button{
-  background-color: #7109AA;
+  background-color: #991B1E;
   color: #FFF;
-  border-color: #330570;
+  border-color: #991B1E;
   font-weight: 700;
+}
+
+
+table.dataTable.no-footer{
+  border-bottom: 1px solid #ddd;
+}
+
+table.dataTable thead th, table.dataTable thead td{
+ border-bottom: 1px solid #ddd; 
 }

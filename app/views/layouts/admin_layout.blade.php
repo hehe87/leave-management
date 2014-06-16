@@ -67,9 +67,6 @@
               <a href="{{URL::route('usersListing')}}">Users</a>
             </li>
           @endif
-          <li>
-            <a href="{{ URL::route('leaves.index') }}">Leaves</a>
-          </li>
           
           <li>
             <a href="{{ URL::route('leaves.report') }}">Reports</a>

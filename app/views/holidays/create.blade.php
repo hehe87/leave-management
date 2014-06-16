@@ -17,7 +17,7 @@
         @include("holidays.form")
         <div class="form-group">
           <div class="col-sm-6 col-sm-offset-2">
-            <a class="btn btn-danger pull-left">Cancel</a>
+            <a href="{{URL::previous()}}" class="btn btn-danger pull-left">Cancel</a>
             <input class="btn btn-primary pull-right" type="submit" value="Add Holiday">
           </div>
         </div>

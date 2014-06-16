@@ -43,10 +43,10 @@
               Phone Number
             </th>
             <th class="text-center">
-              Total Leaves
+              All Leaves(This Year)
             </th>
             <th class="text-center">
-              Remaining Leaves
+              Available Leaves(This Year)
             </th>
             <th class="text-center">
               Actions

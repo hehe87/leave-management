@@ -1,5 +1,34 @@
 {{ Form::hidden('user_id', Auth::user()->id) }}
-<div class="form-group">
+
+@if ((isset($formFor) && $formFor != "edit") || (!isset($formFor)))
+  <div class="form-group">
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-2">
+          {{ Form::label('leave_option', 'Leave Option', array('class' => 'control-label')) }}
+        </div>
+        <div class="col-sm-6">
+          {{ Form::select('leave_option', array('' => 'Select Leave Option', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), '',array('id'=> 'leave_option', 'class' => 'form-control')) }}
+        </div>
+      </div>
+      @if ($errors->first('leave_option'))
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-2">
+            <div class="alert alert-danger">
+              {{{ $errors->first('leave_option') }}}
+            </div>
+          </div>
+        </div>
+      @endif
+    </div>
+  </div>
+@endif
+
+
+
+
+
+<div class="form-group {{ (Input::old('leave_option') == 'LEAVE') || ($leave->leave_type != 'CSR' && $leave->leave_type != '') ? '' : 'hide' }}" id="leave-type-form-group">
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
@@ -9,9 +38,8 @@
         @if (isset($formFor) && $formFor == "edit")
           {{ Form::text('leave[leave_type]', $leave->leave_type, array("class" => "form-control", "readonly" => true)) }}
         @else
-          {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Leave', 'CSR' => 'CSR', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leave', 'MULTI' => 'Multiple Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id'=> 'leave_type')) }}
+          {{ Form::select('leave[leave_type]', array('' => 'Select Leave Type', 'LEAVE' => 'Full Day Leave', 'FH' => 'First Half', 'SH' => 'Second Half', 'LONG' => 'Long Leave', 'MULTI' => 'Multiple Leaves'), $leave->leave_type, array('class' => 'form-control required', 'id' => 'leave_type')) }}
         @endif
-        
       </div>
     </div>
     @if ($errors->first('leave_type'))

@@ -14,14 +14,14 @@ class UsersController extends \BaseController {
   public function __construct()
   {
     $this->beforeFilter('auth', array(
-	'except' => array(
-	  'getLogin',
-	  'postLogin',
-	  'getForgotPassword',
-	  'postForgotPassword',
-	  'getChangePassword',
-	  'postChangePassword'
-	)
+      	'except' => array(
+      	  'getLogin',
+      	  'postLogin',
+      	  'getForgotPassword',
+      	  'postForgotPassword',
+      	  'getChangePassword',
+      	  'postChangePassword'
+      	)
       )
     );
   }
@@ -50,9 +50,9 @@ class UsersController extends \BaseController {
     Function Name: 		postLogin
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
-    Parameters:	            	username, password
+    Parameters:	  username, password
     Purpose:			This function acts as login action which displays user
-                                with login form.
+    with login form.
   */
   public function postLogin(){
     $formData = Input::all();
@@ -66,10 +66,10 @@ class UsersController extends \BaseController {
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
-	return Redirect::to(URL::route('leaves.create'));
+	      return Redirect::intended(URL::route('leaves.create'));
       }
       else{
-	return Redirect::to(URL::route('usersListing'));
+	      return Redirect::intended(URL::route('usersListing'));
       }
       
     }
@@ -83,10 +83,10 @@ class UsersController extends \BaseController {
   
   /**
     Function Name: 		logout
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	username, password
-    Purpose:			This function acts as logout action which logouts the currently logged in user
+    Author Name:		  Nicolas Naresh
+    Date:			        June, 02 2014
+    Parameters:	      username, password
+    Purpose:			    This function acts as logout action which logouts the currently logged in user
   */
   public function logout(){
     Auth::logout();
@@ -127,11 +127,11 @@ class UsersController extends \BaseController {
     else{
       $user = User::where("email", $email)->get();
       if($user->first()){
-	$user = $user->first();
-	$userName = $user->name;
+      	$user = $user->first();
+      	$userName = $user->name;
       }
       else{
-	return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Account not found for this Email');
+        return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Account not found for this Email');
       }
       
       $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
@@ -139,15 +139,15 @@ class UsersController extends \BaseController {
       $emailSubject = "Leave Management: Change Your Password";
       
       $data = array(
-	'token' => $token,
-	'userName' => $userName,
-	'email' => $email
+      	'token' => $token,
+      	'userName' => $userName,
+      	'email' => $email
       );
       Mail::send('emails.changepassword', $data, function($message) use ($email,$userName, $emailSubject, $user, $token)
       {
-	$message->to($email, $userName)->from('nicolas.naresh@ithands.net', 'Admin')->subject($emailSubject);
-	$user->changePasswordToken = $token;
-	$user->save();
+      	$message->to($email, $userName)->from('nicolas.naresh@ithands.net', 'Admin')->subject($emailSubject);
+      	$user->changePasswordToken = $token;
+      	$user->save();
       });
       return Redirect::to(URL::route("userLogin"))->with("success","An Email has been sent to your email id for change password instructions!");
     }
@@ -185,8 +185,8 @@ class UsersController extends \BaseController {
     $validator = Validator::make(
       Input::except("_token"),
       array(
-	'password'  =>'required|between:4,8|confirmed',
-	'password_confirmation'=>'required|between:4,8',
+      	'password'  =>'required|between:4,8|confirmed',
+      	'password_confirmation'=>'required|between:4,8',
       )
     );
     if($validator->fails()){
@@ -195,7 +195,7 @@ class UsersController extends \BaseController {
     else{
       $user = User::where("changePasswordToken",$token);
       if(!$user->first()){
-	return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
+	       return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
       }
       $user = $user->first();
       $user->password = Hash::make(Input::get("password"));
@@ -313,6 +313,8 @@ class UsersController extends \BaseController {
   public function update($id)
   {
     $formData = Input::all();
+    $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));    
     $validator = User::validateRegistrationForm($formData, false);
     if($validator->fails())
     {
@@ -321,13 +323,11 @@ class UsersController extends \BaseController {
     else{
       $formData = Input::except("password_confirmation","_token");
       if(!empty($formData["password"])){
-	$formData["password"] = Hash::make($formData["password"]);
+        $formData["password"] = Hash::make($formData["password"]);
       }
       else{
-	unset($formData["password"]);
+        unset($formData["password"]);
       }
-      
-      
       $user = User::find($id);
       $user->update($formData);
       $user->totalLeaves = $user->getTotalLeaves();
@@ -368,7 +368,13 @@ class UsersController extends \BaseController {
     if(!$yearStart){
       $yearStart = new YearStart();
     }
-    return View::make("users.settings")->with("yearStart", $yearStart)->with("dayList", $dayList)->with("monList", $monList);
+    $leaveConfig = array();
+    $leaveConfig["carry_forward_leaves"] = Leaveconfig::getConfig("carry_forward_leaves",$currYear);
+    $leaveConfig["paternity_leaves"] = Leaveconfig::getConfig("paternity_leaves",$currYear);
+    $leaveConfig["maternity_leaves"] = Leaveconfig::getConfig("maternity_leaves",$currYear);
+    $leaveConfig["paid_leaves"] = Leaveconfig::getConfig("paid_leaves",$currYear);
+
+    return View::make("users.settings")->with("yearStart", $yearStart)->with("dayList", $dayList)->with("monList", $monList)->with("leaveConfig", $leaveConfig);
   }
   
   /**
@@ -385,153 +391,199 @@ class UsersController extends \BaseController {
     if(key_exists("gapi",$allSettings)){
       $showTab = "#gapi";
       $validationRules = array(
-	'client_id' => array('required'),
-	'service_account_name'  =>'required',
-	'key_file_location' => 'required',
-	'timezone' => 'required',
-	'calendar_id' => 'required'
+      	'client_id' => array('required'),
+      	'service_account_name'  =>'required',
+      	'key_file_location' => 'required',
+      	'timezone' => 'required',
+      	'calendar_id' => 'required'
       );
       
       $validator = Validator::make(
-	$allSettings["gapi"],
-	$validationRules
+      	$allSettings["gapi"],
+      	$validationRules
       );
       
       if($validator->fails()){
-	return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
       }
       else{
-	$googleSettings = htmlspecialchars('<?php ' . 
-	  'return array(
-	  "client_id" => "' . $allSettings["gapi"]["client_id"] . '",
-	  "service_account_name" => "' . $allSettings["gapi"]["service_account_name"] . '",
-	  "key_file_location" => base_path() . "' . $allSettings["gapi"]["key_file_location"] . '",
-	  "timezone" => "' . $allSettings["gapi"]["timezone"] . '",
-	  "calendar_id" => "' . $allSettings["gapi"]["calendar_id"] . '",
-	  );'
-	);
-	File::put(base_path() . '/app/config/google.php',htmlspecialchars_decode($googleSettings));
+      	$googleSettings = htmlspecialchars('<?php ' . 
+      	  'return array(
+      	  "client_id" => "' . $allSettings["gapi"]["client_id"] . '",
+      	  "service_account_name" => "' . $allSettings["gapi"]["service_account_name"] . '",
+      	  "key_file_location" => base_path() . "' . $allSettings["gapi"]["key_file_location"] . '",
+      	  "timezone" => "' . $allSettings["gapi"]["timezone"] . '",
+      	  "calendar_id" => "' . $allSettings["gapi"]["calendar_id"] . '",
+  	      );'
+        );
+	      File::put(base_path() . '/app/config/google.php',htmlspecialchars_decode($googleSettings));
       }
     }
     else{
       if(key_exists("admin_account",$allSettings)){
-	$showTab = "#account";
-	$validationRules = array(
-	  'email' => array('required','email'),
-	  'password'  =>'required|between:4,8|confirmed',
-	  'password_confirmation'=>'required|between:4,8',
-	);
+      	$showTab = "#account";
+      	$validationRules = array(
+      	  'email' => array('required','email'),
+      	  'password'  =>'required|between:4,8|confirmed',
+      	  'password_confirmation'=>'required|between:4,8',
+      	);
 	
-	$validator = Validator::make(
-	  $allSettings["admin_account"],
-	  $validationRules
-	);
-	
-	if($validator->fails()){
-	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
-	}
-	else{
-	  $user = Auth::user();
-	  $user->email = $allSettings["admin_account"]["email"];
-	  $user->password = Hash::make($allSettings["admin_account"]["password"]);
-	  $user->save();
-	}
+      	$validator = Validator::make(
+      	  $allSettings["admin_account"],
+      	  $validationRules
+      	);
+      	
+      	if($validator->fails()){
+      	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+      	}
+      	else{
+      	  $user = Auth::user();
+      	  $user->email = $allSettings["admin_account"]["email"];
+      	  $user->password = Hash::make($allSettings["admin_account"]["password"]);
+      	  $user->save();
+      	}
       }
       else{
-	if(key_exists("leave_setting", $allSettings)){
-	  $showTab = "#leave";
-	  
-	  $allSettings["leave_setting"]["new_official_year_date"] = sprintf("%02s", $allSettings["leave_setting"]["official_year_day"]) . "-" . sprintf("%02s", $allSettings["leave_setting"]["official_year_month"]);
-	  
-	  $validationRules = array(
-	    'carry_forward_leaves' => 'required|numeric',
-	    'paternity_leaves'  =>'required|numeric',
-	    'maternity_leaves'=>'required|numeric',
-	    'paid_leaves'=>'required|numeric',
-	    'new_official_year_date' => "required|regex:^[\d]{2}-[\d]{2}^"
-	  );
-	  
-	  $validator = Validator::make(
-	    $allSettings["leave_setting"],
-	    $validationRules
-	  );
-	  
-	  if($validator->fails()){
-	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
-	  }
-	  else{
-	    $leaveSettings = htmlspecialchars('<?php return array(
-	      "carry_forward_leaves" => "' . $allSettings["leave_setting"]["carry_forward_leaves"] . '",
-	      "paternity_leaves" => "' . $allSettings["leave_setting"]["paternity_leaves"] . '",
-	      "maternity_leaves" => "' . $allSettings["leave_setting"]["maternity_leaves"] . '",
-	      "paid_leaves" => "' . $allSettings["leave_setting"]["paid_leaves"] . '"
-	    );');
-	    File::put(base_path() . '/app/config/leave_config.php',htmlspecialchars_decode($leaveSettings));
-	    $official_year_month = $allSettings["leave_setting"]["official_year_month"];
-	    $official_year_day = $allSettings["leave_setting"]["official_year_day"];
-	    
-	    $currYear = date("Y");
-	    $yearStart = YearStart::where("year", $currYear)->first();
-	    if($yearStart){
-	      $yearStart->startDay = $official_year_day;
-	      $yearStart->startMonth = $official_year_month;
-	      $yearStart->year = $currYear;
-	      $yearStart->save();
-	    }
-	    else{
-	      $yearStart = new YearStart();
-	      $yearStart->startDay = $official_year_day;
-	      $yearStart->startMonth = $official_year_month;
-	      $yearStart->year = $currYear;
-	      $yearStart->save();
-	    }
-	  }
-	}
-	else{
-	  if(key_exists("extra_leaves",$allSettings)){
-	    $showTab = "#extra_leave";
-	    $empName = $allSettings["extra_leaves"]["employee_name"];
-	    $extraLeaveType = $allSettings["extra_leaves"]["leave_type"];
-	    switch($extraLeaveType){
-	      case "paternity":
-		$noOfLeaves = Config::get("leave_config.paternity_leaves");
-		$description = "Paternity";
-		break;
-	      case "maternity":
-		$noOfLeaves = Config::get("leave_config.maternity_leaves");
-		$description = "Maternity";
-		break;
-	      case "extra":
-		$noOfLeaves = $allSettings["extra_leaves"]["leaves_count"];
-		$description = $allSettings["extra_leaves"]["description"];
-		break;
-	    }
-	    
-	    $user = User::where("name",$empName)->first();
-	    $userId = $user->id;
-	    $forYear = date("Y");
-	    $fromDate = $allSettings["extra_leaves"]["from_date"];
-	    $fromDate_timestamp = strtotime($fromDate);
-	    $toDate_timestamp = $fromDate_timestamp + (((int)$noOfLeaves - 1) * 24 * 60 * 60);
-	    
-	    $toDate = date("Y-m-d",$toDate_timestamp);
-	    
-	    $extraLeave = new Extraleave();
-	    $extraLeave->user_id = $userId;
-	    $extraLeave->leaves_count = $noOfLeaves;
-	    $extraLeave->for_year = date("Y");
-	    $extraLeave->from_date = $fromDate;
-	    $extraLeave->to_date = $toDate;
-	    $extraLeave->description = $description;
-	    $extraLeave->save();
-	  }
-	}
+      	if(key_exists("leave_setting", $allSettings)){
+      	  $showTab = "#leave";
+      	  
+      	  $allSettings["leave_setting"]["new_official_year_date"] = sprintf("%02s", $allSettings["leave_setting"]["official_year_day"]) . "-" . sprintf("%02s", $allSettings["leave_setting"]["official_year_month"]);
+      	  
+      	  $validationRules = array(
+      	    'carry_forward_leaves' => 'required|numeric',
+      	    'paternity_leaves'  =>'required|numeric',
+      	    'maternity_leaves'=>'required|numeric',
+      	    'paid_leaves'=>'required|numeric',
+      	    'new_official_year_date' => "required|regex:^[\d]{2}-[\d]{2}^"
+      	  );
+      	  
+      	  $validator = Validator::make(
+      	    $allSettings["leave_setting"],
+      	    $validationRules
+      	  );
+      	  
+      	  if($validator->fails()){
+      	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+      	  }
+      	  else{
+
+            $carry_forward_leaves = Leaveconfig::getConfig("carry_forward_leaves",date("Y"));
+            $paternity_leaves = Leaveconfig::getConfig("paternity_leaves",date("Y"));
+            $maternity_leaves = Leaveconfig::getConfig("maternity_leaves",date("Y"));
+            $paid_leaves      = Leaveconfig::getConfig("paid_leaves",date("Y"));
+
+            if("0" == $carry_forward_leaves->leave_days){
+              $carry_forward_leaves = new leaveConfig();
+              $carry_forward_leaves->leave_type = "carry_forward_leaves";
+              $carry_forward_leaves->year = date("Y");
+            }
+            $carry_forward_leaves->leave_days = $allSettings["leave_setting"]["carry_forward_leaves"];
+
+            if("0" == $paternity_leaves->leave_days){
+              $paternity_leaves = new Leaveconfig();
+              $paternity_leaves->leave_type = "paternity_leaves";
+              $paternity_leaves->year = date("Y");
+            }
+            $paternity_leaves->leave_days = $allSettings["leave_setting"]["paternity_leaves"];
+
+            if("0" == $maternity_leaves->leave_days){
+              $maternity_leaves = new LeaveConfig();
+              $maternity_leaves->leave_type = "maternity_leaves";
+              $maternity_leaves->year = date("Y");
+            }
+            $maternity_leaves->leave_days = $allSettings["leave_setting"]["maternity_leaves"];
+
+            if("0" == $paid_leaves->leave_days){
+              $paid_leaves = new LeaveConfig();
+              $paid_leaves->leave_type = "paid_leaves";
+              $paid_leaves->year = date("Y");
+            }
+            $paid_leaves->leave_days = $allSettings["leave_setting"]["paid_leaves"];
+
+            $carry_forward_leaves->save();
+            $paternity_leaves->save();
+            $maternity_leaves->save();
+            $paid_leaves->save();
+
+      	    $official_year_month = $allSettings["leave_setting"]["official_year_month"];
+      	    $official_year_day = $allSettings["leave_setting"]["official_year_day"];
+      	    
+      	    $currYear = date("Y");
+      	    $yearStart = YearStart::where("year", $currYear)->first();
+      	    if($yearStart){
+      	      $yearStart->startDay = $official_year_day;
+      	      $yearStart->startMonth = $official_year_month;
+      	      $yearStart->year = $currYear;
+      	      $yearStart->save();
+      	    }
+      	    else{
+      	      $yearStart = new YearStart();
+      	      $yearStart->startDay = $official_year_day;
+      	      $yearStart->startMonth = $official_year_month;
+      	      $yearStart->year = $currYear;
+      	      $yearStart->save();
+      	    }
+      	  }
+      	}
+      	else{
+      	  if(key_exists("extra_leaves",$allSettings)){
+      	    $showTab = "#extra_leave";
+      	    $empName = $allSettings["extra_leaves"]["employee_name"];
+      	    $extraLeaveType = $allSettings["extra_leaves"]["leave_type"];
+
+
+            $carry_forward_leaves = Leaveconfig::getConfig("carry_forward_leaves",date("Y"));
+            $paternity_leaves = Leaveconfig::getConfig("paternity_leaves",date("Y"));
+            $maternity_leaves = Leaveconfig::getConfig("maternity_leaves",date("Y"));
+            $paid_leaves      = Leaveconfig::getConfig("paid_leaves",date("Y"));
+
+
+      	    switch($extraLeaveType){
+      	      case "paternity":
+            		$noOfLeaves = $paternity_leaves->leave_days;
+            		$description = "Paternity";
+            		break;
+      	      case "maternity":
+            		$noOfLeaves = $maternity_leaves->leave_days;
+            		$description = "Maternity";
+            		break;
+      	      case "extra":
+            		$noOfLeaves = $allSettings["extra_leaves"]["leaves_count"];
+            		$description = $allSettings["extra_leaves"]["description"];
+            		break;
+            }
+      	    
+      	    $user = User::where("name",$empName)->first();
+      	    $userId = $user->id;
+      	    $forYear = date("Y");
+      	    $fromDate = $allSettings["extra_leaves"]["from_date"];
+      	    $fromDate_timestamp = strtotime($fromDate);
+      	    $toDate_timestamp = $fromDate_timestamp + (((int)$noOfLeaves - 1) * 24 * 60 * 60);
+      	    
+      	    $toDate = date("Y-m-d",$toDate_timestamp);
+      	    
+      	    $extraLeave = new Extraleave();
+      	    $extraLeave->user_id = $userId;
+      	    $extraLeave->leaves_count = $noOfLeaves;
+      	    $extraLeave->for_year = date("Y");
+      	    $extraLeave->from_date = $fromDate;
+      	    $extraLeave->to_date = $toDate;
+      	    $extraLeave->description = $description;
+      	    $extraLeave->save();
+      	  }
+      	}
       }
     }
     return Redirect::to(URL::route('users.settings') . $showTab);
   }
   
-  
+  /**
+  Function Name:  getExtraLeaves
+  Author Name:    Nicolas Naresh
+  Date:     June, 10 2014
+  Parameters:   -
+  Purpose:    this function provides the view for getting extra leaves for a given user name for a given year.
+  */
   public function getExtraLeaves(){
     $inputs = Input::all();
     $username = $inputs["name"];
@@ -548,9 +600,4 @@ class UsersController extends \BaseController {
     $extraLeaves = Extraleave::getExtraLeavesInfo($user->id, $year);
     return View::make("users.extra_leaves")->with("data", array("paternityLeave" => $paternityLeave, "maternityLeave" => $maternityLeave, "extraLeaves" => $extraLeaves, "username" => $username));
   }
-  
-  
-  
-  
-
 }
