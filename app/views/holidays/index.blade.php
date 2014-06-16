@@ -21,13 +21,13 @@
   </div>
   <div class="row">
     <div class="col-lg-12">
+          @if( 0 == count($holidays) )
+            <h3 align="center">No Holidays Found</h3>
+          @else
       <table class="table table-striped table-hover table-condensed">
         <thead>
-          @if( 0 == count($holidays) )
           <tr>
-            <h3 align="center">No Holidays Found</h3>
           </tr>
-          @else
           <tr>
             <th>
               Date
@@ -61,8 +61,8 @@
             </tr>
           @endforeach
         </tbody>
-        @endif
       </table>
+        @endif
     </div>
   </div>
   <div class="row">

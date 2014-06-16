@@ -13,7 +13,7 @@
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('admin_account[email]', 'Email', array('class' => 'control-label')) }}
+          {{ Form::label('admin_account[email]', 'Email *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('admin_account[email]', Auth::user()->email, array('class' => 'form-control', 'placeholder' => 'Email')) }}
@@ -35,7 +35,7 @@
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('admin_account[password]', 'Password', array('class' => 'control-label')) }}
+          {{ Form::label('admin_account[password]', 'Password *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('admin_account[password]', '', array('class' => 'form-control', 'placeholder' => 'Password')) }}
@@ -57,7 +57,7 @@
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('admin_account[password_confirmation]', 'Confirm Password', array('class' => 'control-label')) }}
+          {{ Form::label('admin_account[password_confirmation]', 'Confirm Password *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('admin_account[password_confirmation]', '', array('class' => 'form-control', 'placeholder' => 'Confirm Password')) }}

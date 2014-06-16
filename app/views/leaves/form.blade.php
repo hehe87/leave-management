@@ -3,7 +3,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('leave_type', 'Leave Type', array('class' => 'control-label')) }}
+        {{ Form::label('leave_type', 'Leave Type *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         @if (isset($formFor) && $formFor == "edit")
@@ -29,7 +29,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('leave_date', 'Leave Date', array('class' => 'control-label')) }}							
+        {{ Form::label('leave_date', 'Leave Date *', array('class' => 'control-label')) }}							
       </div>
       <div class="col-sm-6" id="leaveDateFrom">
         {{ Form::text('leave[leave_date]',$leave->leave_date, array('class' => 'form-control date_control ' . ((Input::old('leave.leave_type') == 'LONG') ? 'date-long' : ((Input::old('leave.leave_type') == 'MULTI') ? 'date-multiple' : 'date-single')), 'id' => 'date-control')) }}
@@ -56,7 +56,7 @@
     <div class="col-sm-12">
       <div class="row" id="timeContainer">
         <div class="col-sm-2">
-          {{ Form::label('from_time', 'Timings', array('class' => 'control-label')) }}
+          {{ Form::label('from_time', 'Timings *', array('class' => 'control-label')) }}
         </div>
         <div id="timeSlot" class="col-sm-6">
           @if(count(Input::old('csr')) != 0)
@@ -84,7 +84,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('reason', 'Reason', array('class' => 'control-label')) }}
+        {{ Form::label('reason', 'Reason *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::textarea('leave[reason]', $leave->reason, array('class' => 'form-control', 'rows' => '4')) }}
@@ -105,7 +105,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('approver_id', 'Approval', array('class' => 'control-label')) }}
+        {{ Form::label('approver_id', 'Approval *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">        
         {{ Form::select('approval[][approver_id]', $users, array_map(function($approver){return $approver['approver_id']; },(is_array(Input::old('approval')) ? Input::old('approval') : $leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple')) }}

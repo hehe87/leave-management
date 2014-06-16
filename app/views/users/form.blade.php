@@ -11,7 +11,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('name', 'Name', array('class' => 'control-label')) }}
+        {{ Form::label('name', 'Name *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::text('name', $user->name, array('class' => 'form-control', 'placeholder' => 'Full Name')) }}
@@ -33,7 +33,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('email', 'Email', array('class' => 'control-label')) }}
+        {{ Form::label('email', 'Email *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::email('email', $user->email, array('class' => 'form-control', 'placeholder' => 'Email')) }}
@@ -55,7 +55,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('password', 'Password', array('class' => 'control-label')) }}
+        {{ Form::label('password', 'Password *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'Password')) }}
@@ -77,7 +77,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('password_confirmation', 'Confirm Password', array('class' => 'control-label')) }}
+        {{ Form::label('password_confirmation', 'Confirm Password *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::password('password_confirmation',array('class' => 'form-control', 'placeholder' => 'Password Confirmation')) }}
@@ -99,7 +99,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('employeeType', 'User Type', array('class' => 'control-label')) }}
+        {{ Form::label('employeeType', 'User Type *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::select('employeeType', array('ADMIN' => 'ADMIN','EMPLOYEE' => 'EMPLOYEE'),(null !== Input::old('employeeType')) ? Input::old('employeeType') : $user->employeeType,array('class' => 'form-control')) }}
@@ -122,7 +122,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('doj', 'Date of Joining', array('class' => 'control-label')) }}
+        {{ Form::label('doj', 'Date of Joining *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::text('doj', $user->doj, array('class' => 'form-control date_control', 'placeholder' => 'Date of Joining')) }}
@@ -145,7 +145,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('dob', 'Date of Birth', array('class' => 'control-label')) }}
+        {{ Form::label('dob', 'Date of Birth *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::text('dob', $user->dob, array('class' => 'form-control date_control', 'placeholder' => 'Date of Birth')) }}
@@ -171,11 +171,11 @@
         {{ Form::label('inTime', 'In/Out Time', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-3">
-        {{ Form::text('inTime', $user->inTime, array('class' => 'form-control', 'placeholder' => 'In Time (hh:mm)')) }}
+        {{ Form::text('inTime', date('h:i A', strtotime($user->inTime)), array('class' => 'form-control timepicker', 'placeholder' => 'In Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
       <div class="col-sm-3">
-        {{ Form::text('outTime', $user->outTime, array('class' => 'form-control', 'placeholder' => 'Out Time (hh:mm)')) }}
+        {{ Form::text('outTime', date('h:i A', strtotime($user->outTime)), array('class' => 'form-control timepicker', 'placeholder' => 'Out Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
     </div>
@@ -195,7 +195,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('phone', 'Phone', array('class' => 'control-label')) }}
+        {{ Form::label('phone', 'Phone *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::text('phone', $user->phone, array('class' => 'form-control', 'placeholder' => 'Phone/Mobile Number')) }}

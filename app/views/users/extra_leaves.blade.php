@@ -14,7 +14,7 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-3">
-          <label class="control-label">Employee Name</label>
+          <label class="control-label">Employee Name *</label>
         </div>
         <div class="col-lg-8">
           <input type="text" class="form-control" placeholder="Search Employee" value="{{ Input::get('extra_leaves.employee_name') != '' ? Input::get('extra_leaves.employee_name') : (isset($data['username']) ? $data['username'] : '' ) }}" name="extra_leaves[employee_name]" autocomplete="off" id="user-search"  data-search_url="{{ URL::route('usersSearch') }}" data-view="singleColumnList" data-onblank="nil" data-onselect="getExtraLeaves" data-onselectajaxurl="{{ URL::route('users.getExtraLeaves') }}"/>
@@ -35,7 +35,7 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-3">
-          <label class="control-label">Select Leave</label>
+          <label class="control-label">Select Leave *</label>
         </div>
         <div class="col-lg-3">
           @if (isset($data) && !isset($data['paternityLeave']) && !isset($data['maternityLeave']))

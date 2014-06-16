@@ -13,7 +13,12 @@ $('#leavesTable').DataTable( {
         "order": [[ 4, "asc" ]]
     } );
 
-
+// Initialize timepickers
+ $('.timepicker').timepicker({
+    minuteStep: 5,
+    showInputs: false,
+    disableFocus: true
+  });
 
 // opens datepicker calendar on click of calendar icon appended to the date control input element
 $(document).on("click",".glyphicon-calendar", function(){
@@ -38,7 +43,7 @@ $(document).on("keyup", "#user-search",function(e){
     if(typeof onBlank == "undefined"){
       onBlank = "";
     }
-    if(window.xhr){
+    if(window.xhr){      
       window.xhr.abort();
     }
     

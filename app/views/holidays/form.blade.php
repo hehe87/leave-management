@@ -11,7 +11,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('holidayDate', 'Date', array('class' => 'control-label')) }}
+        {{ Form::label('holidayDate', 'Date *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::text('holidayDate', $holiday->holidayDate, array('class' => 'form-control date_control', 'placeholder' => 'Holiday Date')) }}
@@ -34,7 +34,7 @@
   <div class="col-sm-12">
     <div class="row">
       <div class="col-sm-2">
-        {{ Form::label('holidayDescription', 'Description', array('class' => 'control-label')) }}
+        {{ Form::label('holidayDescription', 'Description *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6">
         {{ Form::textarea('holidayDescription', $holiday->holidayDescription, array('class' => 'form-control', 'placeholder' => 'Holiday Description')) }}

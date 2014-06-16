@@ -269,6 +269,8 @@ class UsersController extends \BaseController {
   public function store()
   {
     $formData = Input::all();
+    $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));    
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {

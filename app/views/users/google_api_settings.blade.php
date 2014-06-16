@@ -13,7 +13,7 @@
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('gapi[client_id]', 'Client ID', array('class' => 'control-label')) }}
+          {{ Form::label('gapi[client_id]', 'Client ID *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('gapi[client_id]', Config::get('google.client_id'), array('class' => 'form-control', 'placeholder' => 'Client ID')) }}
@@ -34,7 +34,7 @@
     <div class="col-sm-12">
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('gapi[service_account_name]', 'Service Account Name', array('class' => 'control-label')) }}
+          {{ Form::label('gapi[service_account_name]', 'Service Account Name *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('gapi[service_account_name]', Config::get('google.service_account_name'), array('class' => 'form-control', 'placeholder' => 'Service Account Name')) }}
@@ -55,7 +55,7 @@
     <div class="col-sm-12">    
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('gapi[key_file_location]', 'Key File Location', array('class' => 'control-label')) }}
+          {{ Form::label('gapi[key_file_location]', 'Key File Location *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('gapi[key_file_location]', str_replace(base_path(),"",Config::get('google.key_file_location')), array('class' => 'form-control', 'placeholder' => 'Key File Location')) }}
@@ -76,7 +76,7 @@
     <div class="col-sm-12">    
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('gapi[timezone]', 'Time Zone', array('class' => 'control-label')) }}
+          {{ Form::label('gapi[timezone]', 'Time Zone *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('gapi[timezone]', Config::get('google.timezone'), array('class' => 'form-control', 'placeholder' => 'Time Zone')) }}
@@ -98,7 +98,7 @@
     <div class="col-sm-12">    
       <div class="row">
         <div class="col-sm-3">
-          {{ Form::label('gapi[calendar_id]', 'Calendar ID', array('class' => 'control-label')) }}
+          {{ Form::label('gapi[calendar_id]', 'Calendar ID *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
           {{ Form::text('gapi[calendar_id]', Config::get('google.calendar_id'), array('class' => 'form-control', 'placeholder' => 'Calendar ID')) }}

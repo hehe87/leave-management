@@ -32,6 +32,7 @@ Purpose		: Custom styles for leave management system
 
 .slot_from{
 	width:260px;
+  margin-left: 12px;
 	float:left;
 }
 .slot_to{

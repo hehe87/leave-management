@@ -14,15 +14,16 @@
     <link rel="shortcut icon" href="{{ asset('assets/img/lms.ico') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/img/lms.ico') }}" type="image/vnd.microsoft.icon">
     <!-- including Stylesheets -->
-    <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/bootstrap.min.css')}}}">
-    <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/ui-lightness/jquery-ui-1.10.4.css')}}}">
+    {{ HTML::style('assets/css/bootstrap.min.css') }}
+    {{ HTML::style('assets/css/ui-lightness/jquery-ui-1.10.4.css') }}
     {{ HTML::style('assets/css/jquery.dataTables.min.css') }}
     {{ HTML::style('assets/css/dataTables.bootstrap.css') }}
     {{ HTML::style('assets/css/bootstrap-multiselect.css') }}
     {{ HTML::style('assets/css/mdp.css') }}
     {{ HTML::style('assets/css/pepper-ginder-custom.css') }}
     {{ HTML::style('assets/css/prettify.css') }}
-    <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
+    {{ HTML::style('assets/css/bootstrap-timepicker.min.css') }}
+    {{ HTML::style('assets/css/admin_panel.css') }}
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
     
@@ -125,17 +126,18 @@
     
     
     <!-- Including Scripts -->
-    <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
+    {{ HTML::script('assets/js/jquery.min.js') }}
+    {{ HTML::script('assets/js/bootstrap.min.js') }}
+    {{ HTML::script('assets/js/jquery.ui.js') }}
+    {{ HTML::script('assets/js/jquery.easing.js') }}
     {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
     {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
     {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
-    <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
+    {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
+    {{ HTML::script('assets/js/admin_panel.js') }}
+    {{ HTML::script('assets/js/common.js') }}    
     <!-- End including Scripts -->
   </body>
 </html>
