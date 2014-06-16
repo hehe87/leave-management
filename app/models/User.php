@@ -150,9 +150,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Purpose:	      	This function calculates total number of leaves for current year for current user object using his/her date of joining.
   */
   public function getTotalLeaves(){
+    $currentYear = (int)date("Y");
+    $previousYear = $currentYear - 1;
+    $thisYearTotalLeaves = $this->getTotalLeavesForYear($currentYear);
+    $previousYearLeaves = $this->getTotalLeavesForYear($previousYear);
+    if($previousYearLeaves >= Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days){
+      $thisYearTotalLeaves += Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days;
+    }
+    else{
+      $thisYearTotalLeaves += $previousYearLeaves;
+    }
+    return $thisYearTotalLeaves;
+  }
+  
+  
+  /**
+    Function Name: 	getRemainingLeaves
+    Author Name:	Nicolas Naresh
+    Date:		June, 02 2014
+    Parameters:	        -
+    Purpose:	      	This function calculates total number of leaves for current year for current user object
+			using his/her date of joining.
+  */
+  public function getRemainingLeaves(){
+    return $this->getRemainingLeavesForYear(date("Y"));
+  }
+
+
+  /**
+    Function Name     : getTotalLeavesForYear
+    Author Name       : Nicolas Naresh
+    Date              : June 16, 2014
+    Parameters        : $year
+    Purpost           : this function returns the count of all the leaves for current user for a given year.
+  */
+  public function getTotalLeavesForYear($year){
     $paidLeaves = Config::get("leave_config.paid_leaves");
     $allLeaves = $paidLeaves;
-    $currentDate = new DateTime(date("Y-m-d"));
+    $currentDate = new DateTime(date("Y-m-d", mktime(0,0,0,1,1,$year)));
     $currentYear = (int)$currentDate->format("Y");
     $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
@@ -198,29 +233,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
       $allLeaves += $yearsInCompany;
     }
 
-    $extraLeaves = Extraleave::where("user_id", $this->id)->get();
+    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $currentYear)->get();
 
     foreach($extraLeaves as $extraL){
       $allLeaves += $extraL->leaves_count;
     }
 
-    
-
-    
     return $allLeaves;
   }
-  
-  
+
   /**
-    Function Name: 	getRemainingLeaves
-    Author Name:	Nicolas Naresh
-    Date:		June, 02 2014
-    Parameters:	        -
-    Purpose:	      	This function calculates total number of leaves for current year for current user object
-			using his/her date of joining.
+    Function Name     : getRemainingLeavesForYear
+    Author Name       : Nicolas Naresh
+    Date              : June 16, 2014
+    Parameters        : $year
+    Purpost           : this function returns the count of all the leaves for current user for a given year.
   */
-  public function getRemainingLeaves(){
-    $totalLeaves = $this->getTotalLeaves();
+  public function getRemainingLeavesForYear($year){
+    $totalLeaves = $this->getTotalLeavesForYear($year);
     $remainingLeaves = $totalLeaves;
     $userLeaves = $this->leaves()->get();
     foreach($userLeaves as $uLeave){
@@ -235,24 +265,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         $remainingLeaves -= 1;
       }
     }
-    $extraLeaves = Extraleave::where("user_id", $this->id)->get();
+    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
 
     foreach($extraLeaves as $extraL){
       $remainingLeaves -= $extraL->leaves_count;
     }
     return $remainingLeaves;
-  }
-
-
-  /**
-    Function Name     : getTotalLeavesForYear
-    Author Name       : Nicolas Naresh
-    Date              : June 16, 2014
-    Parameters        : $year
-    Purpost           : this function returns the count of all the leaves for current user for a given year.
-  */
-  public function getTotalLeavesForYear($year){
-    
   }
   
   /**
