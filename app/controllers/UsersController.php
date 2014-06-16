@@ -278,6 +278,8 @@ class UsersController extends \BaseController {
     }
     else{
       $formData = Input::except("password_confirmation","_token");
+      $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
+      $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
       $formData["password"] = Hash::make($formData["password"]);
       $user = User::create($formData);
       $user->totalLeaves = $user->getTotalLeaves();

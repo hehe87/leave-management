@@ -25,6 +25,10 @@
 	    <tr>
 	      <td>
 		{{date('d-m-Y', strtotime($leave->leave_date))}}
+    @if("LONG" == $leave->leave_type)
+      to {{ date('d-m-Y', strtotime($leave->leave_to)) }}
+      {{ Carbon::createFromFormat('Y-m-d',$leave->leave_date)->diffInDays(Carbon::createFromFormat('Y-m-d',$leave->leave_to)) + 1 }} day(s)
+    @endif
 	      </td>
 	      <td>
 		@if( "LEAVE" == $leave->leave_type )
