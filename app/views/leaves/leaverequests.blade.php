@@ -41,7 +41,7 @@
 						        @foreach($leaveReq->leave->csrs as $csr)
 					            <tr>
 					            	<td>
-					            		{{ date('H:i A',strtotime($csr['from_time'])) }} to {{ date('H:i A', strtotime($csr['to_time'])) }}
+					            		{{ date('h:i A',strtotime($csr['from_time'])) }} to {{ date('h:i A', strtotime($csr['to_time'])) }}
 				            		</td>
 			            		</tr>
 						        @endforeach

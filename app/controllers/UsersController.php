@@ -270,7 +270,7 @@ class UsersController extends \BaseController {
   {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));    
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));        
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {
@@ -314,7 +314,7 @@ class UsersController extends \BaseController {
   {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));    
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime'])); 
     $validator = User::validateRegistrationForm($formData, false);
     if($validator->fails())
     {
@@ -322,6 +322,8 @@ class UsersController extends \BaseController {
     }
     else{
       $formData = Input::except("password_confirmation","_token");
+      $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
+      $formData['outTime'] = date('H:i:s', strtotime($formData['outTime'])); 
       if(!empty($formData["password"])){
         $formData["password"] = Hash::make($formData["password"]);
       }

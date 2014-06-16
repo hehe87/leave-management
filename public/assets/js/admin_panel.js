@@ -9,17 +9,19 @@
 */
 
 // Initialize the datatables
-$('#leavesTable').DataTable( {
-        "order": [[ 4, "asc" ]]
-    } );
-
+if(0 != $('#leavesTable').length) {
+  $('#leavesTable').DataTable( {
+          "order": [[ 4, "asc" ]]
+      } );
+}
 // Initialize timepickers
+if (0 != $('.timepicker').length) {
  $('.timepicker').timepicker({
     minuteStep: 5,
     showInputs: false,
     disableFocus: true
   });
-
+}
 // opens datepicker calendar on click of calendar icon appended to the date control input element
 $(document).on("click",".glyphicon-calendar", function(){
   $(this).prev(".ui-datepicker-trigger").click();

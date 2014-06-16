@@ -235,16 +235,7 @@ $(document).on("ready",function(){
         }
         
       }
-    
-    
-    
-    
-    
-    
-    
-    
     })
-    
   }
     
   ////applies datepicker on date_control class
@@ -266,39 +257,7 @@ $(document).on("ready",function(){
   
   
   // update leave request status
-  $('.approve-status-change').on('click', function (e) {
-    var approvalStatus = $(this).data("approve_status");
-    var approvalId = $(this).data("approval_id");
-    var approvalUrl = $(this).data("approval_url");
-    var $this = $(this);
-    $.ajax({
-      type: 'post',
-      url: approvalUrl,
-      data: {approvalStatus: approvalStatus, approvalId: approvalId},
-      dataType: "json",
-      success: function(data){
-        if(approvalStatus == "YES"){
-          $this.parent().html(getApprovedInfoHTML());
-        }
-        else{
-          $this.parent().html(getRejectedInfoHTML());
-        }
-      }
-    });
-  });
   
-  $('.view-approvals').on('click', function(e){
-    var url = $(this).data("url");
-    $.ajax({
-      url: url,
-      type: "get",
-      success: function(retdata){
-        $("#user-modal .modal-title").text("Your Leave Approvals");
-        $("#user-modal .modal-body").html(retdata);
-        $("#user-modal").modal('show');
-      }
-    });
-  });
   
   
   if($('.multiple-select-with-checkbox').length != 0){
@@ -334,10 +293,47 @@ $(document).on("ready",function(){
       });
     }
   });
-  
- 
-  
 });
+
+
+
+$(document).on('click','.approve-status-change', function (e) {
+  var approvalStatus = $(this).data("approve_status");
+  var approvalId = $(this).data("approval_id");
+  var approvalUrl = $(this).data("approval_url");
+  var $this = $(this);
+  $.ajax({
+    type: 'post',
+    url: approvalUrl,
+    data: {approvalStatus: approvalStatus, approvalId: approvalId},
+    dataType: "json",
+    success: function(data){
+      if(approvalStatus == "YES"){
+        $this.parent().html(getApprovedInfoHTML());
+      }
+      else{
+        $this.parent().html(getRejectedInfoHTML());
+      }
+    }
+  });
+});
+
+$(document).on('click', '.view-approvals', function(e){
+  var url = $(this).data("url");
+  $.ajax({
+    url: url,
+    type: "get",
+    success: function(retdata){
+      $("#user-modal .modal-title").text("Your Leave Approvals");
+      $("#user-modal .modal-body").html(retdata);
+      $("#user-modal").modal('show');
+    }
+  });
+});
+
+
+
+
 
 function getMultipleCheckboxHTML(name,key,val, checked){
   var checkboxinput_checked = "";
