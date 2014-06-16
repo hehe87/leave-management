@@ -107,23 +107,26 @@ $(document).on("keydown", "#user-search",function(e){
 
 $(document).on("submit","#report-form",function(e){
   var hasErrors = false;
-  var $form = $(this);
-  var inputs = $(this).find("input");
-  var selects = $(this).find("select");
-  for(i=0;i<inputs.length;i++){
-    if($.trim($(inputs[i]).val()) == ""){
-      hasErrors = true;
-      break;
-    }
-  }
-  if(!hasErrors){
-    for(i=0;i<selects.length;i++){
-      if($.trim($(selects[i]).val()) == ""){
+  if($("#leave-type").val() != "ALL"){
+    var $form = $(this);
+    var inputs = $(this).find("input");
+    var selects = $(this).find("select");
+    for(i=0;i<inputs.length;i++){
+      if($.trim($(inputs[i]).val()) == ""){
         hasErrors = true;
         break;
       }
     }
+    if(!hasErrors){
+      for(i=0;i<selects.length;i++){
+        if($.trim($(selects[i]).val()) == ""){
+          hasErrors = true;
+          break;
+        }
+      }
+    }
   }
+  
   if(hasErrors){
     alert("Please enter/select all search inputs first!!");
     return false;
@@ -131,6 +134,22 @@ $(document).on("submit","#report-form",function(e){
   else{
     $("#report-form").submit();
   }
+});
+
+$(document).on("change","#report-form #leave-type",function(){
+  var $form = $("#report-form");
+  var inputs = $form.find("input");
+  var selects = $form.find("select");
+  if($(this).val() == "ALL"){
+    inputs.hide();
+    selects.hide();
+  }
+  else{
+    inputs.show();
+    selects.show(); 
+  }
+  $("#report-form #leave-type").show();
+  $("input[name='generate_report']").show();
 });
 
 
@@ -237,6 +256,18 @@ $(document).on("ready",function(e){
   var tabID = location.href.split("#")[1];
   if(typeof tabID != "undefined"){
     $("a[href='#"+tabID+"']").tab('show');
+  }
+
+  if($("#report-form #leave-type").length == 1){
+    var $form = $("#report-form");
+    var inputs = $form.find("input");
+    var selects = $form.find("select");
+    if($("#report-form #leave-type").val() == "ALL"){
+      inputs.hide();
+      selects.hide();
+    }
+    $("#report-form #leave-type").show();
+    $("input[name='generate_report']").show();
   }
 });
 

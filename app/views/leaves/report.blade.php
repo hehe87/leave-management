@@ -6,12 +6,14 @@
       <form action="" method="get" id="report-form" role="form">
         <div class="row">
           <div class="col-lg-2">
-            <select class="form-control required" name="leave_type">
+            <select class="form-control required" name="leave_type" id="leave-type">
+              <option value="">Select</option>
+              <option value="ALL"{{  Input::get("leave_type") === "ALL" ? "selected" : "" }}>ALL</option>
               <option value="CSR" {{  Input::get("leave_type") === "CSR" ? "selected" : "" }}>CSR</option>
               <option value="LEAVE" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Leave</option>
-              <option value="FH" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>First Half</option>
-              <option value="SH" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Second Half</option>
-              <option value="LONG" {{  Input::get("leave_type") === "LEAVE" ? "selected" : "" }}>Long Leave</option>              
+              <option value="FH" {{  Input::get("leave_type") === "FH" ? "selected" : "" }}>First Half</option>
+              <option value="SH" {{  Input::get("leave_type") === "SH" ? "selected" : "" }}>Second Half</option>
+              <option value="LONG" {{  Input::get("leave_type") === "LONG" ? "selected" : "" }}>Long Leave</option>              
             </select>
           </div>
           <div class="col-lg-2">
@@ -75,63 +77,15 @@
   <div class="row margin-top-10 {{ !is_null($leaves) ? 'show' : 'hide' }}">
     @if(isset($leaves) && (count($leaves->toArray())!=0))
       <table class="table table-striped table-bordered table-hover ">
-        <thead>
-          <tr>
-            <th style="vertical-align: middle; text-align: center;">
-              Date
-            </th>
-            @if($leaves->first()->leave_type === "CSR")
-              <th style="width: 21.5%;">
-                From Time
-              </th>
-              <th>
-                To Time
-              </th>
-            @else
-              <th>
-                Reason
-              </th>
-            @endif
-            <th>
-              Approved By
-            </th>
-          </tr>
-        </thead>
-        
-          @foreach($leaves as $leave)
-            <tbody>
-              <tr>
-                @if($leave->leave_type === "CSR")
-                  <td style="border: 1px solid #ddd vertical-align: middle; text-align: center;">{{ date("d-m-Y",strtotime($leave->leave_date)) }}</td>
-                @else
-                  <td style="border: 1px solid #ddd vertical-align: middle; text-align: center;">{{ date("d-m-Y",strtotime($leave->leave_date)) }}</td>
-                  <td>{{ $leave->reason }}</td>
-                  <td align="center">
-                    <a class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}" title="View Approvals"><span class="glyphicon glyphicon-eye-open"></span></a>
-                  </td>
-                @endif
-                @if($leave->leave_type === "CSR")
-                  <td colspan="2">
-                    <table class="table table-bordered margin-bottom-0">
-                      @foreach($leave->csrs as $csr)
-                        <tr>
-                          <td>
-                            {{ $csr->from_time }}
-                          </td>
-                          <td>
-                            {{ $csr->to_time }}
-                          </td>
-                        </tr>
-                      @endforeach
-                    </table>
-                  </td>
-                  <td align="center" style="vertical-align: middle;">
-                    <a class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}" title="View Approvals"><span class="glyphicon glyphicon-eye-open"></span></a>
-                  </td>
-                @endif
-              </tr>
-            </tbody>
-          @endforeach
+        @if(Input::get("leave_type") == "ALL")
+           @include("leaves.allReport");
+        @else
+          @if(Input::get("leave_type") == "CSR")
+            @include("leaves.csrReport");
+          @else
+            @include("leaves.leaveReport");
+          @endif
+        @endif
       </table>
     @endif
   </div>

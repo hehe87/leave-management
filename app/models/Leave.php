@@ -17,7 +17,8 @@ class Leave extends \Eloquent {
 	const REJECTED_BY_ALL  = 4;
 
 	// Validation Rules
-	public static $rules = [		
+	public static $rules = [
+		'leave_option' => 'required|in:LEAVE,CSR',
 		'leave_date'  => 'required',
 		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH,LONG,MULTI',
 		'reason'	  => 'required',		

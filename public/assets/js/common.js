@@ -8,12 +8,36 @@
   Most Important Related Files:     -
 */
 
-$('#leave_type').on('change', function(elem){
+$('#leave_option').on('change', function(elem){
+  var leave_option = $(this).val();
+  $csr_container = $('#csr-container');
+  if( 'CSR' == leave_option )
+  {
+    $csr_container.removeClass("hide");
+    $("#leave-type-form-group").addClass("hide");
+    $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
+  }
+  else{
+    if('' == leave_option){
+      $csr_container.addClass("hide");
+      $("#leave-type-form-group").addClass("hide");
+    }
+    else{
+      $csr_container.addClass("hide");
+      $("#leave-type-form-group").removeClass("hide");
+    }
+    
+  }
+});
+
+
+$('#leave_type').on('change',function(e){
+
   var leave_type = $(this).val();
   $csr_container = $('#csr-container');
   if( 'CSR' == leave_type )
   {
-    $csr_container.removeClass("hide").addClass("show");
+    $csr_container.removeClass("hide");
     $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
     
   }
@@ -60,10 +84,19 @@ $('#leave_type').on('change', function(elem){
   }
   $("#date-control").val('');
   $("#date-control").multiDatesPicker('resetDates');
+
 });
+
+
+
+
 
 $(document).on("ready",function(){
   if($("#addSlot").length == 1){
+    if($("#timeSlot").find(".row.form-group").length == 2)
+    {
+      $("#addSlot").remove();
+    }
     window.timeSlotHtml = $('#timeSlot').find(".row.form-group").last().html();
     $('#addSlot').on('click', function(e){
       var slotCount = $("#timeSlot").find(".row.form-group").length.toString();
@@ -74,6 +107,10 @@ $(document).on("ready",function(){
         $name = $name.replace(/[0-9]+/g,slotCount);
         $(this).attr("name",$name);
       });
+      if($("#timeSlot").find(".row.form-group").length == 2)
+      {
+        $("#addSlot").remove();
+      }
     });
   } 
 });

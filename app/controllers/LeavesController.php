@@ -73,7 +73,16 @@ class LeavesController extends \BaseController {
 	  $validator_leave = [];
 	  $validator_csr = [];
 	  $inputs = Input::all();
+
+
+
 	  $leave = $inputs['leave'];
+	  $leave['leave_option'] = $inputs['leave_option'];
+	  if($inputs['leave_option'] == 'CSR'){
+	  	$leave['leave_type'] = 'CSR';
+	  	$inputs['leave']['leave_type'] = 'CSR';
+	  }
+
 	  $hasLeaveError = false;
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
@@ -218,17 +227,21 @@ class LeavesController extends \BaseController {
 	  }
 	  $users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
 	  $inputCSRs = array();
+
 	  if($leave->leave_type == "CSR"){
 	    $csrs = $leave->csrs;
 	    foreach($csrs as $csr){
 	      $from_time = new DateTime($csr->from_time);
 	      $to_time = new DateTime($csr->to_time);
-	      $from_hour = $from_time->format("h");
+	      $from_hour = $from_time->format("H");
 	      $from_min = $from_time->format("i");
-	      $to_hour = $to_time->format("h");
+	      $to_hour = $to_time->format("H");
 	      $to_min = $to_time->format("i");
 	      $inputCSRs[] = array("from" => array("hour" => $from_hour, "min" => $from_min), "to" => array("hour" => $to_hour, "min" => $to_min));
 	    }
+	  }
+	  else{
+
 	  }
 	  //$this->pre_print($inputCSRs);
 	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
@@ -252,6 +265,8 @@ class LeavesController extends \BaseController {
 	  $hasLeaveError = false;
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
+	  $leaveObj = Leave::findOrFail($id);
+	  $leave['leave_option'] = ($leaveObj->leave_type === 'CSR') ? 'CSR' : 'LEAVE';
 	  $validator_leave = Validator::make($leave, Leave::$rules);
 	  
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
@@ -303,7 +318,6 @@ class LeavesController extends \BaseController {
 	  }
 	  
 	  $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-	  $leaveObj = Leave::findOrFail($id);
 	  
 	  if($leaveObj->leave_type === "LONG" || $leave["leave_type"] === "LONG"){
 	    $ldates = explode(",",$leave["leave_date"]);
@@ -394,37 +408,43 @@ class LeavesController extends \BaseController {
 	  $searchData = Input::all();
 	  $leaves = null;
 	  if(!empty($searchData)){
-	    $user = User::where("name", $searchData["employee_name"])->get()->first();
-	    $leaveType = $searchData["leave_type"];
-	    switch($searchData['date_option']){
-	      case "between-dates":
-		$leaves = Leave::where("user_id", $user->id)
-		->whereBetween("leave_date", array($searchData["from_date"], $searchData["to_date"]))
-		->where("leave_type", $leaveType)
-		->get();
-		break;
-	      case "by-date":
-		$leaves = Leave::where("user_id", $user->id)
-		->where("leave_date", $searchData["on_date"])
-		->where("leave_type", $leaveType)
-		->get();
-		break;
-	      case "by-year":
-		$leaves = Leave::where("user_id", $user->id)
-		->where(DB::raw("YEAR(leave_date)"), $searchData["year"])
-		->where("leave_type", $leaveType)
-		->get();
-		break;
-	      case "by-month":
-		$leaves = Leave::where("user_id", $user->id)
-		->where(DB::raw("YEAR(leave_date)"), date("Y"))
-		->where(DB::raw("MONTH(leave_date)"), date("m"))
-		->where("leave_type", $leaveType)
-		->get();
-		break;
-	    }
+
+	  	if($searchData["leave_type"] == "ALL"){
+	  		$leaves = Leave::all();
+	  	}
+	  	else{
+	  		$user = User::where("name", $searchData["employee_name"])->get()->first();
+		    $leaveType = $searchData["leave_type"];
+		    switch($searchData['date_option']){
+		      case "between-dates":
+			$leaves = Leave::where("user_id", $user->id)
+			->whereBetween("leave_date", array($searchData["from_date"], $searchData["to_date"]))
+			->where("leave_type", $leaveType)
+			->get();
+			break;
+		      case "by-date":
+			$leaves = Leave::where("user_id", $user->id)
+			->where("leave_date", $searchData["on_date"])
+			->where("leave_type", $leaveType)
+			->get();
+			break;
+		      case "by-year":
+			$leaves = Leave::where("user_id", $user->id)
+			->where(DB::raw("YEAR(leave_date)"), $searchData["year"])
+			->where("leave_type", $leaveType)
+			->get();
+			break;
+		      case "by-month":
+			$leaves = Leave::where("user_id", $user->id)
+			->where(DB::raw("YEAR(leave_date)"), date("Y"))
+			->where(DB::raw("MONTH(leave_date)"), date("m"))
+			->where("leave_type", $leaveType)
+			->get();
+			break;
+		    }
+	  	}
+	    
 	  }
-	  
 	  return View::make('leaves.report')->withInputs($searchData)->with("leaves",$leaves);
 	}
 	

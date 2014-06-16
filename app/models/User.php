@@ -147,8 +147,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Author Name:	Nicolas Naresh
     Date:		June, 02 2014
     Parameters:	        -
-    Purpose:	      	This function calculates total number of leaves for current year for current user object
-			using his/her date of joining.
+    Purpose:	      	This function calculates total number of leaves for current year for current user object using his/her date of joining.
   */
   public function getTotalLeaves(){
     $paidLeaves = Config::get("leave_config.paid_leaves");
@@ -156,15 +155,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentDate = new DateTime(date("Y-m-d"));
     $currentYear = (int)$currentDate->format("Y");
     $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
-    
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
-    
-    
-    
-    $nonOptionalHolidays = Holiday::where("holidayType", "=", "NONOPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+
     $dateOfJoining = new DateTime($this->doj);
     $joiningYear = (int)$dateOfJoining->format("Y");
     $joiningYearStart = YearStart::where("year", $joiningYear)->first();
+
     if($joiningYearStart){
       $joiningYearStartDay = $joiningYearStart->startDay;
       $joiningYearStartMonth = $joiningYearStart->startMonth;
@@ -173,42 +169,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
       $joiningYearStartDay = 15;
       $joiningYearStartMonth = 1;
     }
-    //$config_last_leave_date = Config::get("leave_config.new_official_year_date");
-    //$config_last_leave_date = explode("-",$config_last_leave_date);
-    //$allMonths = array("Jan" => 1, "Feb" => 2, "Mar" => 3, "Apr" => 4,
-    //  "May" => 5, "Jun" => 6, "Jul" => 7, "Aug" => 8, "Sep" => 9, "Oct" => 10, "Nov" => 11, "Dec" => 12);
-    //$mon = $allMonths[$config_last_leave_date[1]]
-    //$d = $config_last_leave_date[0];
+
     $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,$joiningYearStartMonth,$joiningYearStartDay,$joiningYear)));
-    
+
     $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
+
     $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
-    
+
     $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
-    
+
     if(!$isJoinedBeforeLastLeaveDateOfJoiningYear && !$isJoinedInCurrentYear){
       $yearsInCompany -= 1;
     }
-    foreach($optionalHolidays as $oHoliday){
-      $allLeaves += 1;
+
+    $allLeaves += $optionalHolidaysCount;
+
+
+    $leavesPerMonth = $allLeaves / 12;
+
+    if($isJoinedInCurrentYear){
+      $lastYearDateTS = mktime(0,0,0,12,31,$currentYear);
+      $joiningDateTS = mktime(0,0,0,$dateOfJoining->format("m"), $dateOfJoining->format("d"), $dateOfJoining->format("Y"));
+      $diff = $lastYearDateTS - $joiningDateTS;
+      $diffMonths = $diff / (24 * 60 * 60 * 30);
+      $allLeaves = round($diffMonths * $leavesPerMonth, 1);
     }
-//    if($isJoinedInCurrentYear){
-//      $joiningDateUT = strtotime($this->doj);
-//      foreach($optionalHolidays as $oHoliday){
-//	$oHolidayDate = new DateTime($oHoliday->holidayDate);
-//	$oHolidayDateUT = strtotime($oHoliday->holidayDate);
-//	if($joiningDateUT < $oHolidayDateUT){
-//	  $allLeaves += 1;
-//	}
-//      }
-//    }
-//    else{
-//      foreach($optionalHolidays as $oHoliday){
-//	$allLeaves += 1;
-//      }
-//    }
+    else{
+      $allLeaves += $yearsInCompany;
+    }
+
+    $extraLeaves = Extraleave::where("user_id", $this->id)->get();
+
+    foreach($extraLeaves as $extraL){
+      $allLeaves += $extraL->leaves_count;
+    }
+
     
-    $allLeaves += $yearsInCompany;
+
+    
     return $allLeaves;
   }
   
@@ -222,34 +220,39 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			using his/her date of joining.
   */
   public function getRemainingLeaves(){
-    $currentDate = new DateTime(date("Y-m-d"));
-    $currentYear = (int)$currentDate->format("Y");
-    
-    $totalLeaves = $this->totalLeaves;
+    $totalLeaves = $this->getTotalLeaves();
     $remainingLeaves = $totalLeaves;
-    $joiningDate = $this->doj;
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
-    foreach($optionalHolidays as $oHoliday){
-      $oh = strtotime($oHoliday->holidayDate);
-      $jd = strtotime($this->doj);
-      if($oh < $jd){
-	$remainingLeaves -= 1;
-      }
-    }
     $userLeaves = $this->leaves()->get();
     foreach($userLeaves as $uLeave){
       $isApproved = true;
       foreach($uLeave->approvals as $approval){
-	if($approval->approved != "YES"){
-	  $isApproved = false;
-	  break;
-	}
+        if($approval->approved != "YES"){
+          $isApproved = false;
+          break;
+        }
       }
       if($isApproved){
-	$remainingLeaves -= 1;
+        $remainingLeaves -= 1;
       }
     }
+    $extraLeaves = Extraleave::where("user_id", $this->id)->get();
+
+    foreach($extraLeaves as $extraL){
+      $remainingLeaves -= $extraL->leaves_count;
+    }
     return $remainingLeaves;
+  }
+
+
+  /**
+    Function Name     : getTotalLeavesForYear
+    Author Name       : Nicolas Naresh
+    Date              : June 16, 2014
+    Parameters        : $year
+    Purpost           : this function returns the count of all the leaves for current user for a given year.
+  */
+  public function getTotalLeavesForYear($year){
+    
   }
   
   /**
