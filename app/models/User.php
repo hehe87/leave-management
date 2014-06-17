@@ -153,7 +153,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)date("Y");
     $previousYear = $currentYear - 1;
     $thisYearTotalLeaves = $this->getTotalLeavesForYear($currentYear);
-    if(date("Y",strtotime($user->doj)) != date("Y")){
+    if(date("Y",strtotime($this->doj)) != date("Y")){
       $previousYearLeaves = $this->getTotalLeavesForYear($previousYear);
       if($previousYearLeaves >= Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days){
         $thisYearTotalLeaves += Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days;
