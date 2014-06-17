@@ -23,10 +23,10 @@ Route::post('/password/forgot', array('as' => 'postUserForgotPassword', 'uses' =
 Route::get('/password/change/{token}', array('as' => 'userChangePassword', 'uses' => 'UsersController@getChangePassword'));
 Route::post('/password/change/{token}', array('as' => 'postUserChangePassword', 'uses' => 'UsersController@postChangePassword'));
 
-
+Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
+Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
+	
 Route::group(array('before' => 'auth.admin'), function(){
-	Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
-	Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
 	Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
 	Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));
 	Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));

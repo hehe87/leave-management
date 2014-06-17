@@ -17,6 +17,8 @@ class UsersController extends \BaseController {
       	'except' => array(
       	  'getLogin',
       	  'postLogin',
+          'create',
+          'store',
       	  'getForgotPassword',
       	  'postForgotPassword',
       	  'getChangePassword',

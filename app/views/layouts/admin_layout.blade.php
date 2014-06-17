@@ -46,7 +46,7 @@
             </div>
             <div class="col-lg-3">
               <div class="text-center">
-                <span class="link">Logged in as <b>{{ Auth::user()->name }}</b></span>
+                <span class="link">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></span>
                 <a class="link logout-link" href="{{ URL::route('userLogout') }}">
                   Logout
                 </a>
@@ -85,7 +85,7 @@
               <a href="{{URL::route('users.settings')}}">Settings</a>
             </li>
           <li class="small-window-show">
-            <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
+            <a class="link" href="#">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></a>
           </li>
           <li class="small-window-show">
             <a class="link" href="{{ URL::route('userLogout') }}">

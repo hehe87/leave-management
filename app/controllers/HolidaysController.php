@@ -28,7 +28,7 @@ class HolidaysController extends \BaseController {
   */
   public function index(){
     $currentYear = date("Y");
-    $holidays = Holiday::where(DB::raw("EXTRACT(YEAR FROM timestamp holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $holidays = Holiday::where(DB::raw('EXTRACT(YEAR FROM "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     return View::make("holidays.index")->with("holidays",$holidays);
   }
   

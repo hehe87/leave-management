@@ -189,7 +189,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)$currentDate->format("Y");
     $paidLeaves = Leaveconfig::getConfig("paid_leaves", $currentYear)->leave_days;
     $allLeaves = $paidLeaves;
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("EXTRACT( YEAR from timestamp holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
 
     $dateOfJoining = new DateTime($this->doj);
