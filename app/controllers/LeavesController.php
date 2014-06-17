@@ -430,13 +430,13 @@ class LeavesController extends \BaseController {
 			break;
 		      case "by-year":
 			$leaves = Leave::where("user_id", $user->id)
-			->where(DB::raw("YEAR(leave_date)"), $searchData["year"])
+			->where(DB::raw("EXTRACT(YEAR FROM timstamp leave_date)"), $searchData["year"])
 			->where("leave_type", $leaveType)
 			->get();
 			break;
 		      case "by-month":
 			$leaves = Leave::where("user_id", $user->id)
-			->where(DB::raw("YEAR(leave_date)"), date("Y"))
+			->where(DB::raw("EXTRACT(YEAR FROM timstamp leave_date)"), date("Y"))
 			->where(DB::raw("MONTH(leave_date)"), date("m"))
 			->where("leave_type", $leaveType)
 			->get();
