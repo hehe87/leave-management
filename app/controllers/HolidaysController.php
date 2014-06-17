@@ -62,6 +62,7 @@ class HolidaysController extends \BaseController {
       return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput();
     }
     else{
+      $formData["holidayType"] = "OPTIONAL";
       Holiday::create($formData);
       return Redirect::to(URL::route("holidaysListing"));
     }
