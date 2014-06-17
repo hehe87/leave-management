@@ -8,8 +8,8 @@ try{
 	$database = substr($url["path"], 1);
 }catch(Exception $ex){
 	$host = "localhost";
-	$username = "root";
-	$password = "Rubi@123";
+	$username = "postgres";
+	$password = "postgres";
 	$database = "lms-db";
 }
 
