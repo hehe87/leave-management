@@ -1,4 +1,10 @@
 <?php
+$url = parse_url(getenv("HEROKU_POSTGRESQL_PINK_URL"));
+
+$host = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$database = substr($url["path"], 1);
 
 return array(
 
@@ -26,7 +32,7 @@ return array(
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => 'pgsql',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -65,13 +71,13 @@ return array(
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',
-			'host'     => 'localhost',
-			'database' => 'forge',
-			'username' => 'forge',
-			'password' => '',
+			'host'     => $host,
+			'database' => $database,
+			'username' => $username,
+			'password' => $password,
 			'charset'  => 'utf8',
 			'prefix'   => '',
-			'schema'   => 'lms_db',
+			'schema'   => 'public',
 		),
 
 		'sqlsrv' => array(
