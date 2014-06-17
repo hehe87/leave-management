@@ -1,10 +1,18 @@
 <?php
-$url = parse_url(getenv("HEROKU_POSTGRESQL_PINK_URL"));
+try{
+	$url = parse_url(getenv("HEROKU_POSTGRESQL_PINK_URL"));
 
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$database = substr($url["path"], 1);
+	$host = $url["host"];
+	$username = $url["user"];
+	$password = $url["pass"];
+	$database = substr($url["path"], 1);
+}catch(Exception $ex){
+	$host = "localhost";
+	$username = "root";
+	$password = "Rubi@123";
+	$database = "lms-db";
+}
+
 
 return array(
 
@@ -32,7 +40,7 @@ return array(
 	|
 	*/
 
-	'default' => 'pgsql',
+	'default' => 'mysql',
 
 	/*
 	|--------------------------------------------------------------------------
