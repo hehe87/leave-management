@@ -16,7 +16,7 @@ Purpose		: Custom styles for leave management system
 }
 
 .input-group-addon-new{
-	padding: 9px 12px;
+	padding: 9px 3px;
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 1;
@@ -31,12 +31,12 @@ Purpose		: Custom styles for leave management system
 }
 
 .slot_from{
-	width:260px;
+	width:270px;
   margin-left: 12px;
 	float:left;
 }
 .slot_to{
-	width:260px;
+	width:217px;
 	float:right;
 }
 

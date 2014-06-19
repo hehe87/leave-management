@@ -54,8 +54,9 @@ class LeavesController extends \BaseController {
 	
 	public function create()
 	{
-		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
+		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
 		$leave = new Leave();
+		$leave->leave_type = "";
 		return View::make('leaves.create')->with('users', $users)->with('leave' , $leave);
 	}
 
@@ -77,10 +78,13 @@ class LeavesController extends \BaseController {
 
 
 	  $leave = $inputs['leave'];
-	  $leave['leave_option'] = $inputs['leave_option'];
+	  $leave['leave_option'] = $inputs['leave_option'] ;
 	  if($inputs['leave_option'] == 'CSR'){
 	  	$leave['leave_type'] = 'CSR';
-	  	$inputs['leave']['leave_type'] = 'CSR';
+	  	$inputs['leave']['leave_option'] = 'CSR';
+	  }
+	  else{
+	  	$inputs['leave']['leave_option'] = '';	
 	  }
 
 	  $hasLeaveError = false;
@@ -104,26 +108,23 @@ class LeavesController extends \BaseController {
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
     
-	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  if( 'CSR' == $inputs['leave']['leave_option'] )
 	  {
 	    $csrs = $inputs['csr'];
-      
-	    foreach($csrs as $key=>$csr)
+	    foreach($csrs as $key => $csr)
 	    {
-	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
-	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
-	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+	      // $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+	      // $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+	      $validator_csr[$key] = Validator::make($csr, Csr::$rules);
 	      
 	      if($validator_csr[$key]->fails())
-		$hasCsrError = true;
+			$hasCsrError = true;
 	    }
 	  }
     
 	    // check if user has selected any approver or not
 	  if(!array_key_exists('approval', $inputs))
 	    $hasApprovalError = true;
-    
-  
 	  if($hasLeaveError || $hasApprovalError || $hasCsrError)
 	  {
 	    $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
@@ -134,7 +135,7 @@ class LeavesController extends \BaseController {
 	    }
       
       
-	    return Redirect::back()->withErrors($validator)->withInput();
+	    return Redirect::back()->withErrors($validator)->withInput($inputs);
 	  }
 	  $tempLeave = $leave;
     
@@ -174,11 +175,13 @@ class LeavesController extends \BaseController {
 	    }
 	  }
 	  
-		if( 'CSR' == $inputs['leave']['leave_type'] )
+		if( 'CSR' == $inputs['leave']['leave_option'] )
 	  {
-	    foreach($csr_slots as $slot)
+	    foreach($csrs as $key => $slot)
 	    {
 	      $slot['leave_id'] = $addedLeaves[0]->id;
+	      $slot['from_time'] = date('H:i', strtotime($slot['from_time']));
+	      $slot['to_time'] = date('H:i', strtotime($slot['to_time']));
 	      Csr::create($slot);
 	    }
 	  }
@@ -231,18 +234,16 @@ class LeavesController extends \BaseController {
 	  if($leave->leave_type == "CSR"){
 	    $csrs = $leave->csrs;
 	    foreach($csrs as $csr){
-	      $from_time = new DateTime($csr->from_time);
-	      $to_time = new DateTime($csr->to_time);
-	      $from_hour = $from_time->format("H");
-	      $from_min = $from_time->format("i");
-	      $to_hour = $to_time->format("H");
-	      $to_min = $to_time->format("i");
-	      $inputCSRs[] = array("from" => array("hour" => $from_hour, "min" => $from_min), "to" => array("hour" => $to_hour, "min" => $to_min));
+	      $from_time = preg_replace("/:00$/",'',$csr->from_time);
+	      $to_time = preg_replace("/:00$/",'',$csr->to_time);
+	      // $from_hour = $from_time->format("H");
+	      // $from_min = $from_time->format("i");
+	      // $to_hour = $to_time->format("H");
+	      // $to_min = $to_time->format("i");
+	      $inputCSRs[] = array("from_time" => $from_time, "to_time" => $to_time);
 	    }
 	  }
-	  else{
-
-	  }
+	  // $this->pre_print($inputCSRs);exit;
 	  //$this->pre_print($inputCSRs);
 	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
 	}
@@ -286,15 +287,15 @@ class LeavesController extends \BaseController {
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
     
-	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  if( 'CSR' == $leave['leave_option'] )
 	  {
 	    $csrs = $inputs['csr'];
       
-	    foreach($csrs as $key=>$csr)
+	    foreach($csrs as $key => $csr)
 	    {
-	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
-	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
-	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
+	      // $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
+	      // $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
+	      $validator_csr[$key] = Validator::make($csr, Csr::$rules);
 	      
 	      if($validator_csr[$key]->fails())
 		$hasCsrError = true;
@@ -331,13 +332,15 @@ class LeavesController extends \BaseController {
 	  $leaveObj->update($leave);
 	  //$leave = Leave::create($leave);
 	  
-	  if( 'CSR' == $inputs['leave']['leave_type'] )
+	  if( 'CSR' == $inputs['leave_option'] )
 	  {
 	    $leaveObj->csrs()->forceDelete();
-	    foreach($csr_slots as $slot)
+	    foreach($csrs as $slot)
 	    {
-		$slot['leave_id'] = $leaveObj->id;
-		Csr::create($slot);
+			$slot['leave_id'] = $leaveObj->id;
+			$slot['from_time'] = date("H:i",strtotime($slot['from_time']));
+			$slot['to_time'] = date("H:i",strtotime($slot['to_time']));
+			Csr::create($slot);
 	    }
 	  }
 	  $approvals = $inputs['approval'];
@@ -429,17 +432,34 @@ class LeavesController extends \BaseController {
 			->get();
 			break;
 		      case "by-year":
-			$leaves = Leave::where("user_id", $user->id)
-			->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), $searchData["year"])
-			->where("leave_type", $leaveType)
-			->get();
+		      	if(Config::get("database.default") == "mysql"){
+					$leaves = Leave::where("user_id", $user->id)
+					->where(DB::raw('YEAR(leave_date)'), $searchData["year"])
+					->where("leave_type", $leaveType)
+					->get();
+				}
+				else{
+					$leaves = Leave::where("user_id", $user->id)
+					->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), $searchData["year"])
+					->where("leave_type", $leaveType)
+					->get();	
+				}
 			break;
 		      case "by-month":
-			$leaves = Leave::where("user_id", $user->id)
-			->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), date("Y"))
-			->where(DB::raw('EXTRACT(MONTH FROM "leave_date"::date)'), date("m"))
-			->where("leave_type", $leaveType)
-			->get();
+		      	if(Config::get("database.default") == "mysql"){
+					$leaves = Leave::where("user_id", $user->id)
+					->where(DB::raw('YEAR(leave_date)'), date("Y"))
+					->where(DB::raw('MONTH(leave_date)'), date("m"))
+					->where("leave_type", $leaveType)
+					->get();
+				}
+				else{
+					$leaves = Leave::where("user_id", $user->id)
+					->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), date("Y"))
+					->where(DB::raw('EXTRACT(MONTH FROM "leave_date"::date)'), date("m"))
+					->where("leave_type", $leaveType)
+					->get();
+				}
 			break;
 		    }
 	  	}

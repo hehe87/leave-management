@@ -31,6 +31,23 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'phone',
     'altPhone'
   );
+
+  /**
+    Function Name:  notAdmins
+    Author Name:  Nicolas Naresh
+    Date:   May, 30 2014
+    Parameters:    
+    Purpose:        This function acts as a filter while getting all users
+    which are not admins
+  */
+
+  public function scopeEmployee($query){
+    return $query->where("employeeType", "<>", "ADMIN");
+  }
+
+
+
+
   
   /**
    * Get the unique identifier for the user.
@@ -192,7 +209,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)$currentDate->format("Y");
     $paidLeaves = Leaveconfig::getConfig("paid_leaves", $currentYear)->leave_days;
     $allLeaves = $paidLeaves;
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    if(Config::get("database.default") == "mysql"){
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('YEAR(holidayDate)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();       
+    }
+    else{
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    }
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
 
     $dateOfJoining = new DateTime($this->doj);

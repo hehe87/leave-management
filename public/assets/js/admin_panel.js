@@ -18,8 +18,9 @@ if(0 != $('#leavesTable').length) {
 if (0 != $('.timepicker').length) {
  $('.timepicker').timepicker({
     minuteStep: 5,
-    showInputs: false,
-    disableFocus: true
+    showInputs: true,
+    disableFocus: true,
+    defaultTime: false
   });
 }
 // opens datepicker calendar on click of calendar icon appended to the date control input element
@@ -139,7 +140,7 @@ $(document).on("submit","#report-form",function(e){
     return false;
   }
   else{
-    $("#report-form").submit();
+    $("#report-form")[0].submit();
   }
 });
 

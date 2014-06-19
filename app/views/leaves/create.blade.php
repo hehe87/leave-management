@@ -4,7 +4,7 @@
 
 <div class="row">
   <div class="col-sm-12">
-    {{ Form::open(array('url' => URL::route('leaves.store'), 'method' => 'post', 'class' => 'form-horizontal')) }}
+    {{ Form::open(array('url' => URL::route('leaves.store'), 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'leaves_create_form')) }}
       <legend class="form-signin-heading">Apply for Leave</legend>
       @include("leaves.form", array("leave" => $leave))
       <div class="form-group">

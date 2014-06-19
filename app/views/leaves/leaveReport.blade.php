@@ -26,7 +26,7 @@
       <tr>
         @if($leave->leave_type === "LONG")
           <td style="">
-          {{ date("d-m-Y",strtotime($leave->leave_date)) }} - {{ date("d-m-Y",strtotime($leave->to_date)) }}</td>
+          {{ date("d-m-Y",strtotime($leave->leave_date)) }} - {{ date("d-m-Y",strtotime($leave->leave_to)) }}</td>
         @else
           <td style="">
           {{ date("d-m-Y",strtotime($leave->leave_date)) }}</td>

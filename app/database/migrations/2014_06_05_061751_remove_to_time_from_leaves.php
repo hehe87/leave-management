@@ -28,7 +28,7 @@ class RemoveToTimeFromLeaves extends Migration {
 	{
 		Schema::table('leaves', function(Blueprint $table)
 		{
-			$table->time('to_time');
+			$table->time('to_time')->nullable();
 		});
 	}
 

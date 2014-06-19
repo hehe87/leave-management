@@ -29,10 +29,10 @@
 	          @foreach($leave->csrs as $csr)
 	            <tr>
 	              <td>
-	                {{ $csr->from_time }}
+	                {{ date("H:i A", strtotime($csr->from_time)) }}
 	              </td>
 	              <td>
-	                {{ $csr->to_time }}
+	                {{ date("H:i A", strtotime($csr->to_time)) }}
 	              </td>
 	            </tr>
 	          @endforeach

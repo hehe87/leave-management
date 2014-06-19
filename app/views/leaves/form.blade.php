@@ -1,6 +1,6 @@
 {{ Form::hidden('user_id', Auth::user()->id) }}
 
-@if ((isset($formFor) && $formFor != "edit") || (!isset($formFor)))
+
   <div class="form-group">
     <div class="col-sm-12">
       <div class="row">
@@ -8,7 +8,7 @@
           {{ Form::label('leave_option', 'Leave Option', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-6">
-          {{ Form::select('leave_option', array('' => 'Select Leave Option', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), '',array('id'=> 'leave_option', 'class' => 'form-control')) }}
+          {{ Form::select('leave_option', array('' => 'Select Leave Option', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), ($leave->leave_type == "CSR" ? "CSR" : ($leave->leave_type == "" ? "" : "LEAVE")) ,array('id'=> 'leave_option', 'class' => 'form-control')) }}
         </div>
       </div>
       @if ($errors->first('leave_option'))
@@ -22,7 +22,6 @@
       @endif
     </div>
   </div>
-@endif
 
 
 
@@ -75,7 +74,7 @@
     @endif
   </div>
 </div>
-@if ((Input::old('leave.leave_type') && Input::old('leave.leave_type') == "CSR") || ($leave->leave_type === "CSR"))
+@if ((Input::old('leave.leave_option') && Input::old('leave.leave_option') == "CSR") || ($leave->leave_type === "CSR"))
 <div id="csr-container">
 @else
 <div id="csr-container" class="hide">
@@ -87,17 +86,18 @@
           {{ Form::label('from_time', 'Timings *', array('class' => 'control-label')) }}
         </div>
         <div id="timeSlot" class="col-sm-6">
+
           @if(count(Input::old('csr')) != 0)
             @foreach (Input::old('csr') as $old_csr_key => $old_csr)
               @include("leaves.csrTimeInputs",array("csr_key" => $old_csr_key, "csr_inputs" => $old_csr))
             @endforeach
           @else
-            @if (count($leave->csrs->toArray()) != 0)
+            @if (isset($inputCSRs))
               @foreach ($inputCSRs as $old_csr_key => $old_csr)
                 @include("leaves.csrTimeInputs",array("csr_key" => $old_csr_key, "csr_inputs" => $old_csr))
               @endforeach
             @else
-              @include("leaves.csrTimeInputs",array("csr_key" => 0, "csr_inputs" => array("from" => array("hour" => "0", "min" => "0"), "to" => array("hour" => "0", "min" => "0"))))
+              @include("leaves.csrTimeInputs",array("csr_key" => 0, "csr_inputs" => array("from_time" => "", "to_time" => "")))
             @endif
           @endif
         </div>

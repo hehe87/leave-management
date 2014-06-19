@@ -8,24 +8,28 @@
   Most Important Related Files:     -
 */
 .login-well{
-  background-color: #A069D6;
+  background-color: #eee;
   color: #48036F;
-  border-color: #330570;
+  box-shadow: 7px 0px 0px 6px #991B1E;
+  border-radius: 28px 41px 31px 28px !Important;
 }
 
 .button-normal:hover{
-  background-color: #48036F;
+  background-color: #991B1E;
   border-color: #330570;
 }
 
 .button-normal{
-  background-color: #7109AA;
+  background-color: #991B1E;
   color: #FFF;
-  border-color: #330570;
+  border-color: #991B1E;
   font-weight: 700;
 }
 
 
 legend{
-  color: #fff;
+  color: #991B1E;
+}
+label{
+  color: #991B1E;
 }

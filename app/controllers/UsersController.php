@@ -15,6 +15,7 @@ class UsersController extends \BaseController {
   {
     $this->beforeFilter('auth', array(
       	'except' => array(
+          'test',
       	  'getLogin',
       	  'postLogin',
           'create',
@@ -26,6 +27,10 @@ class UsersController extends \BaseController {
       	)
       )
     );
+  }
+
+  public function test(){
+    return View::make("users.test");
   }
 
   /**
