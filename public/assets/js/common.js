@@ -266,7 +266,7 @@ $(document).on("ready",function(){
     if(confirm("Are you sure you want to delete this leave")){
       $.ajax({
         url: $(this).data("url"),
-        type: "post",
+        type: "get",
         dataType: "json",
         success: function(retdata){
           $parentRow.remove();
@@ -397,6 +397,64 @@ $(document).on('click', '.view-approvals', function(e){
     }
   });
 });
+
+$(document).on('dblclick', ".editable", function(){
+  console.log("i m here");
+  $(this).prop("readonly",false);
+});
+
+$(document).on('blur', ".editable", function(){
+  var url = $(this).data("url");
+  var model = $(this).data("model");
+  var column = $(this).data("column");
+  var value = $(this).val();
+  var id = $(this).data("id");
+  var origVal = $(this).data("orig");
+  var $this = $(this);
+  $.ajax({
+    url: url,
+    data: {model: model, column: column, value: value, id: id},
+    dataType: "json",
+    success: function(retdata){
+      if(retdata.status == true){
+        window.location.reload();
+      }
+      else{
+        $this.val(origVal);
+      }
+    }
+  })
+  $(this).prop("readonly",true);
+});
+
+$(document).on('keyup', ".editable", function(e){
+  if(e.keyCode == 13){
+    var url = $(this).data("url");
+    var model = $(this).data("model");
+    var column = $(this).data("column");
+    var value = $(this).val();
+    var id = $(this).data("id");
+    var origVal = $(this).data("orig");
+    var $this = $(this);
+    $.ajax({
+      url: url,
+      data: {model: model, column: column, value: value, id: id},
+      dataType: "json",
+      success: function(retdata){
+        if(retdata.status == true){
+          window.location.reload();
+        }
+        else{
+          $this.val(origVal);
+        }
+      }
+    })
+    $(this).prop("readonly",true);
+  }
+});
+
+
+
 
 
 

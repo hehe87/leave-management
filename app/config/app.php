@@ -191,5 +191,6 @@ return array(
     'Carbon'          => 'Carbon\Carbon'
 
 	),
+	'lms_key' => '1q3AHJZdIIPPWxmvbReESWTfy39whNE6',
 
 );

@@ -1,4 +1,4 @@
-@extends('layouts.user_layout')
+@extends('layouts.' . $layout)
 
 @section('content')
 
@@ -6,7 +6,7 @@
   <div class="col-sm-12">
     {{ Form::open(array('url' => URL::route('leaves.store'), 'method' => 'post', 'class' => 'form-horizontal', 'id' => 'leaves_create_form')) }}
       <legend class="form-signin-heading">Apply for Leave</legend>
-      @include("leaves.form", array("leave" => $leave))
+      @include("leaves.form", array("leave" => $leave, "layout" => $layout))
       <div class="form-group">
         <div class="col-sm-12">
           <div class="row">

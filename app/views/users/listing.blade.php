@@ -28,6 +28,9 @@
     <td class="text-center">
       {{ $user->getRemainingLeaves() }}
     </td>
+    <td class="text-center">
+      <input class='editable text-center' type="text" value="{{ $user->carry_forward_leaves }}" readonly data-id="{{ TemplateFunction::fakeName($user->id) }}" data-model="{{ TemplateFunction::fakeName('User') }}" data-column="{{ TemplateFunction::fakeName('carry_forward_leaves') }}" data-url="{{ URL::route('base.saveEditable') }}" data-orig="{{ $user->carry_forward_leaves }}"/>
+    </td>
     <td align="center">
       <table>
         <tr>

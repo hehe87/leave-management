@@ -124,6 +124,11 @@ class ApprovalController extends \BaseController {
 	public function updateStatus()
 	{
 		$approval = Approval::findOrFail(Input::get('approvalId'));
+
+    if($approval->approver_id != Auth::user()->id){
+      return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave!'));
+    }
+
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
 
@@ -133,25 +138,21 @@ class ApprovalController extends \BaseController {
     if( Approval::isAllowed( $approval->leave->id ) )
     {
       // Check if google configurations are set properly
-      if ( self::$clientId == ''
-      || !strlen( self::$serviceAccountName )
-      || !strlen( self::$keyFileLocation )) {
-      echo 'Missing google configurations';
-  }
-
-      
+      if ( self::$clientId == '' || !strlen( self::$serviceAccountName ) || !strlen( self::$keyFileLocation )) {
+        echo 'Missing google configurations';
+      }
       $client = new Google_Client();
       $client->setApplicationName("Leave Management System");
       $service = new Google_Service_Calendar($client);
       
       if ( Session::has('service_token') ) {
         $client->setAccessToken( Session::get('service_token') );
-  }
+      }
       $key = file_get_contents( self::$keyFileLocation );
       $cred = new Google_Auth_AssertionCredentials(
-      self::$serviceAccountName,
-      array('https://www.googleapis.com/auth/calendar'),
-      $key
+        self::$serviceAccountName,
+        array('https://www.googleapis.com/auth/calendar'),
+        $key
       );
       
       $client->setAssertionCredentials($cred);

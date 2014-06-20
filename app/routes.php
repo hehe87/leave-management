@@ -24,8 +24,11 @@ Route::post('/password/forgot', array('as' => 'postUserForgotPassword', 'uses' =
 Route::get('/password/change/{token}', array('as' => 'userChangePassword', 'uses' => 'UsersController@getChangePassword'));
 Route::post('/password/change/{token}', array('as' => 'postUserChangePassword', 'uses' => 'UsersController@postChangePassword'));
 
-Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
-Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
+Route::group(array('before' => 'admin_added_or_admin_auth'),function(){
+
+	Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
+	Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
+});
 	
 Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
@@ -47,6 +50,15 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::post('/settings', array('as' => 'users.postSettings', 'uses' => 'UsersController@postSettings'));
 	Route::post('/users/getextraleaves', array('as' => 'users.getExtraLeaves', 'uses' => 'UsersController@getExtraLeaves'));
 });
+
+Route::group(array('before' => 'auth'),function(){
+	Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
+	Route::post('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
+	Route::get('/leaves/{id}/remove', array('as' => 'leaves.destroy', 'uses' => 'LeavesController@destroy'));
+});
+
+Route::get('/editable/save', array('as' => 'base.saveEditable', 'uses' => 'BaseController@saveEditable'));
+
 
 
 Route::group(array('before' => 'auth.user'),function(){
@@ -76,8 +88,8 @@ Route::group(array('before' => 'auth.user'),function(){
 	//Route::get('/leaves/{id}/edit', array('as' => 'leaves.edit', 'uses' => 'LeavesController@edit'));
 	//Route::post('/leaves/{id}/update', array('as' => 'leaves.update', 'uses' => 'LeavesController@update'));
 	//Route::post('/leaves/{id}/remove', array('as' => 'leaves.destroy', 'uses' => 'LeavesController@destroy'));
-	Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
-	Route::post('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
+	// Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
+	// Route::post('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
 });
 
 

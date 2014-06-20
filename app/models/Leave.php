@@ -15,6 +15,7 @@ class Leave extends \Eloquent {
 	const REJECTED_BY_SOME = 2;
 	const APPROVED_BY_ALL  = 3;
 	const REJECTED_BY_ALL  = 4;
+	const PENDING 		   = 5;
 
 	// Validation Rules
 	public static $rules = [
@@ -90,6 +91,8 @@ class Leave extends \Eloquent {
 				return count($allApprovals) == count($rejectedApprovals);
 			case Leave::REJECTED_BY_SOME:
 				return count($rejectedApprovals) > 0;
+			case Leave::PENDING:
+				return (count($allApprovals) - (count($rejectedApprovals) + count($approvedApprovals))) > 0;
 		}
 	}
 	

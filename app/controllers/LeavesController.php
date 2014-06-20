@@ -57,7 +57,8 @@ class LeavesController extends \BaseController {
 		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
 		$leave = new Leave();
 		$leave->leave_type = "";
-		return View::make('leaves.create')->with('users', $users)->with('leave' , $leave);
+		$layout = Auth::user()->employeeType == "ADMIN" ? "admin_layout" : "user_layout";
+		return View::make('leaves.create')->with('users', $users)->with('leave' , $leave)->with("layout", $layout);
 	}
 
 	/**
@@ -144,14 +145,24 @@ class LeavesController extends \BaseController {
 	  
 	  // grab all leave dates in an array
 	  $leave_dates = explode(",", $leave['leave_date']);
-		
-	  
+
+
+	  //checking if user or admin is adding new leave	
+	  $user_id = "";
+	  if(Auth::user()->employeeType == "ADMIN"){
+	  	$user = User::where("name", "LIKE" ,"%" . Input::get("employee_name") . "%")->first();
+	  	$user_id = $user->id;
+	  }
+	  else{
+	  	$user_id = Auth::user()->id;
+	  }
+
 	  if($tempLeave["leave_type"] == "MULTI"){
 	    foreach($leave_dates as $leave_date){
 	      $leave = $tempLeave;
 	      $leave["leave_date"] = $leave_date;
 	      $leave["leave_type"] = "LEAVE";
-	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = array_merge($leave, ['user_id' => $user_id]);
 	      $leave = Leave::create($leave);
 	      $addedLeaves[] = $leave;
 	    }
@@ -161,14 +172,14 @@ class LeavesController extends \BaseController {
 	      $leave = $tempLeave;
 	      $leave["leave_date"] = $leave_dates[0];
 	      $leave["leave_to"] = $leave_dates[1];
-	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = array_merge($leave, ['user_id' => $user_id]);
 	      $leave = Leave::create($leave);
 	      $addedLeaves[] = $leave;
 	    }
 	    else{
 	      $leave = $tempLeave;
 	      $leave["leave_date"] = $leave_dates[0];
-	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
+	      $leave = array_merge($leave, ['user_id' => $user_id]);
 	      $leave = Leave::create($leave);
 	      $addedLeaves[] = $leave;
 	      
@@ -193,11 +204,22 @@ class LeavesController extends \BaseController {
 	    {
 	      $approval['leave_id'] = $addedLeave->id;
 	      $approval['approved'] = 'PENDING';
-	      Approval::create($approval);
+	      $approval = Approval::create($approval);
+	      if(Auth::user()->employeeType == "ADMIN"){
+			$approval->approved = 'YES';
+			$approval->save();
+	      }
 	    }
-	  }	    
-	  return Redirect::to(URL::route('myLeaves'))
+	  }
+	  if(Auth::user()->employeeType == "ADMIN"){
+	  	return Redirect::to(URL::route('leaves.create'))
+		->with('message', 'Leave successfully Added');
+	  }
+	  else{
+	  	return Redirect::to(URL::route('myLeaves'))
 		->with('message', 'Leave successfully applied');
+	  }
+	  
 	}
 
 	/**
@@ -414,6 +436,17 @@ class LeavesController extends \BaseController {
 
 	  	if($searchData["leave_type"] == "ALL"){
 	  		$leaves = Leave::all();
+	  		$extraLeaves = Extraleave::where("for_year",date("Y"))->get();
+	  		// $this->pre_print($extraLeaves);
+	  		foreach($extraLeaves as $el){
+	  			$le = new Leave();
+	  			$le->leave_date = $el->from_date;
+	  			$le->leave_to = $el->to_date;
+	  			$le->reason = $el->description;
+	  			$le->user_id = $el->user_id;
+	  			$le->leave_type = $el->description;
+	  			$leaves = $leaves->merge(array($le));
+	  		}
 	  	}
 	  	else{
 	  		$user = User::where("name", $searchData["employee_name"])->get()->first();

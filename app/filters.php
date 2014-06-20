@@ -98,6 +98,12 @@ Route::filter('auth.user', function()
 	}
 });
 
+Route::filter('admin_added_or_admin_auth', function(){
+	if((User::where("employeeType","ADMIN")->count() != 0) && !(Auth::check() && Auth::user()->employeeType == "ADMIN")){
+		return Redirect::to(URL::route("userLogin"));
+	}
+});
+
 Route::filter('leaves.editable', function($route){
 	$leaveId = $route->getParameter('id');
 	$leave = Leave::find($leaveId);

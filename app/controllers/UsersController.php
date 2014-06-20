@@ -247,7 +247,7 @@ class UsersController extends \BaseController {
   */
   public function index()
   {
-    $users = User::all();
+    $users = User::orderBy("name")->get();
     return View::make('users.index', compact('users'));
   }
 
@@ -373,9 +373,12 @@ class UsersController extends \BaseController {
     //$this->pre_print(array_combine(range(1,31), array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
     $currYear = date("Y");
     $yearStart = YearStart::where("year", $currYear)->first();
-    $dayList = array_combine(array_merge(array("" => ""), range(1,31)), array_merge(array("" => "Select Day"),array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
+    // $dayList = array_combine(array_merge(array("" => ""), range(1,31)), array_merge(array("" => "Select Day"),array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
+    $dayList = TemplateFunction::getIntegerRangeDropdown(1,31);
+
     //$this->pre_print($dayList);
-    $monList = array_combine(array_merge(array("" => ""), range(1,12)), array_merge(array("" => "Select Month"),array_map(function($d){return sprintf("%02s",$d); }, range(1,12))));
+    //$monList = array_combine(array_merge(array("" => ""), range(1,12)), array_merge(array("" => "Select Month"),array_map(function($d){return sprintf("%02s",$d); }, range(1,12))));
+    $monList = TemplateFunction::getIntegerRangeDropdown(1,12);
     if(!$yearStart){
       $yearStart = new YearStart();
     }

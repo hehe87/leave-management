@@ -144,6 +144,14 @@ width: 100%;
 	border-radius: 5px;
 }
 
+.editable{
+	display: inline-block;
+	padding: 5px 0px;
+	width: 50px;
+	border: 1px solid #eee;
+	cursor: pointer;
+}
+
 
 /*@media screen and(max-width: 800px){
 	.slot_to{
