@@ -246,6 +246,7 @@ class LeavesController extends \BaseController {
 	
 	public function edit($id)
 	{
+	  $layout = "user_layout";
 	  $leave = Leave::find($id);
 	  if( 'LONG' == $leave->leave_type ) {
 	    $leave->leave_date .= ','. $leave->leave_to;      
@@ -267,7 +268,7 @@ class LeavesController extends \BaseController {
 	  }
 	  // $this->pre_print($inputCSRs);exit;
 	  //$this->pre_print($inputCSRs);
-	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
+	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs, 'layout' => $layout));
 	}
 
 	/**
