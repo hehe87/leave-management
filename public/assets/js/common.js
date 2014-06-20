@@ -277,7 +277,7 @@ $(document).on("ready",function(){
 });
 
 
-$(document).on("submit", "#leaves_edit_form",function(e){
+$(document).on("submit", "#leaves_create_form, #leaves_edit_form",function(e){
   e.preventDefault();
   if($("#leave_option").val() === "CSR"){
     var slotsCount = ($("#timeSlot .timepicker").length / 2);
@@ -367,12 +367,26 @@ function getTimeInfo(reqVal,inputTime){
 $(document).on('click','.approve-status-change', function (e) {
   var approvalStatus = $(this).data("approve_status");
   var approvalId = $(this).data("approval_id");
+  var leaveId = $(this).data("leave_id");
+  var data;
+  if(typeof approvalId == "undefined"){
+    data = {
+      approvalStatus: approvalStatus,
+      leaveId: leaveId
+    }
+  }
+  else{
+    data = {
+      approvalStatus: approvalStatus,
+      approvalId: approvalId
+    }
+  }
   var approvalUrl = $(this).data("approval_url");
   var $this = $(this);
   $.ajax({
     type: 'post',
     url: approvalUrl,
-    data: {approvalStatus: approvalStatus, approvalId: approvalId},
+    data: data,
     dataType: "json",
     success: function(data){
       if(approvalStatus == "YES"){

@@ -123,11 +123,21 @@ class ApprovalController extends \BaseController {
 
 	public function updateStatus()
 	{
-		$approval = Approval::findOrFail(Input::get('approvalId'));
-
-    if($approval->approver_id != Auth::user()->id){
-      return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave!'));
+    if(Auth::user()->employeeType == "ADMIN"){
+      $approval = new Approval();
+      $approval->approved = "PENDING";
+      $approval->approver_id = Auth::user()->id;
+      $approval->approval_note = "Status Updated By Admin";
+      $approval->leave_id = Input::get("leaveId");
+      $approval->save();
     }
+    else{
+      $approval = Approval::findOrFail(Input::get('approvalId'));
+      if($approval->approver_id != Auth::user()->id){
+        return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave!'));
+      }
+    }
+    
 
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
@@ -135,14 +145,12 @@ class ApprovalController extends \BaseController {
     // fetch leave applicant
     $user = $approval->leave->user;
 
-     // Send Email Notification
-      $this->approvalNotification($approval);
+    // Send Email Notification
+    $this->approvalNotification($approval);
 
     // Mark a calendar event if approved
     if( Approval::isAllowed( $approval->leave->id ) )
     {
-
-
       // Check if google configurations are set properly
       if ( self::$clientId == '' || !strlen( self::$serviceAccountName ) || !strlen( self::$keyFileLocation )) {
         echo 'Missing google configurations';
@@ -294,64 +302,60 @@ class ApprovalController extends \BaseController {
 	}
 
 
-      public function approvalNotification($approval)
+  public function approvalNotification($approval)
+  {
+
+    $subject = $requesting_user =  NULL;
+    $approver_users = $csr = [];
+
+    // Get Leave
+    $leave = Leave::find($approval->leave_id);
+    $leave_type = TemplateFunction::getFullLeaveTypeName($leave->leave_type);
+
+    // Check whether all pending approvals has been updated
+    $is_pending = ($leave->leaveStatus()=="PENDING");
+
+    if (!$is_pending) {
+      if($approval->isAllowed($leave->id))
       {
+        $subject = "Request For $leave_type Approved";
+        $response = "Approved";
+      }
+      else
+      {
+        $subject = "Request For $leave_type Rejected";
+        $response = "Rejected";
+      }
 
-  $subject = $requesting_user =  NULL;
-  $approver_users = $csr = [];
+      // Get user who has requested a leave or CSR
+      $requesting_user = User::find($leave->user_id)->toArray();
 
-  // Get Leave
-  $leave = Leave::find($approval->leave_id);
-  $leave_type = TemplateFunction::getFullLeaveTypeName($leave->leave_type);
+      $approvers = Approval::where('leave_id', '=', $leave->id)->get();
+      if( $approvers->count()>0) {
+        foreach ($approvers as $approver) {
+          $usr = User::find($approver->approver_id)->toArray();
+          $approver_users[$approver->approver_id] = ['name' => $usr['name'], 'status' => $approver->approved];
+        }
+      }
+      $data['requesting_user'] = $requesting_user;
+      $data['approver_users'] = $approver_users;
 
-  // Check whether all pending approvals has been updated
-  $is_pending = ($leave->leaveStatus()=="PENDING");
+      // if leave type is a CSR then store this as well
+      if ( "CSR" == $approval->leave->leave_type ) {
+        $csr = $approval->leave->csrs->toArray();
+        $data['csr'] = $csr;
+      }
 
-  if (!$is_pending) {
-    if($approval->isAllowed($leave->id))
-    {
-      $subject = "Request For $leave_type Approved";
-      $response = "Approved";
+      $data['leave']  = $leave->toArray();
+      $data['approved_status'] = $response;
+
+       //Send email notification to approver
+      Mail::queue('emails.leave_approval', $data,  function($message) use($requesting_user, $subject)
+      {
+        $message->from('jack.braj@ithands.net', 'Admin')
+        ->to($requesting_user['email'], $requesting_user['name'])
+        ->subject($subject);
+      });
     }
-    else
-    {
-      $subject = "Request For $leave_type Rejected";
-      $response = "Rejected";
-    }
-
-              // Get user who has requested a leave or CSR
-              $requesting_user = User::find($leave->user_id)->toArray();
-
-              $approvers = Approval::where('leave_id', '=', $leave->id)->get();
-              if( $approvers->count()>0) {
-                foreach ($approvers as $approver) {
-                    $usr = User::find($approver->approver_id)->toArray();
-                    $approver_users[$approver->approver_id] = ['name' => $usr['name'], 'status' => $approver->approved];
-                  }
-                }
-
-
-    $data['requesting_user'] = $requesting_user;
-    $data['approver_users'] = $approver_users;
-
-    // if leave type is a CSR then store this as well
-    if ( "CSR" == $approval->leave->leave_type ) {
-      $csr = $approval->leave->csrs->toArray();
-      $data['csr'] = $csr;
-    }
-
-    $data['leave']  = $leave->toArray();
-    $data['approved_status'] = $response;
-
-               //Send email notification to approver
-              Mail::queue('emails.leave_approval', $data,  function($message) use($requesting_user, $subject)
-              {
-                  $message->from('jack.braj@ithands.net', 'Admin')
-                  ->to($requesting_user['email'], $requesting_user['name'])
-                  ->subject($subject);
-              });
   }
-
-}
-
 }

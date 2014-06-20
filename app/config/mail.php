@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => "jack.braj@ithands.net",
+	'username' => "nicolas.naresh@ithands.net",
 
 	/*
 	|--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return array(
 	|
 	*/
 
-	'password' => "tombraider4",
+	'password' => "nareshd123",
 
 	/*
 	|--------------------------------------------------------------------------

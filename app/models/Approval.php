@@ -105,6 +105,10 @@ class Approval extends \Eloquent {
 
   public static function isAllowed( $leave_id )
   {
+  	$leave = Leave::find($leave_id);
+  	if($leave->leaveStatus() == "APPROVED"){
+  		return true;
+  	}
     $total = self::where('leave_id', '=', $leave_id);
     $approved = self::where('leave_id', '=', $leave_id)->where('approved', '=', 'YES');
 

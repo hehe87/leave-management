@@ -16,6 +16,7 @@ class Leave extends \Eloquent {
 	const APPROVED_BY_ALL  = 3;
 	const REJECTED_BY_ALL  = 4;
 	const PENDING 		   = 5;
+	const APPROVED_BY_ADMIN = 6;
 
 	// Validation Rules
 	public static $rules = [
@@ -36,6 +37,17 @@ class Leave extends \Eloquent {
 	public function approvals()
 	{
 		return $this->hasMany('Approval');
+	}
+
+	public static function pendingLeaves(){
+		$leaves = Leave::all();
+		$pendingLeaves = array();
+		foreach($leaves as $leave){
+			if($leave->approvalStatus( Leave::PENDING ) && !$leave->approvalStatus( Leave::APPROVED_BY_ADMIN)){
+				$pendingLeaves[] = $leave;
+			}
+		}
+		return $pendingLeaves;
 	}
 
   public function csrs()
@@ -78,9 +90,14 @@ class Leave extends \Eloquent {
 		$allApprovals = $this->approvals->toArray();
 		$approvedApprovals = Approval::where("leave_id",$this->id)->where("approved", "YES")->get()->toArray();
 		$rejectedApprovals = Approval::where("leave_id",$this->id)->where("approved", "NO")->get()->toArray();
+		$admins = User::where("employeeType","ADMIN")->lists("id","id");
+
+		$adminApprovals = Approval::where("leave_id", $this->id)->where("approved","YES")->whereIn("approver_id", $admins)->count();		
 
 
 		switch($requiredStatus){
+			case Leave::APPROVED_BY_ADMIN:
+				return ($adminApprovals > 0);
 			case Leave::APPROVED_BY_SOME:
 				return count($approvedApprovals) >= 1;
 			case Leave::APPROVED_BY_ALL:
@@ -107,6 +124,9 @@ class Leave extends \Eloquent {
 
 	public function leaveStatus()
 	{
+		if($this->approvalStatus(Leave::APPROVED_BY_ADMIN)){
+			return "APPROVED";
+		}
 		if ($this->approvalStatus(Leave::APPROVED_BY_ALL))
 			return "APPROVED";
 		elseif($this->approvalStatus(Leave::REJECTED_BY_ALL) || $this->approvalStatus(Leave::REJECTED_BY_SOME))

@@ -8,16 +8,18 @@
             <label class="control-label">Employee Name *</label>
           </div>
           <div class="col-lg-6">
-            <input type="text" class="form-control" placeholder="Search Employee" value="{{ Input::get('employee_name') != '' ? Input::get('employee_name') : '' }}" name="employee_name" autocomplete="off" id="user-search"  data-search_url="{{ URL::route('usersSearch') }}" data-view="singleColumnList" data-onblank="nil" data-onselect="getExtraLeaves" data-onselectajaxurl="{{ URL::route('users.getExtraLeaves') }}"/>
-            <div id="lm-autosearch">
-              <table class="table">
-                <tbody id="user-listing-tbody">
-                  
-                </tbody>
-              </table>
-            </div>
+            {{ Form::select("employee_id", $users, Input::get("employee_id") ,array("class" => "multiselect form-control", "placeholder" => "Search Employee")) }}
           </div>
         </div>
+        @if ($errors->first('employee_id'))
+          <div class="row">
+            <div class="col-sm-6 col-sm-offset-2">
+              <div class="alert alert-danger">
+                {{{ $errors->first('employee_id') }}}
+              </div>
+            </div>
+          </div>
+        @endif
       </div>
     </div>
   @endif
