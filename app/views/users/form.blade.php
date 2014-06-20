@@ -146,6 +146,29 @@
     @endif
   </div>
 </div>
+<div class="form-group has-feedback">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-2">&nbsp;</div>
+      <div class="col-sm-3">
+        <p class="help-text text-right">Remark for In/out time</p>
+      </div>
+      <div class="col-sm-3">
+        {{ Form::textarea('remark', $user->remark, array('rows' => '3', 'class' => 'form-control', 'placeholder' => 'Remark for In/out time')) }}
+      </div>
+    </div>
+    @if ($errors->first('remark'))
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-2">
+          <div class="alert alert-danger">
+            {{{ $errors->first('remark') }}}
+          </div>
+        </div>
+      </div>
+    @endif
+  </div>
+</div>
+
 
 <div class="form-group">
   <div class="col-sm-12">
