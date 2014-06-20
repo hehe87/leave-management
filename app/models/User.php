@@ -29,7 +29,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'doj',
     'dob',
     'phone',
-    'altPhone'
+    'altPhone',
+    'remark'
   );
 
 
@@ -134,7 +135,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	'inTime' => array('required', 'date_format:H:i:s'),
 	'outTime' => array('required', 'date_format:H:i:s'),
 	'phone' => array('required','regex:/[0-9]{10}/'),
-	'altPhone' => array('required','regex:/[0-9]{10}/')
+	'altPhone' => array('regex:/[0-9]{10}/')
         )
       );
     return $validator;
