@@ -1,5 +1,5 @@
 <?php
-/**
+/*
 
   Class Name					:	TemplateFunctions
   author 						:	Nicolas Naresh
@@ -11,9 +11,9 @@
 class TemplateFunction{
 	public static function getIntegerRangeDropdown($from, $to){
 		$arr = array_map(function($i)
-			{ 
-				return sprintf("%02s",$i); 
-			}, 
+			{
+				return sprintf("%02s",$i);
+			},
 			range($from, $to)
 		);
 		$arr1 = array_combine($arr,$arr);

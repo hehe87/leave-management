@@ -18,7 +18,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
    * @var array
    */
   protected $hidden = array('password');
-  
+
   public $fillable = array(
     'name',
     'email',
@@ -31,7 +31,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'phone',
     'altPhone'
   );
-  
+
   /**
    * Get the unique identifier for the user.
    *
@@ -92,11 +92,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   {
     return $this->email;
   }
-  
-  
-  
-  
-  /**
+
+
+
+
+  /*
     Function Name: 	validateRegistrationForm
     Author Name:	Nicolas Naresh
     Date:		May, 30 2014
@@ -104,29 +104,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Purpose:	      	This function will take an array of registration form values and validates
 			them
   */
-  public static function validateRegistrationForm($registrationDataArr, $requiredPasswordValidation = true){
-    
-    if($requiredPasswordValidation){
-      $passwordValidation = array(
-	'password'  =>'required|between:4,8|confirmed',
-	'password_confirmation'=>'required|between:4,8',
-      );
-    }
-    else{
-      if(!empty($registrationDataArr["password"]) || !empty($registrationDataArr["password_confirmation"])){
-	$passwordValidation = array(
-	  'password'  =>'required|between:4,8|confirmed',
-	  'password_confirmation'=>'required|between:4,8',
-	);
-      }
-      else{
-	$passwordValidation = array();
-      }
-    }
-    
+  public static function validateRegistrationForm($registrationDataArr){
+
+
+
     $validator = Validator::make(
-      $registrationDataArr,
-      array_merge(array(
+          $registrationDataArr,
+          array(
 	'name' => array('required', 'min:5'),
 	'email' => array('required','email'),
 	'doj' => array('required','date'),
@@ -135,14 +119,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	'outTime' => array('required', 'date_format:H:i:s'),
 	'phone' => array('required','regex:/[0-9]{10}/'),
 	'altPhone' => array('required','regex:/[0-9]{10}/')
-      ),$passwordValidation)
-    );
+        )
+      );
     return $validator;
   }
-  
-  
-  
-  /**
+
+
+
+  /*
     Function Name: 	getTotalLeaves
     Author Name:	Nicolas Naresh
     Date:		June, 02 2014
@@ -162,9 +146,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
     return $thisYearTotalLeaves;
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 	getRemainingLeaves
     Author Name:	Nicolas Naresh
     Date:		June, 02 2014
@@ -177,7 +161,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   }
 
 
-  /**
+  /*
     Function Name     : getTotalLeavesForYear
     Author Name       : Nicolas Naresh
     Date              : June 16, 2014
@@ -242,7 +226,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     return $allLeaves;
   }
 
-  /**
+  /*
     Function Name     : getRemainingLeavesForYear
     Author Name       : Nicolas Naresh
     Date              : June 16, 2014
@@ -272,18 +256,36 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
     return $remainingLeaves;
   }
-  
-  /**
+
+  /*
   Function Name	: 			leaves
   Author Name		:		Jack Braj
   Date			:		June 03, 2014
   Parameters		:	    	none
   Purpose		:		Return leave relationship for eloquent
   */
-	
+
   public function leaves()
   {
 	  return $this->hasMany('Leave');
   }
-  
+
+  /*
+  Function Name   :     generatePassword
+  Author Name      :     Jack Braj
+  Date:                 :     June 18, 2014
+  Parameters        :     numAlpha, numNonAlpha
+  Purpose             :     Generate random password for the new user
+   */
+
+  public static function generatePassword($numAlpha=6,$numNonAlpha=2)
+{
+   $listAlpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+   $listNonAlpha = ',;:!?.$/*-+&@_+;./*&?$-!,';
+
+   return str_shuffle(
+      substr(str_shuffle($listAlpha),0,$numAlpha) .
+      substr(str_shuffle($listNonAlpha),0,$numNonAlpha)
+    );
+}
 }

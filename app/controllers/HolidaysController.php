@@ -1,5 +1,5 @@
 <?php
-/**
+/*
   Class Name:                       HolidaysController
   author :		            Nicolas Naresh
   Date:			            June, 03 2014
@@ -10,16 +10,16 @@
 */
 
 class HolidaysController extends \BaseController {
-  
-  
-  
+
+
+
   public function __construct()
   {
     $this->beforeFilter('auth');
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		index
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -31,9 +31,9 @@ class HolidaysController extends \BaseController {
     $holidays = Holiday::where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
     return View::make("holidays.index")->with("holidays",$holidays);
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		create
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -44,9 +44,9 @@ class HolidaysController extends \BaseController {
     $holiday = new Holiday();
     return View::make("holidays.create")->with("holiday", $holiday);
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		store
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -66,9 +66,9 @@ class HolidaysController extends \BaseController {
       return Redirect::to(URL::route("holidaysListing"));
     }
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		edit
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -80,8 +80,8 @@ class HolidaysController extends \BaseController {
     $holiday = Holiday::find($id);
     return View::make("holidays.edit")->with("holiday", $holiday);
   }
-  
-  /**
+
+  /*
     Function Name: 		edit
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -104,9 +104,9 @@ class HolidaysController extends \BaseController {
     $holiday->update(Input::except("_token"));
     return Redirect::to(URL::route("holidaysListing"));
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		destroy
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -116,7 +116,7 @@ class HolidaysController extends \BaseController {
   public function destroy($id)
   {
     Holiday::destroy($id);
-    return Redirect::to(URL::route('holidaysListing'));
+    return Redirect::to(URL::route('holidaysListing'))->with('message', 'Holiday Deleted Successfully');
   }
-  
+
 }

@@ -84,7 +84,7 @@ Route::filter('auth.admin', function(){
 		return Redirect::to(URL::route("userLogin"));
 	}
 	if("ADMIN" != Auth::user()->employeeType){
-		return Redirect::to(URL::route("leaves.create"));
+		return Redirect::to(URL::route("myLeaves"));
 	}
 });
 

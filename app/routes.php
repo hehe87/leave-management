@@ -32,12 +32,13 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));
 	Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
 	Route::post('/users/search', array('as' => 'usersSearch', 'uses' => 'UsersController@postSearch'));
-	
-	
+
+
 	Route::get('/holidays/create', array('as' => 'holidayCreate', 'uses' => 'HolidaysController@create'));
 	Route::post('/holidays/store', array('as' => 'holidayStore', 'uses' => 'HolidaysController@store'));
 	Route::get('/holidays/edit/{resource}', array('as' => 'holidayEdit', 'uses' => 'HolidaysController@edit'));
 	Route::post('/holidays/update/{resource}', array('as' => 'holidayUpdate', 'uses' => 'HolidaysController@update'));
+	Route::get('/holidays/destroy/{id}', array('as' => 'holidayDestroy', 'uses' => 'HolidaysController@destroy'));
 	Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
 	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));
@@ -49,29 +50,29 @@ Route::group(array('before' => 'auth.admin'), function(){
 
 
 Route::group(array('before' => 'auth.user'),function(){
-	
+
 	View::composer('layouts.user_layout', function($view)
 	{
 		$empId = Auth::user()->id;
 		$pendingRequests = Approval::where("approver_id", $empId)->where("approved", "PENDING")->count();
 		$view->with('pendingRequests', $pendingRequests);
 	});
-	
-	
-	
+
+
+
 	// Leave Routes
 	Route::get('/leaves/search', 'LeavesController@search');
 	Route::get('/leaves/myleaves', array('as' => 'myLeaves', 'uses' => 'LeavesController@myLeaves'));
 	Route::get('/leaves/requests', array('as' => 'leaveRequests', 'uses' => 'LeavesController@leaveRequests'));
-	
+
 	Route::post('leaves/approve',array('as' => 'approval.updateStatus', 'uses' => 'ApprovalController@updateStatus'));
-	
+
 	Route::group(array('before' => 'leaves.editable'), function(){
 		Route::get('/leaves/{id}/edit', array('as' => 'leaves.edit', 'uses' => 'LeavesController@edit'));
 		Route::post('/leaves/{id}/update', array('as' => 'leaves.update', 'uses' => 'LeavesController@update'));
 		Route::post('/leaves/{id}/remove', array('as' => 'leaves.destroy', 'uses' => 'LeavesController@destroy'));
 	});
-	
+
 	//Route::get('/leaves/{id}/edit', array('as' => 'leaves.edit', 'uses' => 'LeavesController@edit'));
 	//Route::post('/leaves/{id}/update', array('as' => 'leaves.update', 'uses' => 'LeavesController@update'));
 	//Route::post('/leaves/{id}/remove', array('as' => 'leaves.destroy', 'uses' => 'LeavesController@destroy'));

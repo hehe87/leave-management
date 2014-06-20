@@ -52,9 +52,9 @@
               <td align="center">
                 <table>
                   <tr>
-                    <td><a href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-edit"></span></a></td>
                     <td>&nbsp;&nbsp;</td>
-                    <td><a href="" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
+                    <td><a href="{{ URL::route('holidayDestroy',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button" onclick="return confirm('Are you Sure');"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
                   </tr>
                 </table>
               </td>
@@ -66,6 +66,6 @@
     </div>
   </div>
   <div class="row">
-    
+
   </div>
 @stop

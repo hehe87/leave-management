@@ -1,5 +1,5 @@
 <?php
-/**
+/*
   Class Name					:	Leave
   author 						:	Jack Braj
   Date							:	June 02, 2014
@@ -15,55 +15,56 @@ class Leave extends \Eloquent {
 	const REJECTED_BY_SOME = 2;
 	const APPROVED_BY_ALL  = 3;
 	const REJECTED_BY_ALL  = 4;
+	const PENDING          = 5;
 
 	// Validation Rules
 	public static $rules = [
 		'leave_option' => 'required|in:LEAVE,CSR',
 		'leave_date'  => 'required',
 		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH,LONG,MULTI',
-		'reason'	  => 'required',		
+		'reason'       => 'required',
 	];
 
 	// fillable fields
 	protected $fillable = ['user_id', 'leave_type', 'leave_date', 'leave_to', 'from_time', 'to_time', 'reason'];
-	
+
 	public function user()
 	{
 		return $this->belongsTo('User');
 	}
-	
+
 	public function approvals()
 	{
 		return $this->hasMany('Approval');
 	}
-  
+
   public function csrs()
   {
     return $this->hasMany('Csr');
   }
 
-	/**
+	/*
 	Function Name	: 		normalizeInput
 	Author Name		:		Jack Braj
 	Date			:		June 03, 2014
 	Parameters		:	    array of inputs
 	Purpose			:		This function used to normalize time slots to save into database
 	*/
-	
+
 	public static function normalizeInput($inputs)
 	{
 		$row = [];
-		
+
 		foreach($inputs['from_hour'] as $tempKey => $tempData)
-		{			
-			$row[$tempKey] = ['user_id' => $inputs['user_id'], 'leave_date' => $inputs['leave_date'], 'leave_type' => $inputs['leave_type'], 'from_time' => $inputs['from_hour'][$tempKey].':'.$inputs['from_min'][$tempKey], 'to_time' => $inputs['to_hour'][$tempKey].':'.$inputs['to_min'][$tempKey], 'reason' => $inputs['reason'], 'approver_id' => $inputs['approver_id']];			
+		{
+			$row[$tempKey] = ['user_id' => $inputs['user_id'], 'leave_date' => $inputs['leave_date'], 'leave_type' => $inputs['leave_type'], 'from_time' => $inputs['from_hour'][$tempKey].':'.$inputs['from_min'][$tempKey], 'to_time' => $inputs['to_hour'][$tempKey].':'.$inputs['to_min'][$tempKey], 'reason' => $inputs['reason'], 'approver_id' => $inputs['approver_id']];
 		}
-		
+
 		return $row;
 	}
-	
-	
-	/**
+
+
+	/*
 	Function Name	: 		isApproved
 	Author Name		:	Jack Braj
 	Date			:	June 03, 2014
@@ -71,14 +72,14 @@ class Leave extends \Eloquent {
 	Purpose			:	This function returns boolean value based on $approveStage parameter value
 	Return			:	one of following values: APPROVED_BY_ALL, REJECTED_BY_ALL, APPROVED_BY_SOME, APPROVED_BY_NONE
 	*/
-	
+
 	public function approvalStatus($requiredStatus)
 	{
 		$allApprovals = $this->approvals->toArray();
 		$approvedApprovals = Approval::where("leave_id",$this->id)->where("approved", "YES")->get()->toArray();
 		$rejectedApprovals = Approval::where("leave_id",$this->id)->where("approved", "NO")->get()->toArray();
-		
-		
+
+
 		switch($requiredStatus){
 			case Leave::APPROVED_BY_SOME:
 				return count($approvedApprovals) >= 1;
@@ -90,8 +91,63 @@ class Leave extends \Eloquent {
 				return count($allApprovals) == count($rejectedApprovals);
 			case Leave::REJECTED_BY_SOME:
 				return count($rejectedApprovals) > 0;
+			case Leave::PENDING:
+    				return (count($allApprovals) - (count($rejectedApprovals) + count($approvedApprovals))) > 0;
 		}
 	}
-	
-	
+
+
+	/*
+	Function Name		: 		leaveStatus
+	Author Name		:		Jack Braj
+	Date			:		June 19, 2014
+	Parameters		:		leaveId
+	Purpose		:		This function used to return status of a leave (PENDING|APPROVED|REJECTED)
+	*/
+
+	public function leaveStatus()
+	{
+		if ($this->approvalStatus(Leave::APPROVED_BY_ALL))
+			return "APPROVED";
+		elseif($this->approvalStatus(Leave::REJECTED_BY_ALL) || $this->approvalStatus(Leave::REJECTED_BY_SOME))
+			return "REJECTED";
+		elseif( $this->approvalStatus( Leave::PENDING ) )
+			return "PENDING";
+	}
+
+	public function leaveNotification($leaveId)
+	{
+	 // Get user who has requested a leave or CSR
+            $requesting_user = User::find(Auth::user()->id);
+
+            // Get approver details
+            $approver_user = User::find($approval->approver_id);
+
+            // Construct subject line for the email
+	$request_type	 = TemplateFunction::getFullLeaveTypeName($approval->leave->leave_type);
+	$subject      	 = "$request_type request from $requesting_user->name";
+
+            // form a data array to be passed in view
+            $data = [];
+	$data['requesting_user'] = $requesting_user->toArray();
+
+	// Get leave details
+	$leave = Leave::find($approval->leave_id);
+	$data['leave'] = $leave->toArray();
+
+	// if leave type is a CSR then merge this as well in data
+	if ( "CSR" == $approval->leave->leave_type ) {
+		$data['csr'] = $approval->leave->csrs->toArray();
+	}
+
+             //Send email notification to approver
+            Mail::queue('emails.leave_request', $data,  function($message) use($approver_user, $subject)
+            {
+                $message->from('jack.braj@ithands.net', 'Admin');
+                $message->to($approver_user->email, $approver_user->name);
+                $message->subject($subject);
+            });
+        }
+
+
 }

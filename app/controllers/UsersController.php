@@ -1,5 +1,5 @@
 <?php
-/**
+/*
   Class Name:                       UsersController
   author :		            Nicolas Naresh
   Date:			            May, 30 2014
@@ -10,7 +10,7 @@
 */
 
 class UsersController extends \BaseController {
-  
+
   public function __construct()
   {
     $this->beforeFilter('auth', array(
@@ -26,7 +26,7 @@ class UsersController extends \BaseController {
     );
   }
 
-  /**
+  /*
     Function Name: 		getLogin
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -40,13 +40,13 @@ class UsersController extends \BaseController {
         return Redirect::to(URL::route('leaves.index'));
       }
       else{
-        return Redirect::to(URL::route('leaves.create'));
-      } 
+        return Redirect::to(URL::route('myLeaves'));
+      }
     }
     return View::make('users.login');
   }
-  
-  /**
+
+  /*
     Function Name: 		postLogin
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -66,22 +66,22 @@ class UsersController extends \BaseController {
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
-	      return Redirect::intended(URL::route('leaves.create'));
+	      return Redirect::intended(URL::route('myLeaves'));
       }
       else{
 	      return Redirect::intended(URL::route('usersListing'));
       }
-      
+
     }
     else{
       return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
     }
   }
-  
-  
-  
-  
-  /**
+
+
+
+
+  /*
     Function Name: 		logout
     Author Name:		  Nicolas Naresh
     Date:			        June, 02 2014
@@ -92,10 +92,10 @@ class UsersController extends \BaseController {
     Auth::logout();
     return Redirect::to(URL::route('userLogin'))->with('message', 'Your are now logged out!');
   }
-  
-  
-  
-  /**
+
+
+
+  /*
     Function Name: 		getForgotPassword
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -105,9 +105,9 @@ class UsersController extends \BaseController {
   public function getForgotPassword(){
     return View::make('users.forgotpassword');
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		postForgotPassword
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -120,7 +120,7 @@ class UsersController extends \BaseController {
       array("email" => $email),
       array("email" => "required|email")
     );
-    
+
     if($validator->fails()){
       return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Email Address is not valid');
     }
@@ -133,11 +133,11 @@ class UsersController extends \BaseController {
       else{
         return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Account not found for this Email');
       }
-      
+
       $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
-      
+
       $emailSubject = "Leave Management: Change Your Password";
-      
+
       $data = array(
       	'token' => $token,
       	'userName' => $userName,
@@ -152,9 +152,9 @@ class UsersController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("success","An Email has been sent to your email id for change password instructions!");
     }
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		getChangePassword
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -162,7 +162,7 @@ class UsersController extends \BaseController {
     Purpose:			This function provides a change password form to user
   */
   public function getChangePassword($token){
-    
+
     $user = User::where("changePasswordToken",$token)->get();
     if($user->first()){
       $user = $user->first();
@@ -172,9 +172,9 @@ class UsersController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
     }
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		postChangePassword
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -204,10 +204,10 @@ class UsersController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("success","Your password has been updated successfully!");
     }
   }
-  
-  
-  
-  /**
+
+
+
+  /*
     Function Name: 		postSearch
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -217,21 +217,21 @@ class UsersController extends \BaseController {
   */
 
   public function postSearch(){
-    
+
     if((Input::get("onblank") && Input::get("onblank") == "nil") && (trim((Input::get('name'))) == "")) {
       $searchFor = "%1234%";
     }
     else{
       $searchFor = "%". Input::get("name") . "%";
     }
-    
+
     $users = User::where("name","LIKE", $searchFor)->get();
-    
+
     return View::make(Input::get('view') ? 'users.' . Input::get('view') : 'users.listing')->with("users", $users);
   }
-  
-  
-  /**
+
+
+  /*
     Function Name: 		index
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -244,7 +244,7 @@ class UsersController extends \BaseController {
     return View::make('users.index', compact('users'));
   }
 
-  /**
+  /*
     Function Name: 		create
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -258,9 +258,9 @@ class UsersController extends \BaseController {
     return View::make('users.create')->with("user",$user);
   }
 
-  /**
+  /*
     Function Name: 		store
-    Author Name:		Nicolas Naresh
+    Author Name:		Jack Braj
     Date:			June, 03 2014
     Parameters:	            	-
     Purpose:			This function acts as an action for storing the filled information about
@@ -268,27 +268,41 @@ class UsersController extends \BaseController {
   */
   public function store()
   {
-    $formData = Input::all();
+    $formData = Input::except("_token");
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));        
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {
       return Redirect::to(URL::route('userCreate'))->withErrors($validator)->withInput();
     }
     else{
-      $formData = Input::except("password_confirmation","_token");
-      $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-      $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
-      $formData["password"] = Hash::make($formData["password"]);
       $user = User::create($formData);
       $user->totalLeaves = $user->getTotalLeaves();
-      $user->save();
-      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been created successfully, Please login now!');
+
+      // new code
+      $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
+
+      $emailSubject = "Leave Management: Your Account Details";
+
+      $data = array(
+        'token' => $token,
+      );
+      $data = array_merge($data,array('user'=> $user->toArray()));
+
+      // Send an email to user
+      Mail::queue('emails.registration', $data, function($message) use ($user, $token, $emailSubject)
+      {
+        $message->to($user->email, $user->name)->from('nicolas.naresh@ithands.net', 'Admin')->subject($emailSubject);
+        $user->changePasswordToken = $token;
+        $user->save();
+      });
+
+      return Redirect::to('users')->with('success', 'Account created successfully');
     }
   }
 
-  /**
+  /*
     Function Name: 		edit
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -304,7 +318,7 @@ class UsersController extends \BaseController {
     return View::make('users.edit')->with("user", $user);
   }
 
-  /**
+  /*
     Function Name: 		update
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -316,7 +330,7 @@ class UsersController extends \BaseController {
   {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime'])); 
+    $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
     $validator = User::validateRegistrationForm($formData, false);
     if($validator->fails())
     {
@@ -325,7 +339,7 @@ class UsersController extends \BaseController {
     else{
       $formData = Input::except("password_confirmation","_token");
       $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
-      $formData['outTime'] = date('H:i:s', strtotime($formData['outTime'])); 
+      $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
       if(!empty($formData["password"])){
         $formData["password"] = Hash::make($formData["password"]);
       }
@@ -340,7 +354,7 @@ class UsersController extends \BaseController {
     }
   }
 
-  /**
+  /*
     Function Name: 		destroy
     Author Name:		Nicolas Naresh
     Date:			June, 03 2014
@@ -352,16 +366,16 @@ class UsersController extends \BaseController {
     User::destroy($id);
     return Redirect::to(URL::route('usersListing'));
   }
-  
-  
-  /**
+
+
+  /*
   Function Name:	getSettings
   Author Name:		Nicolas Naresh
   Date:			June, 10 2014
   Parameters:		-
   Purpose:		Display tabbed settings page for admin
   */
-  
+
   public function getSettings(){
     //$this->pre_print(array_combine(range(1,31), array_map(function($d){return sprintf("%02s",$d); }, range(1,31))));
     $currYear = date("Y");
@@ -380,17 +394,17 @@ class UsersController extends \BaseController {
 
     return View::make("users.settings")->with("yearStart", $yearStart)->with("dayList", $dayList)->with("monList", $monList)->with("leaveConfig", $leaveConfig);
   }
-  
-  /**
+
+  /*
   Function Name:	postSettings
   Author Name:		Nicolas Naresh
   Date:			June, 10 2014
   Parameters:		-
   Purpose:		Saves/Updates various setting values
   */
-  
+
   public function postSettings(){
-    
+
     $allSettings = Input::all();
     if(key_exists("gapi",$allSettings)){
       $showTab = "#gapi";
@@ -401,17 +415,17 @@ class UsersController extends \BaseController {
       	'timezone' => 'required',
       	'calendar_id' => 'required'
       );
-      
+
       $validator = Validator::make(
       	$allSettings["gapi"],
       	$validationRules
       );
-      
+
       if($validator->fails()){
 	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
       }
       else{
-      	$googleSettings = htmlspecialchars('<?php ' . 
+      	$googleSettings = htmlspecialchars('<?php ' .
       	  'return array(
       	  "client_id" => "' . $allSettings["gapi"]["client_id"] . '",
       	  "service_account_name" => "' . $allSettings["gapi"]["service_account_name"] . '",
@@ -428,31 +442,53 @@ class UsersController extends \BaseController {
       	$showTab = "#account";
       	$validationRules = array(
       	  'email' => array('required','email'),
-      	  'password'  =>'required|between:4,8|confirmed',
-      	  'password_confirmation'=>'required|between:4,8',
+      	  'password'  =>'between:4,8',
+      	  'password_confirmation'=>'between:4,8',
       	);
-	
+
       	$validator = Validator::make(
       	  $allSettings["admin_account"],
       	  $validationRules
       	);
-      	
+
+        // Add password validation only if user has edited it
+
+       $validator->sometimes( 'password', 'required|confirmed', function($input){
+            return ( !empty($input->password) || !empty($input->password_confirmation) );
+
+       });
+
+       $validator->sometimes( 'password_confirmation', 'required', function($input){
+            return ( !empty($input->password) || !empty($input->password_confirmation) );
+
+       });
+
+
       	if($validator->fails()){
       	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
       	}
       	else{
       	  $user = Auth::user();
       	  $user->email = $allSettings["admin_account"]["email"];
+
+            // Check if user has entered the password then only update it otherwise update other values (not password)
+
+            if ( !empty($allSettings["admin_account"]["password"]) && !empty($allSettings["admin_account"]["password_confirmation"]) ) {
       	  $user->password = Hash::make($allSettings["admin_account"]["password"]);
-      	  $user->save();
+            }
+            else {
+              $temp_user = User::find(Auth::user()->id);
+              $user->password = $temp_user->password;
+          }
+            $user->save();
       	}
       }
       else{
       	if(key_exists("leave_setting", $allSettings)){
       	  $showTab = "#leave";
-      	  
+
       	  $allSettings["leave_setting"]["new_official_year_date"] = sprintf("%02s", $allSettings["leave_setting"]["official_year_day"]) . "-" . sprintf("%02s", $allSettings["leave_setting"]["official_year_month"]);
-      	  
+
       	  $validationRules = array(
       	    'carry_forward_leaves' => 'required|numeric',
       	    'paternity_leaves'  =>'required|numeric',
@@ -460,12 +496,12 @@ class UsersController extends \BaseController {
       	    'paid_leaves'=>'required|numeric',
       	    'new_official_year_date' => "required|regex:^[\d]{2}-[\d]{2}^"
       	  );
-      	  
+
       	  $validator = Validator::make(
       	    $allSettings["leave_setting"],
       	    $validationRules
       	  );
-      	  
+
       	  if($validator->fails()){
       	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
       	  }
@@ -511,7 +547,7 @@ class UsersController extends \BaseController {
 
       	    $official_year_month = $allSettings["leave_setting"]["official_year_month"];
       	    $official_year_day = $allSettings["leave_setting"]["official_year_day"];
-      	    
+
       	    $currYear = date("Y");
       	    $yearStart = YearStart::where("year", $currYear)->first();
       	    if($yearStart){
@@ -556,16 +592,16 @@ class UsersController extends \BaseController {
             		$description = $allSettings["extra_leaves"]["description"];
             		break;
             }
-      	    
+
       	    $user = User::where("name",$empName)->first();
       	    $userId = $user->id;
       	    $forYear = date("Y");
       	    $fromDate = $allSettings["extra_leaves"]["from_date"];
       	    $fromDate_timestamp = strtotime($fromDate);
       	    $toDate_timestamp = $fromDate_timestamp + (((int)$noOfLeaves - 1) * 24 * 60 * 60);
-      	    
+
       	    $toDate = date("Y-m-d",$toDate_timestamp);
-      	    
+
       	    $extraLeave = new Extraleave();
       	    $extraLeave->user_id = $userId;
       	    $extraLeave->leaves_count = $noOfLeaves;
@@ -580,8 +616,8 @@ class UsersController extends \BaseController {
     }
     return Redirect::to(URL::route('users.settings') . $showTab);
   }
-  
-  /**
+
+  /*
   Function Name:  getExtraLeaves
   Author Name:    Nicolas Naresh
   Date:     June, 10 2014

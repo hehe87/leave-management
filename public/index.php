@@ -46,4 +46,12 @@ $app = require_once __DIR__.'/../bootstrap/start.php';
 |
 */
 
-$app->run();
+//$app->run();
+//
+try {
+    $app->run();
+} catch(\Exception $e) {
+    echo "<pre>";
+    echo $e;
+    echo "</pre>";
+}

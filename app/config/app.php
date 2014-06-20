@@ -120,7 +120,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
     'Way\Generators\GeneratorsServiceProvider',
-    'Cornford\Bootstrapper\BootstrapServiceProvider'
+    'Cornford\Bootstrapper\BootstrapServiceProvider',
+    'Barryvdh\Debugbar\ServiceProvider',
 
 	),
 

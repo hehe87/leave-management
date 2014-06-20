@@ -1,20 +1,19 @@
 <?php
 /**
-
-  Class Name					:	LeavesController
-  author 					:	Jack Braj
-  Date						:	June 02, 2014
-  Purpose					:	Resourceful controller for leaves
-
-  Table referred				:	leaves, users, approvals
-  Table updated					:	leaves, approvals
-  Most Important Related Files			:   	/app/models/Leave.php
+ *
+ * Class Name					:	LeavesController
+ * author 						:	Jack Braj
+ * Date							:	June 02, 2014
+ * Purpose						:	Resourceful controller for leaves
+ * Table referred				:	leaves, users, approvals
+ * Table updated				:	leaves, approvals
+ * Most Important Related Files	:  	/app/models/Leave.php
 */
 
 
 
 class LeavesController extends \BaseController {
-	
+
 	public function __construct()
 	{
 	  $this->beforeFilter('auth');
@@ -22,36 +21,31 @@ class LeavesController extends \BaseController {
 
 
 	/**
-	Function Name				:	index
-	Author Name					:	Jack Braj
-	Date					:	June 02, 2014
-	Parameters					:	none
-	Purpose					:	This function used to list all leaves
+	 * Function Name	:	index
+	 * Author Name		:	Jack Braj
+	 * Date				:	June 02, 2014
+	 * Parameters		:	none
+	 * Purpose			:	This function used to list all leaves
 	*/
 
-	//public function __construct()
-	//{
-	//	$this->beforeFilter('auth');
-	//}
-	
-	
+
 	public function index()
 	{
 		$leaves = Leave::all();
-		
+
 		$extraLeaves = Extraleave::all();
 
 		return View::make('leaves.index')->with("leaves", $leaves)->with('extraLeaves', $extraLeaves);
 	}
 
 	/**
-	Function Name		: 		create
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	   	none
-	Purpose			:		This function renders leave form with user data
+	* Function Name		: 		create
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	   	none
+	* Purpose			:		This function renders leave form with user data
 	*/
-	
+
 	public function create()
 	{
 		$users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
@@ -60,21 +54,19 @@ class LeavesController extends \BaseController {
 	}
 
 	/**
-	Function Name		: 		store
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	    	none
-	Purpose			:		This function used to create leave
+	* Function Name		: 		store
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	   	none
+	* Purpose			:		This function used to create leave
 	*/
-	
+
 	public function store()
 	{
 	  $validator = [];
 	  $validator_leave = [];
 	  $validator_csr = [];
 	  $inputs = Input::all();
-
-
 
 	  $leave = $inputs['leave'];
 	  $leave['leave_option'] = $inputs['leave_option'];
@@ -86,44 +78,44 @@ class LeavesController extends \BaseController {
 	  $hasLeaveError = false;
 	  $hasApprovalError = false;
 	  $hasCsrError = false;
-    
+
 	  $validator_leave = Validator::make($leave, Leave::$rules);
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
 	    return $input->leave_type === "MULTI";
 	  });
-	  
+
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
 	    return $input->leave_type === "LONG";
 	  });
-	  
+
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
 	    $ltypes = array('FH','SH','LEAVE','CSR');
 	    return in_array($input->leave_type, $ltypes);
 	  });
-    
+
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
-    
+
 	  if( 'CSR' == $inputs['leave']['leave_type'] )
 	  {
 	    $csrs = $inputs['csr'];
-      
+
 	    foreach($csrs as $key=>$csr)
 	    {
 	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
 	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
 	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
-	      
+
 	      if($validator_csr[$key]->fails())
 		$hasCsrError = true;
 	    }
 	  }
-    
+
 	    // check if user has selected any approver or not
 	  if(!array_key_exists('approval', $inputs))
 	    $hasApprovalError = true;
-    
-  
+
+
 	  if($hasLeaveError || $hasApprovalError || $hasCsrError)
 	  {
 	    $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
@@ -132,19 +124,19 @@ class LeavesController extends \BaseController {
 	    {
 	      $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	    }
-      
-      
+
+
 	    return Redirect::back()->withErrors($validator)->withInput();
 	  }
 	  $tempLeave = $leave;
-    
+
 	  $addedLeaves = [];
-	  
-	  
+
+
 	  // grab all leave dates in an array
+
 	  $leave_dates = explode(",", $leave['leave_date']);
-		
-	  
+
 	  if($tempLeave["leave_type"] == "MULTI"){
 	    foreach($leave_dates as $leave_date){
 	      $leave = $tempLeave;
@@ -152,6 +144,7 @@ class LeavesController extends \BaseController {
 	      $leave["leave_type"] = "LEAVE";
 	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
 	      $leave = Leave::create($leave);
+
 	      $addedLeaves[] = $leave;
 	    }
 	  }
@@ -170,10 +163,10 @@ class LeavesController extends \BaseController {
 	      $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
 	      $leave = Leave::create($leave);
 	      $addedLeaves[] = $leave;
-	      
+
 	    }
 	  }
-	  
+
 		if( 'CSR' == $inputs['leave']['leave_type'] )
 	  {
 	    foreach($csr_slots as $slot)
@@ -182,29 +175,32 @@ class LeavesController extends \BaseController {
 	      Csr::create($slot);
 	    }
 	  }
-		
-		
+
+
 	  $approvals = $inputs['approval'];
 	  foreach($addedLeaves as $addedLeave){
 	    foreach($approvals as $approval)
 	    {
 	      $approval['leave_id'] = $addedLeave->id;
 	      $approval['approved'] = 'PENDING';
-	      Approval::create($approval);
+	      $approval = Approval::create($approval);
+
 	    }
-	  }	    
+	  }
+
 	  return Redirect::to(URL::route('myLeaves'))
 		->with('message', 'Leave successfully applied');
 	}
 
+
 	/**
-	Function Name	: 		show
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	    id
-	Purpose			:		This function used to show individual leave
+	* Function Name		: 		show
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	    id
+	* Purpose			:		This function used to show individual leave
 	*/
-	
+
 	public function show($id)
 	{
 	  $leave = Leave::findOrFail($id);
@@ -212,18 +208,18 @@ class LeavesController extends \BaseController {
 	}
 
 	/**
-	Function Name		: 		edit
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	    	id
-	Purpose			:		This function used to render edit form with user information filled in
+	* Function Name		: 		edit
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	   	id
+	* Purpose			:		This function used to render edit form with user information filled in
 	*/
-	
+
 	public function edit($id)
 	{
 	  $leave = Leave::find($id);
 	  if( 'LONG' == $leave->leave_type ) {
-	    $leave->leave_date .= ','. $leave->leave_to;      
+	    $leave->leave_date .= ','. $leave->leave_to;
 	  }
 	  $users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
 	  $inputCSRs = array();
@@ -243,18 +239,17 @@ class LeavesController extends \BaseController {
 	  else{
 
 	  }
-	  //$this->pre_print($inputCSRs);
 	  return View::make('leaves.edit', array('leave' => $leave, 'users' => $users, 'inputCSRs' => $inputCSRs));
 	}
 
 	/**
-	Function Name	: 			update
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	    	id
-	Purpose			:		This function used to update individual leave
+	* Function Name		: 		update
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	    id
+	* Purpose			:		This function used to update individual leave
 	*/
-	
+
 	public function update($id)
 	{
 	  $validator = [];
@@ -268,44 +263,45 @@ class LeavesController extends \BaseController {
 	  $leaveObj = Leave::findOrFail($id);
 	  $leave['leave_option'] = ($leaveObj->leave_type === 'CSR') ? 'CSR' : 'LEAVE';
 	  $validator_leave = Validator::make($leave, Leave::$rules);
-	  
+
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
 	    return $input->leave_type === "MULTI";
 	  });
-	  
+
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})/', function($input){
 	    return $input->leave_type === "LONG";
 	  });
-	  
+
 	  $validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}/', function($input){
 	    $ltypes = array('FH','SH','LEAVE','CSR');
 	    return in_array($input->leave_type, $ltypes);
 	  });
-	  
-    
+
+
 	  if($validator_leave->fails())
 	    $hasLeaveError = true;
-    
+
 	  if( 'CSR' == $inputs['leave']['leave_type'] )
 	  {
 	    $csrs = $inputs['csr'];
-      
+
 	    foreach($csrs as $key=>$csr)
 	    {
 	      $csr_slots[$key]['from_time'] = sprintf("%02s", $csr['from']['hour']).':' . sprintf("%02s", $csr['from']['min']);
 	      $csr_slots[$key]['to_time'] = sprintf("%02s", $csr['to']['hour']) . ':' . sprintf("%02s", $csr['to']['min']);
 	      $validator_csr[$key] = Validator::make($csr_slots[$key], Csr::$rules);
-	      
+
 	      if($validator_csr[$key]->fails())
 		$hasCsrError = true;
 	    }
 	  }
-  
+
 	  // check if user has selected any approver or not
+
 	  if(!array_key_exists('approval', $inputs))
 	    $hasApprovalError = true;
-    
-  
+
+
 	  if($hasLeaveError || $hasApprovalError || $hasCsrError)
 	  {
 	    $validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
@@ -316,9 +312,9 @@ class LeavesController extends \BaseController {
 	    }
 	    return Redirect::back()->withErrors($validator)->withInput();
 	  }
-	  
+
 	  $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
-	  
+
 	  if($leaveObj->leave_type === "LONG" || $leave["leave_type"] === "LONG"){
 	    $ldates = explode(",",$leave["leave_date"]);
 	    $leave_date = $ldates[0];
@@ -326,11 +322,10 @@ class LeavesController extends \BaseController {
 	    $leave["leave_date"] = $leave_date;
 	    $leave["leave_to"] = $leave_to;
 	  }
-	  
-	  
+
+
 	  $leaveObj->update($leave);
-	  //$leave = Leave::create($leave);
-	  
+
 	  if( 'CSR' == $inputs['leave']['leave_type'] )
 	  {
 	    $leaveObj->csrs()->forceDelete();
@@ -341,7 +336,7 @@ class LeavesController extends \BaseController {
 	    }
 	  }
 	  $approvals = $inputs['approval'];
-	  
+
 	  $leaveObj->approvals()->forceDelete();
 	  foreach($approvals as $approval)
 	  {
@@ -354,13 +349,13 @@ class LeavesController extends \BaseController {
 	}
 
 	/**
-	Function Name	: 		destroy
-	Author Name		:		Jack Braj
-	Date			:		June 02, 2014
-	Parameters		:	    id
-	Purpose			:		This function used to delete a single leave
+	* Function Name		: 		destroy
+	* Author Name		:		Jack Braj
+	* Date				:		June 02, 2014
+	* Parameters		:	    id
+	* Purpose			:		This function used to delete a single leave
 	*/
-	
+
 	public function destroy($id)
 	{
 	  $leave = Leave::find($id);
@@ -371,39 +366,37 @@ class LeavesController extends \BaseController {
 	  Leave::destroy($id);
 	  return Response::json(array('status' => true));
 	}
-	
-	
+
+
 	/**
-	Function Name		: 		myLeaves
-	Author Name		:		Jack Braj
-	Date			:		June 03, 2014
-	Parameters		:	    	none
-	Purpose			:		This function is used for listing all leaves/csrs
+	* Function Name		: 		myLeaves
+	* Author Name		:		Jack Braj
+	* Date				:		June 03, 2014
+	* Parameters		:	   	none
+	* Purpose			:		This function is used for listing all leaves/csrs
 	*/
-	
+
 	public function myLeaves(){
-	  /* $myLeaves = Leave::where("user_id",Auth::user()->id)->get();
-	  return View::make('leaves.myleaves')->with("leaves",$myLeaves); */
 	  $leaves = Leave::where('user_id', '=', Auth::user()->id)->get();
 	  return View::make('leaves.myleaves')->with('leaves', $leaves);
 	}
-	
-	
+
+
 	/**
-	Function Name		: 		leaveRequests
-	Author Name		:		Jack Braj
-	Date			:		June 03, 2014
-	Parameters		:	    	none
-	Purpose			:		This function is used for listing all leaves/csrs
+	* Function Name		: 		leaveRequests
+	* Author Name		:		Jack Braj
+	* Date				:		June 03, 2014
+	* Parameters		:	    none
+	* Purpose			:		This function is used for listing all leaves/csrs
 	*/
-	
+
 	public function leaveRequests(){
 	  $leaveRequests = Approval::where("approver_id",Auth::user()->id)->get();
 	  return View::make('leaves.leaverequests')->with("leaveRequests",$leaveRequests);
 	}
-	
-	
-	
+
+
+
 	public function getReport(){
 	  $searchData = Input::all();
 	  $leaves = null;
@@ -443,15 +436,15 @@ class LeavesController extends \BaseController {
 			break;
 		    }
 	  	}
-	    
+
 	  }
 	  return View::make('leaves.report')->withInputs($searchData)->with("leaves",$leaves);
 	}
-	
+
 	public function generateReport(){
-	  
+
 	}
-	
-	
-	
+
+
+
 }

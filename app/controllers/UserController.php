@@ -1,16 +1,16 @@
 <?php
 /**
-  Class Name:                       UserController
-  author :		            Nicolas Naresh
-  Date:			            May, 30 2014
-  Purpose:		            This class acts as a controller for user management
-  Table referred:		    users
-  Table updated:	            users
-  Most Important Related Files:     models/User.php
+ * Class Name                   :     UserController
+ * author                       :     Nicolas Naresh
+ * Date                         :     May, 30 2014
+ * Purpose                      :     This class acts as a controller for user management
+ * Table referred               :	    users
+ * Table updated                :     users
+ * Most Important Related Files :     models/User.php
 */
 
 class UserController extends \BaseController {
-  
+
   public function __construct()
   {
     $this->beforeFilter('auth', array(
@@ -27,13 +27,13 @@ class UserController extends \BaseController {
   }
 
   /**
-    Function Name: 		getLogin
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	username, password
-    Purpose:			This function acts as login action which displays user
-                                with login form.
+  * Function Name   : 	getLogin
+  * Author Name     :		Nicolas Naresh
+  * Date            :		June, 02 2014
+  * Parameters      :   username, password
+  * Purpose         :		This function acts as login action which displays user with login form.
   */
+
   public function getLogin(){
     if(Auth::check()){
       if(Auth::user()->employeeType == "ADMIN"){
@@ -41,19 +41,19 @@ class UserController extends \BaseController {
       }
       else{
         return Redirect::to(URL::route('leaves.create'));
-      } 
+      }
     }
     return View::make('users.login');
   }
-  
+
   /**
-    Function Name: 		postLogin
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	username, password
-    Purpose:			This function acts as login action which displays user
-                                with login form.
+  * Function Name :		postLogin
+  * Author Name   :		Nicolas Naresh
+  * Date          : 	June, 02 2014
+  * Parameters    :	 	username, password
+  * Purpose       :		This function acts as login action which displays user with login form.
   */
+
   public function postLogin(){
     $formData = Input::all();
     $email = $formData["email"];
@@ -71,48 +71,48 @@ class UserController extends \BaseController {
       else{
 	return Redirect::to(URL::route('usersListing'));
       }
-      
+
     }
     else{
       return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
     }
   }
-  
-  
-  
-  
+
+
+
+
   /**
-    Function Name: 		logout
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	username, password
-    Purpose:			This function acts as logout action which logouts the currently logged in user
+  * Function Name   : 	logout
+  * Author Name     :		Nicolas Naresh
+  * Date            :		June, 02 2014
+  * Parameters      :	 	username, password
+  * Purpose         :		This function acts as logout action which logouts the currently logged in user
   */
   public function logout(){
     Auth::logout();
     return Redirect::to(URL::route('userLogin'))->with('message', 'Your are now logged out!');
   }
-  
-  
-  
+
+
+
   /**
-    Function Name: 		getForgotPassword
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	-
-    Purpose:			This function displays forgot password page
+  * Function Name : 	getForgotPassword
+  * Author Name   :		Nicolas Naresh
+  * Date          :		June, 02 2014
+  * Parameters    :   none
+  * Purpose       :		This function displays forgot password page
   */
   public function getForgotPassword(){
     return View::make('users.forgotpassword');
   }
-  
-  
+
+
   /**
-    Function Name: 		postForgotPassword
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	-
-    Purpose:			This function emails a link to input email id with a change password link
+  * Function Name: 		postForgotPassword
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 02 2014
+  * Parameters:	            	-
+  * Purpose:			This function emails a link to input email id with a change password link
   */
   public function postForgotPassword(){
     $email = Input::get("email");
@@ -120,7 +120,7 @@ class UserController extends \BaseController {
       array("email" => $email),
       array("email" => "required|email")
     );
-    
+
     if($validator->fails()){
       return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Email Address is not valid');
     }
@@ -133,11 +133,11 @@ class UserController extends \BaseController {
       else{
 	return Redirect::to(URL::route("userForgotPassword"))->with('error', 'Account not found for this Email');
       }
-      
+
       $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
-      
+
       $emailSubject = "Leave Management: Change Your Password";
-      
+
       $data = array(
 	'token' => $token,
 	'userName' => $userName,
@@ -152,17 +152,17 @@ class UserController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("success","An Email has been sent to your email id for change password instructions!");
     }
   }
-  
-  
+
+
   /**
-    Function Name: 		getChangePassword
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	$token - change password token generated at time of submitting forgot password page
-    Purpose:			This function provides a change password form to user
+  * Function Name   : 		getChangePassword
+  * Author Name     : 		Nicolas Naresh
+  * Date            :			June, 02 2014
+  * Parameters      :    	$token - change password token generated at time of submitting forgot password page
+  * Purpose         : 		This function provides a change password form to user
   */
   public function getChangePassword($token){
-    
+
     $user = User::where("changePasswordToken",$token)->get();
     if($user->first()){
       $user = $user->first();
@@ -172,14 +172,14 @@ class UserController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("error","The link you requested is no longer valid!");
     }
   }
-  
-  
+
+
   /**
-    Function Name: 		postChangePassword
-    Author Name:		Nicolas Naresh
-    Date:			June, 02 2014
-    Parameters:	            	$token - change password token generated at time of submitting forgot password page
-    Purpose:			This function updates user password
+  * Function Name: 		postChangePassword
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 02 2014
+  * Parameters:	            	$token - change password token generated at time of submitting forgot password page
+  * Purpose:			This function updates user password
   */
   public function postChangePassword($token){
     $validator = Validator::make(
@@ -204,30 +204,30 @@ class UserController extends \BaseController {
       return Redirect::to(URL::route("userLogin"))->with("success","Your password has been updated successfully!");
     }
   }
-  
-  
-  
+
+
+
   /**
-    Function Name: 		postSearch
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	-
-    Purpose:			This function searches for the name of user in database and returns an array of
-				matching users.
+  * Function Name: 		postSearch
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	-
+  * Purpose:			This function searches for the name of user in database and returns an array of
+	*	matching users.
   */
 
   public function postSearch(){
     $users = User::where("name","LIKE", "%". Input::get("name") . "%")->get();
     return View::make('users.listing')->with("users", $users);
   }
-  
-  
+
+
   /**
-    Function Name: 		index
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	-
-    Purpose:			This function acts as an action for displaying all the users in a table
+  * Function Name: 		index
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	-
+  * Purpose:			This function acts as an action for displaying all the users in a table
   */
   public function index()
   {
@@ -236,11 +236,11 @@ class UserController extends \BaseController {
   }
 
   /**
-    Function Name: 		create
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	-
-    Purpose:			This function acts as an action for displaying user addition form
+  * Function Name: 		create
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	-
+  * Purpose:			This function acts as an action for displaying user addition form
   */
   public function create()
   {
@@ -249,12 +249,12 @@ class UserController extends \BaseController {
   }
 
   /**
-    Function Name: 		store
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	-
-    Purpose:			This function acts as an action for storing the filled information about
-				user to the database table users
+  * Function Name: 		store
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	-
+  * Purpose:			This function acts as an action for storing the filled information about
+	* user to the database table users
   */
   public function store()
   {
@@ -275,12 +275,12 @@ class UserController extends \BaseController {
   }
 
   /**
-    Function Name: 		edit
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	$id
-    Purpose:			This function acts as an action for displaying edit user form, where the
-				retlated to the user can be edited
+  * Function Name: 		edit
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	$id
+  * Purpose:			This function acts as an action for displaying edit user form, where the
+	*	retlated to the user can be edited
   */
   public function edit($id)
   {
@@ -289,12 +289,12 @@ class UserController extends \BaseController {
   }
 
   /**
-    Function Name: 		update
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	$id
-    Purpose:			This function updates the given users information to database with
-				the information updated in the edit form
+  * Function Name: 		update
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	$id
+  * Purpose:			This function updates the given users information to database with
+	*		the information updated in the edit form
   */
   public function update($id)
   {
@@ -312,8 +312,8 @@ class UserController extends \BaseController {
       else{
 	unset($formData["password"]);
       }
-      
-      
+
+
       $user = User::find($id);
       $user->update($formData);
       $user->totalLeaves = $user->getTotalLeaves();
@@ -322,12 +322,13 @@ class UserController extends \BaseController {
     }
   }
 
+
   /**
-    Function Name: 		destroy
-    Author Name:		Nicolas Naresh
-    Date:			June, 03 2014
-    Parameters:	            	$id
-    Purpose:			This function removes the specified user from database
+  * Function Name: 		destroy
+  * Author Name:		Nicolas Naresh
+  * Date:			June, 03 2014
+  * Parameters:	            	$id
+  * Purpose:			This function removes the specified user from database
   */
   public function destroy($id)
   {
