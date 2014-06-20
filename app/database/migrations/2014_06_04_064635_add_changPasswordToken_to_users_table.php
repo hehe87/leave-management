@@ -14,7 +14,7 @@ class AddChangPasswordTokenToUsersTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table)
 		{
-			$table->string('changePasswordToken', 100);
+			$table->string('changePasswordToken', 100)->nullable();
 		});
 	}
 

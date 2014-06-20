@@ -100,9 +100,9 @@ $(document).on("ready",function(){
     window.timeSlotHtml = $('#timeSlot').find(".row.form-group").last().html();
     $('#addSlot').on('click', function(e){
       var slotCount = $("#timeSlot").find(".row.form-group").length.toString();
-      $('#timeSlot').append("<div class='row form-group'></div>")
+      $('#timeSlot').append("<div class='row form-group has-feedback'></div>")
       $('#timeSlot .row.form-group:last').append(window.timeSlotHtml);
-      $("#timeSlot").find(".row.form-group").last().find('select').each(function() {
+      $("#timeSlot").find(".row.form-group").last().find('input').each(function() {
         $name = $(this).attr('name');
         $name = $name.replace(/[0-9]+/g,slotCount);
         $(this).attr("name",$name);
@@ -111,6 +111,12 @@ $(document).on("ready",function(){
       {
         $("#addSlot").remove();
       }
+      $('.timepicker').timepicker({
+        minuteStep: 5,
+        showInputs: true,
+        disableFocus: true,
+        defaultTime: false
+      });
     });
   } 
 });
@@ -153,8 +159,6 @@ $(document).on("ready",function(){
       var $date_control =   $(this);
       var date_control_val = $date_control.val().split(" ")[0];
       
-      console.log(date_control_val);
-      
       if($(".date_control").hasClass("date-long")){
         var dts = [];
         if(date_control_val == ""){
@@ -169,7 +173,6 @@ $(document).on("ready",function(){
         }
         else{
           $.each(date_control_val.split(","),function(k,v){
-            console.log(v);
             dts.push(new Date(v.split('-')[0], parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
           });
           $date_control.multiDatesPicker({
@@ -237,29 +240,7 @@ $(document).on("ready",function(){
       }
     })
   }
-    
-  ////applies datepicker on date_control class
-  //$(".date_control").datepicker({
-  //  showOn : "both",
-  //  dateFormat: "yy-mm-dd",
-  //  changeMonth: true,
-  //  changeYear: true,
-  //  yearRange: "-100:+0"
-  //});
-  //
-  ////removes time part from date_control input value
-  //$(".date_control").each(function(){
-  //  if($(this).val() != ""){
-  //    $(this).val($(this).val().split(" ")[0]);
-  //  }
-  //});
-  
-  
-  
-  // update leave request status
-  
-  
-  
+
   if($('.multiple-select-with-checkbox').length != 0){
     $('.multiple-select-with-checkbox').each(function(){
       var options = $(this).find("option");
@@ -285,7 +266,7 @@ $(document).on("ready",function(){
     if(confirm("Are you sure you want to delete this leave")){
       $.ajax({
         url: $(this).data("url"),
-        type: "post",
+        type: "get",
         dataType: "json",
         success: function(retdata){
           $parentRow.remove();
@@ -294,6 +275,92 @@ $(document).on("ready",function(){
     }
   });
 });
+
+
+$(document).on("submit", "#leaves_edit_form",function(e){
+  e.preventDefault();
+  if($("#leave_option").val() === "CSR"){
+    var slotsCount = ($("#timeSlot .timepicker").length / 2);
+    switch(slotsCount){
+      case 1:
+        var startTime = $("#timeSlot .timepicker.start").first().val();
+        var endTime = $("#timeSlot .timepicker.end").first().val();
+        var diff = getHourDifference(startTime, endTime);
+        if(diff < 0){
+          alert("Invalid Date Range selected for CSR time inputs");
+          return;
+        }
+        if(diff > 2){
+          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          return;
+        }
+        break;
+      case 2:
+        var startTime1 = $("#timeSlot .timepicker.start").first().val();
+        var endTime1 = $("#timeSlot .timepicker.end").first().val();
+        var startTime2 = $("#timeSlot .timepicker.start").last().val();
+        var endTime2 = $("#timeSlot .timepicker.end").last().val();
+        var diff = getHourDifference(startTime1, endTime1);
+
+        if(diff < 0){
+          alert("Invalid Date Range selected for CSR(1) time inputs");
+          return;
+        }
+        if(diff > 2){
+          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          return;
+        }
+        var diff2 = getHourDifference(startTime2,endTime2);
+        if(diff2 < 0){
+          alert("Invalid Date Range selected for CSR(2) time inputs");
+          return;
+        }
+        diff2 += diff;
+        if(diff2 > 2){
+          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          return;
+        }
+        diff += diff2;
+        break;
+    }
+  }
+  if($(this).attr("id") == "leaves_create_form"){
+    $("#leaves_create_form")[0].submit();
+  }
+  else{
+    $("#leaves_edit_form")[0].submit();
+  }
+  
+});
+
+
+function getHourDifference(startTime, endTime){
+  var sTime = new Date("10-12-1987 " + startTime);
+  var eTime = new Date("10-12-1987 " + endTime);
+  var diff = (eTime - sTime)/1000/60/60;
+  return diff;
+}
+
+/*  reqVal may be hour, min
+    and returns 24 hour format hour if reqVal is hour
+*/
+
+function getTimeInfo(reqVal,inputTime){
+  switch(reqVal){
+    case "hour":
+      var hour = parseInt(inputTime.split(":")[0]);
+      var meridian = inputTime.split(":")[1].split(" ")[1];
+      if(meridian === "PM"){
+        hour += 12;
+      }
+      else{
+        hour = hour % 12;
+      }
+      return hour;
+    case "min":
+      return parseInt(inputTime.split(":")[1].split(" ")[0]);
+  }
+}
 
 
 
@@ -330,6 +397,64 @@ $(document).on('click', '.view-approvals', function(e){
     }
   });
 });
+
+$(document).on('dblclick', ".editable", function(){
+  console.log("i m here");
+  $(this).prop("readonly",false);
+});
+
+$(document).on('blur', ".editable", function(){
+  var url = $(this).data("url");
+  var model = $(this).data("model");
+  var column = $(this).data("column");
+  var value = $(this).val();
+  var id = $(this).data("id");
+  var origVal = $(this).data("orig");
+  var $this = $(this);
+  $.ajax({
+    url: url,
+    data: {model: model, column: column, value: value, id: id},
+    dataType: "json",
+    success: function(retdata){
+      if(retdata.status == true){
+        window.location.reload();
+      }
+      else{
+        $this.val(origVal);
+      }
+    }
+  })
+  $(this).prop("readonly",true);
+});
+
+$(document).on('keyup', ".editable", function(e){
+  if(e.keyCode == 13){
+    var url = $(this).data("url");
+    var model = $(this).data("model");
+    var column = $(this).data("column");
+    var value = $(this).val();
+    var id = $(this).data("id");
+    var origVal = $(this).data("orig");
+    var $this = $(this);
+    $.ajax({
+      url: url,
+      data: {model: model, column: column, value: value, id: id},
+      dataType: "json",
+      success: function(retdata){
+        if(retdata.status == true){
+          window.location.reload();
+        }
+        else{
+          $this.val(origVal);
+        }
+      }
+    })
+    $(this).prop("readonly",true);
+  }
+});
+
+
+
 
 
 

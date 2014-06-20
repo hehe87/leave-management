@@ -19,6 +19,7 @@
     {{ HTML::style('assets/css/mdp.css') }}
     {{ HTML::style('assets/css/pepper-ginder-custom.css') }}
     {{ HTML::style('assets/css/prettify.css') }}
+    {{ HTML::style('assets/css/bootstrap-timepicker.min.css') }}
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
@@ -119,6 +120,8 @@
     {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
+    {{ HTML::script('assets/js/dateformat.js') }}
+    {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
     <!-- End including Scripts -->

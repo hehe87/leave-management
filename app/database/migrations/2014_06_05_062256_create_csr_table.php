@@ -19,7 +19,7 @@ class CreateCsrTable extends Migration {
 			$table->foreign('leave_id')->references('id')->on('leaves');
 			$table->time('from_time');
 			$table->time('to_time');
-			$table->text('completion_note');
+			$table->text('completion_note')->nullable();
 			$table->timestamps();
 		});
 	}

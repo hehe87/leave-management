@@ -16,20 +16,20 @@ class CreateUsersTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('name', 80);
-			$table->string('fName', 80);
+			$table->string('fName', 80)->nullable();
 			$table->string('email', 50);
 			$table->string('password', 80);
 			$table->time('inTime');
 			$table->time('outTime');
 			$table->datetime('dob');
 			$table->datetime('doj');
-			$table->string('bloodGroup', 5);
-			$table->boolean('maritalStatus');
+			$table->string('bloodGroup', 5)->nullable();
+			$table->boolean('maritalStatus')->nullable();
 			$table->string('phone', 15);
-			$table->string('altPhone', 15);
-			$table->text('cAddress', 200);
-			$table->text('pAddress', 200);
-			$table->integer('totalLeaves',false,3);
+			$table->string('altPhone', 15)->nullable();
+			$table->text('cAddress', 200)->nullable();
+			$table->text('pAddress', 200)->nullable();
+			$table->integer('totalLeaves',false,3)->nullable();
 			$table->enum('employeeType', array("EMPLOYEE","ADMIN"));
 			$table->timestamps();
 		});

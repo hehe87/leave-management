@@ -43,10 +43,13 @@
               Phone Number
             </th>
             <th class="text-center">
-              All Leaves(This Year)
+              All Leaves<br>(This Year)
             </th>
             <th class="text-center">
-              Available Leaves(This Year)
+              Available Leaves<br>(This Year)
+            </th>
+            <th>
+              Carry Forward
             </th>
             <th class="text-center">
               Actions

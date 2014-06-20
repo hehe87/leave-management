@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class RemoveFromTimeFromLeaves extends Migration {
+class AddCarryForwardLeavesToUsersTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,9 @@ class RemoveFromTimeFromLeaves extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('leaves', function(Blueprint $table)
+		Schema::table('users', function(Blueprint $table)
 		{
-			$table->dropColumn('from_time');      
+			$table->integer('carry_forward_leaves')->nullable()->default(0);
 		});
 	}
 
@@ -26,9 +26,9 @@ class RemoveFromTimeFromLeaves extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('leaves', function(Blueprint $table)
+		Schema::table('users', function(Blueprint $table)
 		{
-			$table->time('from_time')->nullable();
+			$table->dropColumn('carry_forward_leaves');
 		});
 	}
 

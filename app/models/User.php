@@ -32,6 +32,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'altPhone'
   );
 
+
+  /*
+    Function Name:  scopeEmployee
+    Author Name:  Nicolas Naresh
+    Date:   May, 30 2014
+    Parameters:
+    Purpose:        This function acts as a filter while getting all users
+    which are not admins
+  */
+
+  public function scopeEmployee($query){
+    return $query->where("employeeType", "<>", "ADMIN");
+  }
+
+
+
   /**
    * Get the unique identifier for the user.
    *
@@ -137,13 +153,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)date("Y");
     $previousYear = $currentYear - 1;
     $thisYearTotalLeaves = $this->getTotalLeavesForYear($currentYear);
-    $previousYearLeaves = $this->getTotalLeavesForYear($previousYear);
-    if($previousYearLeaves >= Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days){
-      $thisYearTotalLeaves += Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days;
-    }
-    else{
-      $thisYearTotalLeaves += $previousYearLeaves;
-    }
+    // if(date("Y",strtotime($this->doj)) != date("Y")){
+    //   $previousYearLeaves = $this->getTotalLeavesForYear($previousYear);
+    //   if($previousYearLeaves >= Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days){
+    //     $thisYearTotalLeaves += Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days;
+    //   }
+    //   else{
+    //     $thisYearTotalLeaves += $previousYearLeaves;
+    //   }
+    // }
+
     return $thisYearTotalLeaves;
   }
 
@@ -173,7 +192,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)$currentDate->format("Y");
     $paidLeaves = Leaveconfig::getConfig("paid_leaves", $currentYear)->leave_days;
     $allLeaves = $paidLeaves;
-    $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    if(Config::get("database.default") == "mysql"){
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('YEAR(holidayDate)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    }
+    else{
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    }
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
 
     $dateOfJoining = new DateTime($this->doj);
@@ -221,6 +245,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
     foreach($extraLeaves as $extraL){
       $allLeaves += $extraL->leaves_count;
+    }
+
+    if((int)$currentYear == (int)date("Y")){
+      $allLeaves += $this->carry_forward_leaves;
     }
 
     return $allLeaves;

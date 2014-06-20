@@ -46,7 +46,7 @@
             </div>
             <div class="col-lg-3">
               <div class="text-center">
-                <span class="link">Logged in as <b>{{ Auth::user()->name }}</b></span>
+                <span class="link">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></span>
                 <a class="link logout-link" href="{{ URL::route('userLogout') }}">
                   Logout
                 </a>
@@ -71,6 +71,9 @@
           <li>
             <a href="{{ URL::route('leaves.report') }}">Reports</a>
           </li>
+          <li class="">
+              <a href="{{URL::route('leaves.create')}}">Add Leave</a>
+            </li>
           
           @if (Route::currentRouteName() === "holidaysListing")
             <li class="lms-active">
@@ -85,7 +88,7 @@
               <a href="{{URL::route('users.settings')}}">Settings</a>
             </li>
           <li class="small-window-show">
-            <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
+            <a class="link" href="#">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></a>
           </li>
           <li class="small-window-show">
             <a class="link" href="{{ URL::route('userLogout') }}">
@@ -96,6 +99,13 @@
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
+          @if(Session::get("message"))
+            <div class="form-group">
+              <div class="col-sm-12 alert alert-success">
+                {{ Session::get("message") }}
+              </div>
+            </div>
+          @endif
           @yield('content')  
         </div>
         <!-- End Content Panel -->
@@ -124,12 +134,15 @@
     
     <!-- Including Scripts -->
     {{ HTML::script('assets/js/jquery.min.js') }}
+    {{ HTML::script('assets/js/jquery-migrate.js') }}
     {{ HTML::script('assets/js/bootstrap.min.js') }}
     {{ HTML::script('assets/js/jquery.ui.js') }}
     {{ HTML::script('assets/js/jquery.easing.js') }}
     {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
     {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
     {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
+    {{ HTML::script('assets/js/jquery.ui.core.js') }}
+    {{ HTML::script('assets/js/jquery.ui.datepicker.js') }}
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
     {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}

@@ -11,6 +11,7 @@
   class Holiday extends Eloquent{
     public $fillable = array(
       'holidayDate',
+      'holidayType',
       'holidayDescription'
     );
     

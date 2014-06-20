@@ -28,7 +28,12 @@ class HolidaysController extends \BaseController {
   */
   public function index(){
     $currentYear = date("Y");
-    $holidays = Holiday::where(DB::raw("YEAR(holidayDate)"), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    if(Config::get("database.default") == "mysql"){
+       $holidays = Holiday::where(DB::raw('YEAR(holidayDate)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    }
+    else{
+      $holidays = Holiday::where(DB::raw('EXTRACT(YEAR FROM "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+    }
     return View::make("holidays.index")->with("holidays",$holidays);
   }
 
@@ -62,6 +67,7 @@ class HolidaysController extends \BaseController {
       return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput();
     }
     else{
+      $formData["holidayType"] = "OPTIONAL";
       Holiday::create($formData);
       return Redirect::to(URL::route("holidaysListing"));
     }

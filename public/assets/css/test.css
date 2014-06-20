@@ -1,0 +1,12 @@
+.header{
+	height: 50px;
+	background-color: #991B1E;
+}
+
+.header div:first-child{
+	linear-gradient(#BCED91 49%, transparent 49%),
+    linear-gradient(-45deg, white 33%, transparent 33%) 0 50%,
+    white linear-gradient(45deg, white 33%, #BCED91 33%) 0 50%;
+    background-repeat: repeat-x;
+    background-size: 1px 100%, 40px 40px, 40px 40px;
+}

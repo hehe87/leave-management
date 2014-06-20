@@ -1,6 +1,28 @@
 {{ Form::hidden('user_id', Auth::user()->id) }}
 
-@if ((isset($formFor) && $formFor != "edit") || (!isset($formFor)))
+  @if ($layout == "admin_layout")
+    <div class="form-group">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="col-lg-2">
+            <label class="control-label">Employee Name *</label>
+          </div>
+          <div class="col-lg-6">
+            <input type="text" class="form-control" placeholder="Search Employee" value="{{ Input::get('employee_name') != '' ? Input::get('employee_name') : '' }}" name="employee_name" autocomplete="off" id="user-search"  data-search_url="{{ URL::route('usersSearch') }}" data-view="singleColumnList" data-onblank="nil" data-onselect="getExtraLeaves" data-onselectajaxurl="{{ URL::route('users.getExtraLeaves') }}"/>
+            <div id="lm-autosearch">
+              <table class="table">
+                <tbody id="user-listing-tbody">
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
+
+
   <div class="form-group">
     <div class="col-sm-12">
       <div class="row">
@@ -8,7 +30,7 @@
           {{ Form::label('leave_option', 'Leave Option', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-6">
-          {{ Form::select('leave_option', array('' => 'Select Leave Option', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), '',array('id'=> 'leave_option', 'class' => 'form-control')) }}
+          {{ Form::select('leave_option', array('' => 'Select Leave Option', 'LEAVE' => 'Leave', 'CSR' => 'CSR'), ($leave->leave_type == "CSR" ? "CSR" : ($leave->leave_type == "" ? "" : "LEAVE"))  ,array('id'=> 'leave_option', 'class' => 'form-control')) }}
         </div>
       </div>
       @if ($errors->first('leave_option'))
@@ -22,7 +44,6 @@
       @endif
     </div>
   </div>
-@endif
 
 
 
@@ -75,7 +96,7 @@
     @endif
   </div>
 </div>
-@if ((Input::old('leave.leave_type') && Input::old('leave.leave_type') == "CSR") || ($leave->leave_type === "CSR"))
+@if ((Input::old('leave.leave_option') && Input::old('leave.leave_option') == "CSR") || ($leave->leave_type === "CSR"))
 <div id="csr-container">
 @else
 <div id="csr-container" class="hide">
@@ -87,17 +108,18 @@
           {{ Form::label('from_time', 'Timings *', array('class' => 'control-label')) }}
         </div>
         <div id="timeSlot" class="col-sm-6">
+
           @if(count(Input::old('csr')) != 0)
             @foreach (Input::old('csr') as $old_csr_key => $old_csr)
               @include("leaves.csrTimeInputs",array("csr_key" => $old_csr_key, "csr_inputs" => $old_csr))
             @endforeach
           @else
-            @if (count($leave->csrs->toArray()) != 0)
+            @if (isset($inputCSRs))
               @foreach ($inputCSRs as $old_csr_key => $old_csr)
                 @include("leaves.csrTimeInputs",array("csr_key" => $old_csr_key, "csr_inputs" => $old_csr))
               @endforeach
             @else
-              @include("leaves.csrTimeInputs",array("csr_key" => 0, "csr_inputs" => array("from" => array("hour" => "0", "min" => "0"), "to" => array("hour" => "0", "min" => "0"))))
+              @include("leaves.csrTimeInputs",array("csr_key" => 0, "csr_inputs" => array("from_time" => "", "to_time" => "")))
             @endif
           @endif
         </div>
@@ -129,25 +151,29 @@
     @endif
   </div>
 </div>
-<div class="form-group">
-  <div class="col-sm-12">
-    <div class="row">
-      <div class="col-sm-2">
-        {{ Form::label('approver_id', 'Approval *', array('class' => 'control-label')) }}
-      </div>
-      <div class="col-sm-6">        
-        {{ Form::select('approval[][approver_id]', $users, array_map(function($approver){return $approver['approver_id']; },(is_array(Input::old('approval')) ? Input::old('approval') : $leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple')) }}
-        
-      </div>
-    </div>
-    @if ($errors->first('approval'))
+@if ($layout != "admin_layout")
+  <div class="form-group">
+    <div class="col-sm-12">
       <div class="row">
-        <div class="col-sm-6 col-sm-offset-2">
-          <div class="alert alert-danger">
-            {{{ $errors->first('approval') }}}
-          </div>
+        <div class="col-sm-2">
+          {{ Form::label('approver_id', 'Approval *', array('class' => 'control-label')) }}
+        </div>
+        <div class="col-sm-6">        
+          {{ Form::select('approval[][approver_id]', $users, array_map(function($approver){return $approver['approver_id']; },(is_array(Input::old('approval')) ? Input::old('approval') : $leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple')) }}
+          
         </div>
       </div>
-    @endif
+      @if ($errors->first('approval'))
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-2">
+            <div class="alert alert-danger">
+              {{{ $errors->first('approval') }}}
+            </div>
+          </div>
+        </div>
+      @endif
+    </div>
   </div>
-</div>
+@else
+  {{ Form::hidden('approval[][approver_id]',Auth::user()->id)}}
+@endif

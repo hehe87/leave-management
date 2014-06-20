@@ -6,11 +6,13 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"cornford/bootstrapper": "1.*",
-    "google/apiclient": "1.0.*@dev"
+    	"google/apiclient": "1.0.*@dev",
+    	"way/generators": "2.*"
 	},
 	"require-dev": {
 		"way/generators": "2.*",
 		"barryvdh/laravel-debugbar": "1.*"
+    		"heroku/heroku-buildpack-php": "dev-develop"
 	},
 	"autoload": {
 		"classmap": [
