@@ -11,8 +11,8 @@
 	},
 	"require-dev": {
 		"way/generators": "2.*",
-		"barryvdh/laravel-debugbar": "1.*"
-    		"heroku/heroku-buildpack-php": "dev-develop"
+		"barryvdh/laravel-debugbar": "1.*",
+		"heroku/heroku-buildpack-php": "dev-develop"
 	},
 	"autoload": {
 		"classmap": [
