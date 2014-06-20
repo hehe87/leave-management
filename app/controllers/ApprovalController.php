@@ -128,7 +128,6 @@ class ApprovalController extends \BaseController {
     if($approval->approver_id != Auth::user()->id){
       return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave!'));
     }
-
 		$approval->approved = Input::get('approvalStatus');
 		$approval->save();
 
@@ -237,7 +236,7 @@ class ApprovalController extends \BaseController {
 
           // Add one day to end date since google doesn't mark event for a day when any time is not provided after midnight
           $tempDate = new DateTime($endDate);
-          $tempDate->add(new DateInterval('P1D')); // PID means a period of 1 day
+          $tempDate->add(new DateInterval('P1D')); // P1D means a period of 1 day
           $endDate = $tempDate->format('Y-m-d');
 
           $end->setDate($endDate);
