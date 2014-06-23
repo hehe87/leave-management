@@ -22,7 +22,7 @@ class TemplateFunction{
 
 	public static function getFullLeaveTypeName($ltype){
 		$fullNames = array(
-			"LEAVE" => "Full Day Leave",
+			"LEAVE" => "Full Day",
 			"FH" => "First Half",
 			"SH" => "Second Half",
 			"CSR" => "CSR",
@@ -34,6 +34,10 @@ class TemplateFunction{
 		else{
 			return $ltype;
 		}
+	}
+
+	public static function getLeaveTypeSummary($ltype){
+		return "(" . $ltype . ")";
 	}
 
 	public static function fakeName($name){
@@ -62,5 +66,18 @@ class TemplateFunction{
 	    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 	    $decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $encryption_key, $encrypted_string, MCRYPT_MODE_ECB, $iv);
 	    return $decrypted_string;
+	}
+
+	public static function requireGoogleCalendarApi(){
+		require_once( base_path() . '/vendor/google/apiclient/src/Google/Client.php' );
+    	require_once( base_path() . '/vendor/google/apiclient/src/Google/Service/Calendar.php' );
+	}
+
+	public static function getGoogleCalendarCreds(){
+		$googleCreds = array();
+		$googleCreds['clientId'] = Config::get('google.client_id');
+	    $googleCreds['serviceAccountName'] = Config::get('google.service_account_name');
+	    $googleCreds['keyFileLocation'] = Config::get('google.key_file_location');
+	    return $googleCreds;
 	}
 }

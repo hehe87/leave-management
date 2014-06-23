@@ -147,7 +147,7 @@ $(document).on("submit","#report-form",function(e){
 $(document).on("change","#report-form #leave-type",function(){
   var $form = $("#report-form");
   var inputs = $form.find("input").not(".multiselect-search");
-  var selects = $form.find("select").not("select[name='employee_name']");
+  var selects = $form.find("select").not(".multiselect");
   if($(this).val() == "ALL"){
     inputs.hide();
     selects.hide();

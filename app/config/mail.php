@@ -54,7 +54,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => null, 'name' => "admin@ithands.net"),
+	'from' => array('address' => null, 'name' => "anmol.vichar108@gmail.com"),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return array(
 	|
 	*/
 
-	'username' => "anmol.vichar108",
+	'username' => "anmol.vichar108@gmail.com",
 
 	/*
 	|--------------------------------------------------------------------------

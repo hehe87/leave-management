@@ -204,10 +204,12 @@ class LeavesController extends \BaseController {
 				$approval['leave_id'] = $addedLeave->id;
 				$approval['approved'] = 'PENDING';
 				$approval = Approval::create($approval);
-
+				
 				if(Auth::user()->employeeType == "ADMIN"){
 					$approval->approved = 'YES';
 					$approval->save();
+					$approval->sendApprovalNotification();
+    				$approval->markCalendarEvent();
 				}
 			}
 		}
