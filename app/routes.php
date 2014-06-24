@@ -11,8 +11,7 @@
 |
 */
 
-
-
+//  SSL workaround for IRON MQ
 Route::get('/', array('as' => 'usersHome', 'uses' => 'HomeController@showWelcome'));
 Route::get('/test', array('as' => 'test', 'uses' => 'UsersController@test'));
 
@@ -29,7 +28,7 @@ Route::group(array('before' => 'admin_added_or_admin_auth'),function(){
 	Route::get('/users/create', array('as' => 'userCreate', 'uses' => 'UsersController@create'));
 	Route::post('/users/store', array('as' => 'userStore', 'uses' => 'UsersController@store'));
 });
-	
+
 Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
 	Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));

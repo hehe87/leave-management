@@ -26,7 +26,7 @@
     {{ HTML::style('assets/css/admin_panel.css') }}
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
-    
+
     <script type="text/javascript">
       window.currentYear = "{{ date('Y') }}";
     </script>
@@ -58,43 +58,11 @@
       <div class="row">
         <!-- Left Panel Menus -->
         <ul id="left-panel" class="col-lg-2">
-          @if (Route::currentRouteName() === "usersListing")
-            <li class="lms-active">
-              <a href="{{URL::route('usersListing')}}">Users</a>
-            </li>
-          @else
-            <li>
-              <a href="{{URL::route('usersListing')}}">Users</a>
-            </li>
-          @endif
-          
-          <li>
-            <a href="{{ URL::route('leaves.report') }}">Reports</a>
-          </li>
-          <li class="">
-              <a href="{{URL::route('leaves.create')}}">Add Leave</a>
-            </li>
-          
-          @if (Route::currentRouteName() === "holidaysListing")
-            <li class="lms-active">
-              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
-            </li>
-          @else
-            <li>
-              <a href="{{URL::route('holidaysListing')}}">Holidays</a>
-            </li>
-          @endif
-          <li>
-              <a href="{{URL::route('users.settings')}}">Settings</a>
-            </li>
-          <li class="small-window-show">
-            <a class="link" href="#">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></a>
-          </li>
-          <li class="small-window-show">
-            <a class="link" href="{{ URL::route('userLogout') }}">
-              Logout
-            </a>
-          </li>
+          {{ HTML::nav_link(Route::currentRouteName(), "users", "Users") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "holidays", "Holidays") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "reports", "Reports") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "settings", "Settings") }}
         </ul>
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->
@@ -106,13 +74,13 @@
               </div>
             </div>
           @endif
-          @yield('content')  
+          @yield('content')
         </div>
         <!-- End Content Panel -->
       </div>
     </div>
-    
-    
+
+
     <div class="modal fade" id="user-modal">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -129,9 +97,9 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-    
-    
-    
+
+
+
     <!-- Including Scripts -->
     {{ HTML::script('assets/js/jquery.min.js') }}
     {{ HTML::script('assets/js/jquery-migrate.js') }}
@@ -139,7 +107,7 @@
     {{ HTML::script('assets/js/jquery.ui.js') }}
     {{ HTML::script('assets/js/jquery.easing.js') }}
     {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
-    {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
+    {{ HTML::script('assets/js/dataTables.bootstrap.js') }}
     {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
     {{ HTML::script('assets/js/jquery.ui.core.js') }}
     {{ HTML::script('assets/js/jquery.ui.datepicker.js') }}
@@ -147,7 +115,7 @@
     {{ HTML::script('assets/js/prettify.js') }}
     {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
     {{ HTML::script('assets/js/admin_panel.js') }}
-    {{ HTML::script('assets/js/common.js') }}    
+    {{ HTML::script('assets/js/common.js') }}
     <!-- End including Scripts -->
   </body>
 </html>

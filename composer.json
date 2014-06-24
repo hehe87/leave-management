@@ -7,7 +7,8 @@
 		"laravel/framework": "4.1.*",
 		"cornford/bootstrapper": "1.*",
 	    	"google/apiclient": "1.0.*@dev",
-	    	"way/generators": "2.*"
+	    	"way/generators": "2.*",
+	    	"iron-io/iron_mq": "dev-master"
 	},
 	"require-dev": {
 		"way/generators": "2.*",

@@ -51,10 +51,10 @@ return array(
 
 		'iron' => array(
 			'driver'  => 'iron',
-			'host'    => 'mq-aws-us-east-1.iron.io',
-			'token'   => 'your-token',
-			'project' => 'your-project-id',
-			'queue'   => 'your-queue-name',
+			'host'    => 'mq-aws-eu-west-1.iron.io',
+			'token'   => 'eV0thYf0-VKtgDIFNSIIhTAChnc',
+			'project' => '53a411008b6d080005000018',
+			'queue'   => 'lms-emails',
 		),
 
 		'redis' => array(

@@ -79,3 +79,10 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+/**
+ * Add macro.php for custom macros
+ */
+
+require app_path().'/macros.php';
