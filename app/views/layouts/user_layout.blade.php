@@ -113,7 +113,9 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
+    <div id="blockUI" class="hide">
+      <img src="{{ asset('assets/img/loading.gif') }}"/>
+    </div>
     
     
     

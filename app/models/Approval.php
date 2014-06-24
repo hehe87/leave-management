@@ -211,6 +211,8 @@ class Approval extends \Eloquent {
 			$start = new Google_Service_Calendar_EventDateTime();
 			$end = new Google_service_Calendar_EventDateTime();
 
+			$event = new Google_Service_Calendar_Event();
+
 			$summary = $user->name . " " . TemplateFunction::getLeaveTypeSummary($leave->leave_type);
 
 			switch($leave->leave_type){
@@ -253,7 +255,7 @@ class Approval extends \Eloquent {
 			$arrEventTime = array();
 			if($leave->leave_type != "CSR"){
 				$arrEventTime[0]["start"] = $start;
-				$arrEventTime[1]["end"] = $end;
+				$arrEventTime[0]["end"] = $end;
 				// $event->setStart($start);
 				// $event->setEnd($end);
 			}
@@ -274,6 +276,7 @@ class Approval extends \Eloquent {
 					$end = $etime["end"];
 					$event->setStart($start);
 					$event->setEnd($end);
+				 	$event->setSummary($summary);
 					$createdEvent = $cal->events->insert(Config::get('google.calendar_id'), $event);
 				}
 			}

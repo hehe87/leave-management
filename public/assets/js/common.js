@@ -7,6 +7,18 @@
   Table updated:	            -
   Most Important Related Files:     -
 */
+(function ( $ ) {
+  $.blockUI =  function(){
+    $("#blockUI").removeClass("hide");
+  };
+  $.unblockUI = function(){
+    $("#blockUI").addClass("hide");
+  };
+}( jQuery ));
+
+$(".in_time").val("09:30 AM");
+$(".out_time").val("07:00 PM");
+
 
 $('#leave_option').on('change', function(elem){
   var leave_option = $(this).val();
@@ -383,6 +395,7 @@ $(document).on('click','.approve-status-change', function (e) {
   }
   var approvalUrl = $(this).data("approval_url");
   var $this = $(this);
+  $.blockUI();
   $.ajax({
     type: 'post',
     url: approvalUrl,
@@ -395,6 +408,7 @@ $(document).on('click','.approve-status-change', function (e) {
       else{
         $this.parent().html(getRejectedInfoHTML());
       }
+      $.unblockUI();
     }
   });
 });
@@ -425,6 +439,7 @@ $(document).on('blur', ".editable", function(){
   var id = $(this).data("id");
   var origVal = $(this).data("orig");
   var $this = $(this);
+  $.blockUI();
   $.ajax({
     url: url,
     data: {model: model, column: column, value: value, id: id},
@@ -436,6 +451,7 @@ $(document).on('blur', ".editable", function(){
       else{
         $this.val(origVal);
       }
+      $.unblockUI();
     }
   })
   $(this).prop("readonly",true);
@@ -450,6 +466,7 @@ $(document).on('keyup', ".editable", function(e){
     var id = $(this).data("id");
     var origVal = $(this).data("orig");
     var $this = $(this);
+    $.blockUI();
     $.ajax({
       url: url,
       data: {model: model, column: column, value: value, id: id},
@@ -461,6 +478,7 @@ $(document).on('keyup', ".editable", function(e){
         else{
           $this.val(origVal);
         }
+        $.unblockUI();
       }
     })
     $(this).prop("readonly",true);

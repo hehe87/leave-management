@@ -2,15 +2,9 @@
 
 class ApprovalController extends \BaseController {
 
-  protected static $clientId = '';
-  protected static $serviceAccountName = '';
-  protected static $keyFileLocation = '';
-
   public function __construct()
   {
-    self::$clientId = Config::get('google.client_id');
-    self::$serviceAccountName = Config::get('google.service_account_name');
-    self::$keyFileLocation = Config::get('google.key_file_location');
+    
   }
 
 	/**
