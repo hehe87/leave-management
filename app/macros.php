@@ -1,4 +1,5 @@
 <?php
+
 HTML::macro('nav_link', function($route_name, $link_name, $text)
 {
     $routes = array(
@@ -25,4 +26,5 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
     }
     $href  = URL::route($menuhrefs[$link_name]);
     return '<li class="' . $class . '"><a href="' . $href . '">' . $text . '</a></li>';
+
 });

@@ -8,12 +8,16 @@
 		"cornford/bootstrapper": "1.*",
 	    	"google/apiclient": "1.0.*@dev",
 	    	"way/generators": "2.*",
-	    	"iron-io/iron_mq": "dev-master"
+	    	"iron-io/iron_mq": "dev-master",
+	    	"google/apiclient": "1.0.*@dev",
+	    	"way/generators": "2.*",
+	    	"barryvdh/laravel-debugbar": "1.*"
+
 	},
 	"require-dev": {
 		"way/generators": "2.*",
 		"barryvdh/laravel-debugbar": "1.*",
-    		"heroku/heroku-buildpack-php": "dev-develop"
+		"heroku/heroku-buildpack-php": "dev-develop"
 	},
 	"autoload": {
 		"classmap": [

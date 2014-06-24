@@ -117,7 +117,7 @@ $(document).on("submit","#report-form",function(e){
   var hasErrors = false;
   if($("#leave-type").val() != "ALL"){
     var $form = $(this);
-    var inputs = $(this).find("input");
+    var inputs = $(this).find("input").not(".multiselect-search");
     var selects = $(this).find("select");
     for(i=0;i<inputs.length;i++){
       if($.trim($(inputs[i]).val()) == ""){
@@ -146,8 +146,8 @@ $(document).on("submit","#report-form",function(e){
 
 $(document).on("change","#report-form #leave-type",function(){
   var $form = $("#report-form");
-  var inputs = $form.find("input");
-  var selects = $form.find("select");
+  var inputs = $form.find("input").not(".multiselect-search");
+  var selects = $form.find("select").not(".multiselect");
   if($(this).val() == "ALL"){
     inputs.hide();
     selects.hide();

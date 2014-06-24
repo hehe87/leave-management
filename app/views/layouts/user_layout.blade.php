@@ -10,6 +10,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="icon" href="{{ asset('assets/img/lms.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/img/lms.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/img/lms.ico') }}" type="image/vnd.microsoft.icon">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <!-- including Stylesheets -->
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/bootstrap.min.css')}}}">
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/ui-lightness/jquery-ui-1.10.4.css')}}}">
@@ -27,19 +31,17 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-12 page_header text-center">
+        <div class="col-lg-12 page_header">
           <div class="row">
-            <div class="text-center page_heading_text">
+            <div class="page_heading_text col-lg-6">
               Leave Management
             </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-6 col-lg-offset-3">
-              <div class="link show h4-new">Welcome {{ Auth::user()->name }}</div>
+            <div class="col-lg-3 col-lg-offset-2">
+              <div class="link show h4-new welcome-message pull-right">Welcome {{ Auth::user()->name }}</div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-1">
               <div class="text-center">
-                <span class="link">Logged in as <b>{{ Auth::user()->name }}</b></span>
+                <!-- <span class="link">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></span> -->
                 <a class="link logout-link" href="{{ URL::route('userLogout') }}">
                   Logout
                 </a>
@@ -85,6 +87,13 @@
         </div>
         <!-- End Content Panel -->
       </div>
+      <div class="page_footer">
+        <div class="col-lg-6 col-lg-offset-6">
+          <span class="pull-right">
+            &copy; {{ date('Y') }} Rubico IT Private Limited
+          </span>
+        </div>
+      </div>
     </div>
     
     
@@ -104,7 +113,9 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
+    <div id="blockUI" class="hide">
+      <img src="{{ asset('assets/img/loading.gif') }}"/>
+    </div>
     
     
     

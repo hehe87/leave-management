@@ -46,6 +46,7 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
 	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));
 	Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
+	Route::get('/leaves/pending', array('as' => 'leaves.pendingLeaves', 'uses' => 'LeavesController@pendingLeaves'));
 	Route::get('/settings', array('as' => 'users.settings', 'uses' => 'UsersController@getSettings'));
 	Route::post('/settings', array('as' => 'users.postSettings', 'uses' => 'UsersController@postSettings'));
 	Route::post('/users/getextraleaves', array('as' => 'users.getExtraLeaves', 'uses' => 'UsersController@getExtraLeaves'));
@@ -55,6 +56,7 @@ Route::group(array('before' => 'auth'),function(){
 	Route::get('/leaves/create', array('as' => 'leaves.create', 'uses' => 'LeavesController@create'));
 	Route::post('/leaves/store', array('as' => 'leaves.store', 'uses' => 'LeavesController@store'));
 	Route::get('/leaves/{id}/remove', array('as' => 'leaves.destroy', 'uses' => 'LeavesController@destroy'));
+	Route::post('leaves/approve',array('as' => 'approval.updateStatus', 'uses' => 'ApprovalController@updateStatus'));
 });
 
 Route::get('/editable/save', array('as' => 'base.saveEditable', 'uses' => 'BaseController@saveEditable'));
@@ -77,7 +79,7 @@ Route::group(array('before' => 'auth.user'),function(){
 	Route::get('/leaves/myleaves', array('as' => 'myLeaves', 'uses' => 'LeavesController@myLeaves'));
 	Route::get('/leaves/requests', array('as' => 'leaveRequests', 'uses' => 'LeavesController@leaveRequests'));
 
-	Route::post('leaves/approve',array('as' => 'approval.updateStatus', 'uses' => 'ApprovalController@updateStatus'));
+	
 
 	Route::group(array('before' => 'leaves.editable'), function(){
 		Route::get('/leaves/{id}/edit', array('as' => 'leaves.edit', 'uses' => 'LeavesController@edit'));

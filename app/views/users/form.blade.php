@@ -127,11 +127,11 @@
         {{ Form::label('inTime', 'In/Out Time', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-3">
-        {{ Form::text('inTime', date('h:i A', strtotime($user->inTime)), array('class' => 'form-control timepicker', 'placeholder' => 'In Time (hh:mm)')) }}
+        {{ Form::text('inTime', date('h:i A', strtotime($user->inTime)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "in_time"), 'placeholder' => 'In Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
       <div class="col-sm-3">
-        {{ Form::text('outTime', date('h:i A', strtotime($user->outTime)), array('class' => 'form-control timepicker', 'placeholder' => 'Out Time (hh:mm)')) }}
+        {{ Form::text('outTime', date('h:i A', strtotime($user->outTime)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "out_time"), 'placeholder' => 'Out Time (hh:mm)')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
     </div>

@@ -49,6 +49,8 @@ class LeavesController extends \BaseController {
 	public function create()
 	{
 		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
+		$users["-1"] = "Select Employee";
+		ksort($users);
 		$leave = new Leave();
 		$leave->leave_type = "";
 		$layout = Auth::user()->employeeType == "ADMIN" ? "admin_layout" : "user_layout";
@@ -119,10 +121,16 @@ class LeavesController extends \BaseController {
 		// check if user has selected any approver or not
 		if(!array_key_exists('approval', $inputs))
 			$hasApprovalError = true;
-		if($hasLeaveError || $hasApprovalError || $hasCsrError)
+		$hasEmployeeError = false;
+		if(Input::get("employee_id") == -1){
+			$hasEmployeeError = true;
+		}
+		if($hasLeaveError || $hasApprovalError || $hasCsrError || $hasEmployeeError)
 		{
 			$validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
 			$validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
+
+			$validator = array_merge($validator, ($hasEmployeeError) ? ['employee_id' => ['Please select an Employee']] : []);			
 			foreach($validator_csr as $vc)
 			{
 			 	$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
@@ -140,7 +148,7 @@ class LeavesController extends \BaseController {
 		//checking if user or admin is adding new leave
 		$user_id = "";
 		if(Auth::user()->employeeType == "ADMIN"){
-			$user = User::where("name", "LIKE" ,"%" . Input::get("employee_name") . "%")->first();
+			$user = User::find(Input::get("employee_id"));
 			$user_id = $user->id;
 		}
 		else{
@@ -196,10 +204,12 @@ class LeavesController extends \BaseController {
 				$approval['leave_id'] = $addedLeave->id;
 				$approval['approved'] = 'PENDING';
 				$approval = Approval::create($approval);
-
+				
 				if(Auth::user()->employeeType == "ADMIN"){
 					$approval->approved = 'YES';
 					$approval->save();
+					$approval->sendApprovalNotification();
+    				$approval->markCalendarEvent();
 				}
 			}
 		}
@@ -242,7 +252,7 @@ class LeavesController extends \BaseController {
 	  if( 'LONG' == $leave->leave_type ) {
 	    $leave->leave_date .= ','. $leave->leave_to;
 	  }
-	  $users = User::where('id', '<>', Auth::user()->id)->lists('name', 'id');
+	  $users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
 	  $inputCSRs = array();
 
 	  if($leave->leave_type == "CSR"){
@@ -413,12 +423,28 @@ class LeavesController extends \BaseController {
 	public function getReport(){
 	  $searchData = Input::all();
 	  $leaves = null;
+	  $users = User::employee()->lists('name', 'id');
+	  $users[0] = "All Employees";
+	  ksort($users);
+
 	  if(!empty($searchData)){
 
 	  	if($searchData["leave_type"] == "ALL"){
-	  		$leaves = Leave::all();
-	  		$extraLeaves = Extraleave::where("for_year",date("Y"))->get();
-	  		// $this->pre_print($extraLeaves);
+  			if(isset($searchData["employee_id"])){
+  				if($searchData["employee_id"] == 0){
+  					$leaves = Leave::all();
+  					$extraLeaves = Extraleave::where("for_year",date("Y"))->get();
+  				}
+  				else{
+  					$leaves = Leave::where("user_id", $searchData["employee_id"])->get();
+  					$extraLeaves = Extraleave::where("for_year",date("Y"))->where("user_id",$searchData["employee_id"])->get();
+  				}
+  			}
+  			else{
+  				$leaves = Leave::all();
+  				$extraLeaves = Extraleave::where("for_year",date("Y"))->get();
+  			}
+	  		
 	  		foreach($extraLeaves as $el){
 	  			$le = new Leave();
 	  			$le->leave_date = $el->from_date;
@@ -430,7 +456,7 @@ class LeavesController extends \BaseController {
 	  		}
 	  	}
 	  	else{
-	  		$user = User::where("name", $searchData["employee_name"])->get()->first();
+	  		$user = User::find($searchData["employee_id"]);
 		    $leaveType = $searchData["leave_type"];
 		    switch($searchData['date_option']){
 		      case "between-dates":
@@ -440,11 +466,11 @@ class LeavesController extends \BaseController {
 			->get();
 			break;
 		      case "by-date":
-			$leaves = Leave::where("user_id", $user->id)
-			->where("leave_date", $searchData["on_date"])
-			->where("leave_type", $leaveType)
-			->get();
-			break;
+				$leaves = Leave::where("user_id", $user->id)
+				->where("leave_date", $searchData["on_date"])
+				->where("leave_type", $leaveType)
+				->get();
+				break;
 		      case "by-year":
 		      	if(Config::get("database.default") == "mysql"){
 					$leaves = Leave::where("user_id", $user->id)
@@ -458,7 +484,7 @@ class LeavesController extends \BaseController {
 					->where("leave_type", $leaveType)
 					->get();
 				}
-			break;
+				break;
 		      case "by-month":
 		      	if(Config::get("database.default") == "mysql"){
 					$leaves = Leave::where("user_id", $user->id)
@@ -474,18 +500,20 @@ class LeavesController extends \BaseController {
 					->where("leave_type", $leaveType)
 					->get();
 				}
-			break;
+				break;
 		    }
 	  	}
 
 	  }
-	  return View::make('leaves.report')->withInputs($searchData)->with("leaves",$leaves);
+	  return View::make('leaves.report')->withInput($searchData)->with("leaves",$leaves)->with("users", $users);
 	}
 
 	public function generateReport(){
 
 	}
 
-
-
+	public function pendingLeaves(){
+		$leaves = Leave::pendingLeaves();
+		return View::make('leaves.index')->with("leaves", $leaves)->with("extraLeaves", array());
+	}
 }
