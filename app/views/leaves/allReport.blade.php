@@ -23,14 +23,14 @@
       <td>
         {{ $leave->user->name }}
       </td>
-      <td>
+      <td  class="text-center">
         @if($leave->leave_type == "LEAVE")
           {{ date('d-m-Y', strtotime($leave->leave_date)) }}
         @else
           @if($leave->leave_type == "LONG")
             {{ date('d-m-Y', strtotime($leave->leave_date)) }} - {{ date('d-m-Y', strtotime($leave->leave_to)) }}
              - {{ (Carbon::createFromFormat('Y-m-d',$leave->leave_date)->diffInDays(Carbon::createFromFormat('Y-m-d',$leave->leave_to))) + 1 }} day(s)
-          @else 
+          @else
             @if($leave->leave_type == "CSR")
               {{ date('d-m-Y', strtotime($leave->leave_date)) }}
               <table class="table table-bordered">
@@ -50,7 +50,7 @@
             @endif
           @endif
         @endif
-      </td> 
+      </td>
       <td>
         {{ TemplateFunction::getFullLeaveTypeName($leave->leave_type) }}
       </td>

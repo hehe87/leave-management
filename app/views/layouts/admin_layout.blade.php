@@ -60,6 +60,7 @@
           {{ HTML::nav_link(Route::currentRouteName(), "users", "Users") }}
           {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave") }}
           {{ HTML::nav_link(Route::currentRouteName(), "holidays", "Holidays") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "pendingLeaves", "Pending Leaves") }}
           {{ HTML::nav_link(Route::currentRouteName(), "reports", "Reports") }}
           {{ HTML::nav_link(Route::currentRouteName(), "settings", "Settings") }}
           <li class="small-window-show">

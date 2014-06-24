@@ -1,9 +1,12 @@
 <thead>
   <tr>
+   <th>
+      User
+    </th>
     <th style="vertical-align: middle; text-align: center;">
       Date
     </th>
-    	
+
   	<th style="width: 10.5%;">
     	From Time
   	</th>
@@ -13,7 +16,7 @@
   	<th>
     	Reason
   	</th>
-    
+
     <th>
       Approved By
     </th>
@@ -23,6 +26,9 @@
   @foreach($leaves as $leave)
     <tbody>
       <tr>
+       <td>
+        {{ $leave->user->name }}
+      </td>
   		<td style="border: 1px solid #ddd vertical-align: middle; text-align: center;">{{ date("d-m-Y",strtotime($leave->leave_date)) }}</td>
 	    <td colspan="2">
 	        <table class="table table-bordered margin-bottom-0">

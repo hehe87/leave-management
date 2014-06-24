@@ -130,7 +130,7 @@ class LeavesController extends \BaseController {
 			$validator = ($hasLeaveError)? $validator_leave->messages()->toArray() : [];
 			$validator = array_merge($validator, ($hasApprovalError)? ['approval' => ['Please select at least one approval']] : [] );
 
-			$validator = array_merge($validator, ($hasEmployeeError) ? ['employee_id' => ['Please select an Employee']] : []);			
+			$validator = array_merge($validator, ($hasEmployeeError) ? ['employee_id' => ['Please select an Employee']] : []);
 			foreach($validator_csr as $vc)
 			{
 			 	$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
@@ -204,7 +204,7 @@ class LeavesController extends \BaseController {
 				$approval['leave_id'] = $addedLeave->id;
 				$approval['approved'] = 'PENDING';
 				$approval = Approval::create($approval);
-				
+
 				if(Auth::user()->employeeType == "ADMIN"){
 					$approval->approved = 'YES';
 					$approval->save();
@@ -444,7 +444,7 @@ class LeavesController extends \BaseController {
   				$leaves = Leave::all();
   				$extraLeaves = Extraleave::where("for_year",date("Y"))->get();
   			}
-	  		
+
 	  		foreach($extraLeaves as $el){
 	  			$le = new Leave();
 	  			$le->leave_date = $el->from_date;
@@ -457,51 +457,54 @@ class LeavesController extends \BaseController {
 	  	}
 	  	else{
 	  		$user = User::find($searchData["employee_id"]);
-		    $leaveType = $searchData["leave_type"];
-		    switch($searchData['date_option']){
-		      case "between-dates":
-			$leaves = Leave::where("user_id", $user->id)
-			->whereBetween("leave_date", array($searchData["from_date"], $searchData["to_date"]))
-			->where("leave_type", $leaveType)
-			->get();
-			break;
-		      case "by-date":
-				$leaves = Leave::where("user_id", $user->id)
-				->where("leave_date", $searchData["on_date"])
+		    	$leaveType = $searchData["leave_type"];
+		    	if(isset($searchData["employee_id"]) ){
+		    		if($searchData["employee_id"] == 0){
+		    			$leaves = new Leave();
+		    		}
+		    		else{
+		    			$leaves = Leave::where("user_id", $user->id);
+		    		}
+
+		    	}
+			switch($searchData['date_option']){
+				case "between-dates":
+				$leaves = $leaves->whereBetween("leave_date", array($searchData["from_date"], $searchData["to_date"]))
 				->where("leave_type", $leaveType)
 				->get();
 				break;
-		      case "by-year":
-		      	if(Config::get("database.default") == "mysql"){
-					$leaves = Leave::where("user_id", $user->id)
-					->where(DB::raw('YEAR(leave_date)'), $searchData["year"])
-					->where("leave_type", $leaveType)
-					->get();
-				}
-				else{
-					$leaves = Leave::where("user_id", $user->id)
-					->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), $searchData["year"])
-					->where("leave_type", $leaveType)
-					->get();
-				}
+				case "by-date":
+				$leaves = $leaves->where("leave_date", $searchData["on_date"])
+				->where("leave_type", $leaveType)
+				->get();
 				break;
-		      case "by-month":
-		      	if(Config::get("database.default") == "mysql"){
-					$leaves = Leave::where("user_id", $user->id)
-					->where(DB::raw('YEAR(leave_date)'), date("Y"))
-					->where(DB::raw('MONTH(leave_date)'), date("m"))
-					->where("leave_type", $leaveType)
-					->get();
-				}
-				else{
-					$leaves = Leave::where("user_id", $user->id)
-					->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), date("Y"))
-					->where(DB::raw('EXTRACT(MONTH FROM "leave_date"::date)'), date("m"))
-					->where("leave_type", $leaveType)
-					->get();
-				}
-				break;
-		    }
+				case "by-year":
+					if(Config::get("database.default") == "mysql"){
+						$leaves = $leaves->where(DB::raw('YEAR(leave_date)'), $searchData["year"])
+						->where("leave_type", $leaveType)
+						->get();
+					}
+					else{
+						$leaves = $leaves->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), $searchData["year"])
+						->where("leave_type", $leaveType)
+						->get();
+					}
+					break;
+				case "by-month":
+					if(Config::get("database.default") == "mysql"){
+						$leaves = $leaves->where(DB::raw('YEAR(leave_date)'), date("Y"))
+						->where(DB::raw('MONTH(leave_date)'), date("m"))
+						->where("leave_type", $leaveType)
+						->get();
+					}
+					else{
+						$leaves = $leaves->where(DB::raw('EXTRACT(YEAR FROM "leave_date"::date)'), date("Y"))
+						->where(DB::raw('EXTRACT(MONTH FROM "leave_date"::date)'), date("m"))
+						->where("leave_type", $leaveType)
+						->get();
+					}
+					break;
+			}
 	  	}
 
 	  }

@@ -52,25 +52,10 @@
       </div>
       <div class="row">
         <!-- Left Panel Menus -->
-        <ul id="left-panel" class="col-lg-2">
-          @if (Route::currentRouteName() === "myLeaves")
-            <li class="lms-active">
-              <a href="{{ URL::route('myLeaves') }}">My Leaves</a>
-            </li>
-          @else
-            <li>
-              <a href="{{ URL::route('myLeaves') }}">My Leaves</a>
-            </li>
-          @endif
-          
-          <li>
-            <a href="{{ URL::route('leaves.create') }}">Add Leave/CSR</a>
-          </li>
-          
-          <li>
-            <a href="{{ URL::route('leaveRequests') }}">Leave Requests ({{ $pendingRequests }})</a>
-          </li>
-          
+      <ul id="left-panel" class="col-lg-2">
+             {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
+             {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
+             {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Requests(" .  $pendingRequests . ")") }}
           <li class="small-window-show">
             <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
           </li>
@@ -83,7 +68,7 @@
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
-          @yield('content')  
+          @yield('content')
         </div>
         <!-- End Content Panel -->
       </div>
@@ -95,8 +80,8 @@
         </div>
       </div>
     </div>
-    
-    
+
+
     <div class="modal fade" id="user-modal">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -116,18 +101,18 @@
     <div id="blockUI" class="hide">
       <img src="{{ asset('assets/img/loading.gif') }}"/>
     </div>
-    
-    
-    
-    
-    
+
+
+
+
+
     <!-- Including Scripts -->
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.ui.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/jquery.easing.js') }}"></script>
     {{ HTML::script('assets/js/jquery.dataTables.min.js') }}
-    {{ HTML::script('assets/js/dataTables.bootstrap.js') }}	
+    {{ HTML::script('assets/js/dataTables.bootstrap.js') }}
     {{ HTML::script('assets/js/bootstrap-multiselect.js') }}
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
     {{ HTML::script('assets/js/prettify.js') }}

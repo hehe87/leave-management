@@ -1,5 +1,8 @@
 <thead>
   <tr>
+  <th>
+      User
+    </th>
     <th style="vertical-align: middle; text-align: center;">
       Date
     </th>
@@ -24,11 +27,14 @@
   @foreach($leaves as $leave)
     <tbody>
       <tr>
+       <td>
+        {{ $leave->user->name }}
+      </td>
         @if($leave->leave_type === "LONG")
-          <td style="">
+          <td class="text-center">
           {{ date("d-m-Y",strtotime($leave->leave_date)) }} - {{ date("d-m-Y",strtotime($leave->leave_to)) }}</td>
         @else
-          <td style="">
+          <td  class="text-center">
           {{ date("d-m-Y",strtotime($leave->leave_date)) }}</td>
         @endif
         <td>{{ $leave->reason }}</td>

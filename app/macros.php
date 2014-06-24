@@ -8,17 +8,24 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
             "userEdit" => "users",
             "leaves.report" => "reports",
             "leaves.create" => "add_leave",
+            "leaves.edit" => "add_leave",
             "holidayCreate" => "holidays",
             "holidayEdit" => "holidays",
             "holidaysListing" => "holidays",
-           "users.settings"  => "settings"
+           "users.settings"  => "settings",
+           "leaves.pendingLeaves" => "pendingLeaves",
+           "myLeaves" =>"myleaves",
+           "leaveRequests" => "leaverequests"
     );
     $menuhrefs = array(
         "users" => "usersListing",
         "reports" => "leaves.report",
         "add_leave" => "leaves.create",
         "holidays" => "holidaysListing",
-        "settings" => "users.settings"
+        "settings" => "users.settings",
+        "pendingLeaves" => "leaves.pendingLeaves",
+        "myleaves" => "myLeaves",
+        "leaverequests" => "leaveRequests"
     );
     $class = "";
     if($routes[$route_name] == $link_name){

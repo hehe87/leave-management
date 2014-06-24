@@ -79,7 +79,7 @@ Route::group(array('before' => 'auth.user'),function(){
 	Route::get('/leaves/myleaves', array('as' => 'myLeaves', 'uses' => 'LeavesController@myLeaves'));
 	Route::get('/leaves/requests', array('as' => 'leaveRequests', 'uses' => 'LeavesController@leaveRequests'));
 
-	
+
 
 	Route::group(array('before' => 'leaves.editable'), function(){
 		Route::get('/leaves/{id}/edit', array('as' => 'leaves.edit', 'uses' => 'LeavesController@edit'));
