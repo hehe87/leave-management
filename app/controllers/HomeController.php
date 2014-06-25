@@ -15,9 +15,22 @@ class HomeController extends BaseController {
 	|
 	*/
 
-	public function showWelcome()
+	public function userDashboard()
 	{
-		return Redirect::to(URL::route("userLogin"));
+		$user = Auth::user();
+		$totalLeaves = $user->getTotalLeaves();
+		$approvedLeaves = count($user->approvedLeaves(date("Y")));
+		$pendingLeaves = count($user->pendingLeaves(date("Y")));
+		$rejectedLeaves = count($user->rejectedLeaves(date("Y")));
+		$extraLeaves = count($user->extraLeaves(date("Y")));
+		$appliedLeaves = count($user->appliedLeaves(date("Y")));
+
+		return View::make("users.user_dashboard")
+		->with("total_leaves", $totalLeaves)
+		->with("approved_leaves", $approvedLeaves)
+		->with("pending_leaves", $pendingLeaves)
+		->with("extra_leaves", $extraLeaves)
+		->with("applied_leaves", $appliedLeaves);
 	}
 
 }

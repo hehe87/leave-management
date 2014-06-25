@@ -419,7 +419,7 @@ $(document).on('click', '.view-approvals', function(e){
     url: url,
     type: "get",
     success: function(retdata){
-      $("#user-modal .modal-title").text("Your Leave Approvals");
+      $("#user-modal .modal-title").text("Approval Status");
       $("#user-modal .modal-body").html(retdata);
       $("#user-modal").modal('show');
     }

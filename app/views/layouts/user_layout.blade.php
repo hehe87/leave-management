@@ -31,21 +31,18 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-12 page_header">
+        <div class="col-sm-12 page_header">
           <div class="row">
-            <div class="page_heading_text col-lg-6">
+            <div class="page_heading_text col-sm-6">
               Leave Management
             </div>
-            <div class="col-lg-3 col-lg-offset-2">
+            <div class="col-sm-3 col-sm-offset-2">
               <div class="link show h4-new welcome-message pull-right">Welcome {{ Auth::user()->name }}</div>
             </div>
-            <div class="col-lg-1">
-              <div class="text-center">
-                <!-- <span class="link">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></span> -->
-                <a class="link logout-link" href="{{ URL::route('userLogout') }}">
+            <div class="col-sm-1">
+                <a class="link logout-link pull-right" href="{{ URL::route('userLogout') }}">
                   Logout
                 </a>
-              </div>
             </div>
           </div>
         </div>
@@ -53,17 +50,15 @@
       <div class="row">
         <!-- Left Panel Menus -->
       <ul id="left-panel" class="col-lg-2">
-             {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
-             {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
-             {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Requests(" .  $pendingRequests . ")") }}
-          <li class="small-window-show">
-            <a class="link" href="#">Logged in as <b>{{ Auth::user()->name }}</b></a>
-          </li>
-          <li class="small-window-show">
-            <a class="link" href="{{ URL::route('userLogout') }}">
-              Logout
-            </a>
-          </li>
+        {{ HTML::nav_link(Route::currentRouteName(), "usersHome", "Dashboard") }}
+        {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
+        {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
+        {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Requests(" .  $pendingRequests . ")") }}
+        <li class="small-window-show">
+          <a class="link" href="{{ URL::route('userLogout') }}">
+            Logout
+          </a>
+        </li>
         </ul>
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->

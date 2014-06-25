@@ -12,7 +12,6 @@
 */
 
 //  SSL workaround for IRON MQ
-Route::get('/', array('as' => 'usersHome', 'uses' => 'HomeController@showWelcome'));
 Route::get('/test', array('as' => 'test', 'uses' => 'UsersController@test'));
 
 Route::get('/login', array('as' => 'userLogin', 'uses' => 'UsersController@getLogin'));
@@ -71,6 +70,8 @@ Route::group(array('before' => 'auth.user'),function(){
 		$pendingRequests = Approval::where("approver_id", $empId)->where("approved", "PENDING")->count();
 		$view->with('pendingRequests', $pendingRequests);
 	});
+
+	Route::get('/', array('as' => 'usersHome', 'uses' => 'HomeController@userDashboard'));
 
 
 

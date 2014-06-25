@@ -39,6 +39,13 @@ class Leave extends \Eloquent {
 		return $this->hasMany('Approval');
 	}
 
+	/*
+		Function Name	: 		pendingLeaves
+		Author Name		:		Nicolas Naresh
+		Date			:		June 20, 2014
+		Parameters		:	    --
+		Purpose			:		This function retuns an array of pending leaves for all users
+	*/
 	public static function pendingLeaves(){
 		$leaves = Leave::all();
 		$pendingLeaves = array();
@@ -50,10 +57,12 @@ class Leave extends \Eloquent {
 		return $pendingLeaves;
 	}
 
-  public function csrs()
-  {
-    return $this->hasMany('Csr');
-  }
+
+
+	public function csrs()
+	{
+		return $this->hasMany('Csr');
+	}
 
 	/*
 	Function Name	: 		normalizeInput

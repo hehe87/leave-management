@@ -58,7 +58,7 @@
 								{{$leaveReq->leave->reason}}
 				      </td>
 				      <td align="">
-			          @if ($leaveReq->approved == "PENDING")
+			          @if ($leaveReq->leave->leaveStatus() == "PENDING")
 			            <a title="Approve Leave" class="btn btn-xs btn-primary approve-status-change" data-approve_status="YES" data-approval_id = "{{ $leaveReq->id }}" data-approval_url="{{ URL::route('approval.updateStatus') }}">
 					    			<span class="glyphicon glyphicon-ok"></span>
 					  			</a>
@@ -67,7 +67,7 @@
 								    <span class="glyphicon glyphicon-remove"></span>
 								  </a>
 			          @else
-			            @if ($leaveReq->approved == "YES")
+			            @if ($leaveReq->leave->leaveStatus() == "APPROVED")
 			              <a href="javascript: void(0);" class="btn btn-xs btn-primary btn-success">
 								      <span class="glyphicon glyphicon-ok" title="Leave Approved"></span>
 								    </a>

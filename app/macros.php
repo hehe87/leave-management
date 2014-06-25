@@ -15,7 +15,8 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
            "users.settings"  => "settings",
            "leaves.pendingLeaves" => "pendingLeaves",
            "myLeaves" =>"myleaves",
-           "leaveRequests" => "leaverequests"
+           "leaveRequests" => "leaverequests",
+           "usersHome" => "usersHome"
     );
     $menuhrefs = array(
         "users" => "usersListing",
@@ -25,7 +26,8 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
         "settings" => "users.settings",
         "pendingLeaves" => "leaves.pendingLeaves",
         "myleaves" => "myLeaves",
-        "leaverequests" => "leaveRequests"
+        "leaverequests" => "leaveRequests",
+        "usersHome" => "usersHome"
     );
     $class = "";
     if($routes[$route_name] == $link_name){

@@ -45,7 +45,7 @@ class UsersController extends \BaseController {
   public function getLogin(){
     if(Auth::check()){
       if(Auth::user()->employeeType == "ADMIN"){
-        return Redirect::to(URL::route('leaves.index'));
+        return Redirect::to(URL::route('usersHome'));
       }
       else{
         return Redirect::to(URL::route('myLeaves'));
@@ -74,7 +74,7 @@ class UsersController extends \BaseController {
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
-	      return Redirect::intended(URL::route('myLeaves'));
+	      return Redirect::intended(URL::route('usersHome'));
       }
       else{
 	      return Redirect::intended(URL::route('usersListing'));

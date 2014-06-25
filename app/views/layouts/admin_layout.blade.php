@@ -35,21 +35,18 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-12 page_header">
+        <div class="col-sm-12 page_header">
           <div class="row">
-            <div class="page_heading_text col-lg-6">
+            <div class="page_heading_text col-sm-6">
               Leave Management
             </div>
-            <div class="col-lg-3 col-lg-offset-2">
+            <div class="col-sm-3 col-sm-offset-2">
               <div class="link show h4-new welcome-message pull-right">Welcome Administrator</div>
             </div>
-            <div class="col-lg-1">
-              <div class="text-center">
-                <!-- <span class="link">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></span> -->
-                <a class="link logout-link" href="{{ URL::route('userLogout') }}">
-                  Logout
-                </a>
-              </div>
+            <div class="col-sm-1">
+              <a class="link logout-link pull-right" href="{{ URL::route('userLogout') }}">
+                Logout
+              </a>
             </div>
           </div>
         </div>
@@ -63,9 +60,6 @@
           {{ HTML::nav_link(Route::currentRouteName(), "pendingLeaves", "Pending Leaves") }}
           {{ HTML::nav_link(Route::currentRouteName(), "reports", "Reports") }}
           {{ HTML::nav_link(Route::currentRouteName(), "settings", "Settings") }}
-          <li class="small-window-show">
-            <a class="link" href="#">Logged in as <b>{{ Auth::user() ? Auth::user()->name : "" }}</b></a>
-          </li>
           <li class="small-window-show">
             <a class="link" href="{{ URL::route('userLogout') }}">
               Logout

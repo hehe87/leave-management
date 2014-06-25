@@ -299,6 +299,86 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	  return $this->hasMany('Leave');
   }
 
+
+  /*
+  Function Name :       approvedLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       25 June, 2014
+  Parameters    :       $year
+  Purpose       :       to get the all approved leaves for current user for a given year
+  */
+  public function approvedLeaves($year){
+    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    $approved = array();
+    foreach($leaves as $leave){
+      if($leave->leaveStatus() == "APPROVED"){
+        $approved[] = $leave;
+      }
+    }
+    return $approved;
+  }
+
+  /*
+  Function Name :       pendingLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       25 June, 2014
+  Parameters    :       $year
+  Purpose       :       to get the all pending leaves for current user for a given year
+  */
+  public function pendingLeaves($year){
+    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    $pending = array();
+    foreach($leaves as $leave){
+      if($leave->leaveStatus() == "PENDING"){
+        $pending[] = $leave;
+      }
+    }
+    return $pending;
+  }
+
+  /*
+  Function Name :       rejectedLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       25 June, 2014
+  Parameters    :       $year
+  Purpose       :       to get the all rejected leaves for current user for a given year
+  */
+  public function rejectedLeaves($year){
+    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    $rejected = array();
+    foreach($leaves as $leave){
+      if($leave->leaveStatus() == "REJECTED"){
+        $rejected[] = $leave;
+      }
+    }
+    return $rejected;
+  }
+
+  /*
+  Function Name :       appliedLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       25 June, 2014
+  Parameters    :       $year
+  Purpose       :       to get the all applied leaves for current user for a given year
+  */
+  public function appliedLeaves($year){
+    return $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+  }
+
+  /*
+  Function Name :       extraLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       25 June, 2014
+  Parameters    :       $year
+  Purpose       :       to get the all extra leaves for current user for a given year
+  */
+  public function extraLeaves($year){
+    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
+    return $extraLeaves;
+  }
+
+
+
   /*
   Function Name   :     generatePassword
   Author Name      :     Jack Braj
@@ -308,13 +388,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
    */
 
   public static function generatePassword($numAlpha=6,$numNonAlpha=2)
-{
-   $listAlpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-   $listNonAlpha = ',;:!?.$/*-+&@_+;./*&?$-!,';
+  {
+    $listAlpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $listNonAlpha = ',;:!?.$/*-+&@_+;./*&?$-!,';
 
-   return str_shuffle(
+    return str_shuffle(
       substr(str_shuffle($listAlpha),0,$numAlpha) .
       substr(str_shuffle($listNonAlpha),0,$numNonAlpha)
     );
-}
+  }
+
+  
 }
