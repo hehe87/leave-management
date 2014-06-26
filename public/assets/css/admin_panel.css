@@ -144,7 +144,6 @@ li.lms-active a{
 }
 
 #content-panel{
-  min-height: 512px;
   z-index: 1;
   padding-top: 10px;
   padding-bottom: 30px;

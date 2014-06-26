@@ -8,7 +8,7 @@
   Table updated:	            -
   Most Important Related Files:     -
 -->
-{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal not-rounded')) }}
   <legend class="form-signin-heading">Add Extra Leaves(For Current Year)</legend>
   <div class="form-group">
     <div class="col-lg-12">

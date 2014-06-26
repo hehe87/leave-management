@@ -28,7 +28,7 @@ class RemovePasswordFromUsersTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table)
 		{
-			$table->string('password',80)->after('email');
+			$table->string('password',80)->after('email')->nullable();
 		});
 	}
 

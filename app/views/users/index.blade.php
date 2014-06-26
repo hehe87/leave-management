@@ -13,15 +13,13 @@
   <div class="row">
     <div class="col-lg-2 pull-left">
       <div class="form-group">
-        <label class="control-label">&nbsp;</label>
         <a class="btn btn-primary form-control normal-button" href="{{ URL::route('userCreate') }}">Add New User</a>
       </div>
     </div>
     <div class="col-lg-3 pull-right">
       <div class="form-group has-feedback">
-        <label class="control-label">&nbsp;</label>
         <input type="text" class="form-control" id="user-search" placeholder="Search Users" data-search_url="{{ URL::route('usersSearch') }}">
-        <span class="glyphicon glyphicon-search form-control-feedback"></span>
+        <span class="glyphicon glyphicon-search form-control-feedback" style="top: 0px;"></span>
       </div>
     </div>
   </div>

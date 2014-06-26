@@ -1,13 +1,13 @@
 <!--
-  Page Name:                        admin_account_settings.blade.php
-  author :		            Nicolas Naresh
-  Date:			            June, 10 2014
-  Purpose:		            This page contains the form for updating the admin user details
+  Page Name:                            admin_account_settings.blade.php
+  author :		                          Nicolas Naresh
+  Date:			                            June, 10 2014
+  Purpose:		                          This page contains the form for updating the admin user details
   Table referred:		    -
   Table updated:	            -
   Most Important Related Files:     -
 -->
-{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal not-rounded')) }}
   <legend class="form-signin-heading">Account Settings</legend>
   <div class="form-group">
     <div class="col-sm-12">

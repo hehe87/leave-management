@@ -14,7 +14,6 @@
   <div class="row">
     <div class="col-lg-2 pull-left">
       <div class="form-group">
-        <label class="control-label">&nbsp;</label>
         <a class="btn btn-primary form-control normal-button" href="{{ URL::route('holidayCreate') }}">Add New Holiday</a>
       </div>
     </div>

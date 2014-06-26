@@ -154,16 +154,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $currentYear = (int)date("Y");
     $previousYear = $currentYear - 1;
     $thisYearTotalLeaves = $this->getTotalLeavesForYear($currentYear);
-    // if(date("Y",strtotime($this->doj)) != date("Y")){
-    //   $previousYearLeaves = $this->getTotalLeavesForYear($previousYear);
-    //   if($previousYearLeaves >= Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days){
-    //     $thisYearTotalLeaves += Leaveconfig::getConfig('carry_forward_leaves',$previousYear)->leave_days;
-    //   }
-    //   else{
-    //     $thisYearTotalLeaves += $previousYearLeaves;
-    //   }
-    // }
-
     return $thisYearTotalLeaves;
   }
 
@@ -189,15 +179,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Purpost           : this function returns the count of all the leaves for current user for a given year.
   */
   public function getTotalLeavesForYear($year){
-    $currentDate = new DateTime(date("Y-m-d", mktime(0,0,0,1,1,$year)));
-    $currentYear = (int)$currentDate->format("Y");
-    $paidLeaves = Leaveconfig::getConfig("paid_leaves", $currentYear)->leave_days;
+    $januaryOne = new DateTime(date("Y-m-d", mktime(0,0,0,1,1,$year)));
+    $paidLeaves = Leaveconfig::getConfig("paid_leaves", $year)->leave_days;
     $allLeaves = $paidLeaves;
     if(Config::get("database.default") == "mysql"){
-      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('YEAR(holidayDate)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('YEAR(holidayDate)'), "=", $year)->orderBy("holidayDate", "asc")->get();
     }
     else{
-      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $currentYear)->orderBy("holidayDate", "asc")->get();
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $year)->orderBy("holidayDate", "asc")->get();
     }
     $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
 
@@ -216,7 +205,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
     $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,$joiningYearStartMonth,$joiningYearStartDay,$joiningYear)));
 
-    $yearsInCompany = (int)$currentDate->format("Y") - (int)$dateOfJoining->format("Y");
+    $yearsInCompany = (int)$januaryOne->format("Y") - (int)$dateOfJoining->format("Y");
 
     $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
 
@@ -232,7 +221,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $leavesPerMonth = $allLeaves / 12;
 
     if($isJoinedInCurrentYear){
-      $lastYearDateTS = mktime(0,0,0,12,31,$currentYear);
+      $lastYearDateTS = mktime(0,0,0,12,31,$year);
       $joiningDateTS = mktime(0,0,0,$dateOfJoining->format("m"), $dateOfJoining->format("d"), $dateOfJoining->format("Y"));
       $diff = $lastYearDateTS - $joiningDateTS;
       $diffMonths = $diff / (24 * 60 * 60 * 30);
@@ -242,16 +231,37 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
       $allLeaves += $yearsInCompany;
     }
 
-    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $currentYear)->get();
+    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
 
     foreach($extraLeaves as $extraL){
       $allLeaves += $extraL->leaves_count;
     }
 
-    if((int)$currentYear == (int)date("Y")){
-      $allLeaves += $this->carry_forward_leaves;
+    $currentDate = new DateTime();
+
+
+    $currentYearStart = YearStart::where("year", date("Y"))->first();
+    $currentYearJan = new DateTime(date("Y-m-d",mktime(0,0,0,1,1,date("Y"))));
+
+    if($currentYearStart){
+      $currentYearStartDay = $currentYearStart->startDay;
+      $currentYearStartMonth = $currentYearStart->startMonth;
+    }
+    else{
+      $currentYearStartDay = 15;
+      $currentYearStartMonth = 1;
     }
 
+    $lastLeaveDateInCurrentYear = new DateTime(date("Y-m-d",mktime(0,0,0,$currentYearStartMonth,$currentYearStartDay, date("Y"))));
+  
+    if((int)$year == (int)date("Y")){
+      if($currentDate >= $currentYearJan && $currentDate <= $lastLeaveDateInCurrentYear){
+        $allLeaves += $this->getTotalLeavesForYear(((int)$year-1));
+      }
+      else{
+        $allLeaves += $this->carry_forward_leaves;
+      }
+    }
     return $allLeaves;
   }
 
@@ -308,7 +318,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all approved leaves for current user for a given year
   */
   public function approvedLeaves($year){
-    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    if(Config::get("database.default") == "mysql"){
+      $leaves = $this->hasMany('Leave')->where(DB::raw('YEAR(leave_date)'), $year)->get();
+    }
+    else{
+      $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    }
+    
     $approved = array();
     foreach($leaves as $leave){
       if($leave->leaveStatus() == "APPROVED"){
@@ -326,7 +342,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all pending leaves for current user for a given year
   */
   public function pendingLeaves($year){
-    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    if(Config::get("database.default") == "mysql"){
+      $leaves = $this->hasMany('Leave')->where(DB::raw('YEAR(leave_date)'), $year)->get();
+    }
+    else{
+      $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    }
     $pending = array();
     foreach($leaves as $leave){
       if($leave->leaveStatus() == "PENDING"){
@@ -344,7 +365,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all rejected leaves for current user for a given year
   */
   public function rejectedLeaves($year){
-    $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    if(Config::get("database.default") == "mysql"){
+      $leaves = $this->hasMany('Leave')->where(DB::raw('YEAR(leave_date)'), $year)->get();
+    }
+    else{
+      $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    }
     $rejected = array();
     foreach($leaves as $leave){
       if($leave->leaveStatus() == "REJECTED"){

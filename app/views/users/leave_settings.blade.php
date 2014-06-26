@@ -7,8 +7,8 @@
   Table updated:	            -
   Most Important Related Files:     -
 -->
-{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
-  <legend class="form-signin-heading">Google API Settings</legend>
+{{ Form::open(array('url' => URL::route('users.postSettings'), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal not-rounded')) }}
+  <legend class="form-signin-heading">Google API Settings1</legend>
   @include("layouts.form_group_3-8", array("label" => array("text" => "Carry Forward Leaves *", "name" => "leave_setting[carry_forward_leaves]"), "input" => array("type" => "text", "value" => $leaveConfig["carry_forward_leaves"]->leave_days, "name" => "leave_setting[carry_forward_leaves]", "placeholder" => "Carry Forward Leave Count"), "err" => array("name" => "carry_forward_leaves")))
   @include("layouts.form_group_3-8", array("label" => array("text" => "Paternity Leaves *", "name" => "leave_setting[paternity_leaves]"), "input" => array("type" => "text", "value" => $leaveConfig["paternity_leaves"]->leave_days, "name" => "leave_setting[paternity_leaves]", "placeholder" => "Paternity Leaves Count"), "err" => array("name" => "paternity_leaves")))
   @include("layouts.form_group_3-8", array("label" => array("text" => "Maternity Leaves *", "name" => "leave_setting[maternity_leaves]"), "input" => array("type" => "text", "value" => $leaveConfig["maternity_leaves"]->leave_days, "name" => "leave_setting[maternity_leaves]", "placeholder" => "Maternity Leaves Count"), "err" => array("name" => "maternity_leaves")))

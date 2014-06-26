@@ -22,6 +22,9 @@ Purpose		: Custom styles for leave management system
 	font-size: 15px;
 	font-weight: 700;
 }
+.not-rounded{
+	border-radius: 0px !important;
+}
 .rounded{
 	border-radius: 44px;
 }
@@ -169,8 +172,9 @@ width: 100%;
 }
 .btn-group>.btn:first-child >b.caret
 {
-  float: right;
-  margin-top: 8px;
+  	margin-top: 8px;
+	position: absolute;
+	right: 9px;
   
 }
 
@@ -178,7 +182,6 @@ width: 100%;
 	border-radius: 10px 10px 10px 10px;
 	border: 1px solid #ddd;
 	padding: 10px;
-	margin-top: 10px;
 	border-collapse: separate;
 }
 
