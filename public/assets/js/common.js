@@ -275,16 +275,20 @@ $(document).on("ready",function(){
   $(".delete-myleave").on("click", function(){
     var $this = $(this);
     var $parentRow = $(this).closest("tr");
-    if(confirm("Are you sure you want to delete this leave")){
-      $.ajax({
-        url: $(this).data("url"),
-        type: "get",
-        dataType: "json",
-        success: function(retdata){
-          $parentRow.remove();
-        }
-      });
-    }
+    jConfirm("Are you sure you want to delete this leave", "Confirmation", function(r){
+      if(r){
+        $.blockUI();
+        $.ajax({
+          url: $(this).data("url"),
+          type: "get",
+          dataType: "json",
+          success: function(retdata){
+            $parentRow.remove();
+            $.unblockUI();
+          }
+        });
+      }
+    });
   });
 });
 

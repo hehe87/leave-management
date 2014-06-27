@@ -17,6 +17,7 @@
     <!-- including Stylesheets -->
     {{ HTML::style('assets/css/bootstrap.min.css') }}
     {{ HTML::style('assets/css/ui-lightness/jquery-ui-1.10.4.css') }}
+    {{ HTML::style('assets/css/jquery.alerts.css') }}
     {{ HTML::style('assets/css/jquery.dataTables.min.css') }}
     {{ HTML::style('assets/css/dataTables.bootstrap.css') }}
     {{ HTML::style('assets/css/bootstrap-multiselect.css') }}
@@ -122,10 +123,11 @@
     {{ HTML::script('assets/js/jquery.ui.core.js') }}
     {{ HTML::script('assets/js/jquery.ui.datepicker.js') }}
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
+    {{ HTML::script('assets/js/jquery.alerts.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
     {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
-    {{ HTML::script('assets/js/admin_panel.js') }}
     {{ HTML::script('assets/js/common.js') }}
+    {{ HTML::script('assets/js/admin_panel.js') }}
     <!-- End including Scripts -->
   </body>
 </html>

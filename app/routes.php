@@ -40,7 +40,7 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::post('/holidays/store', array('as' => 'holidayStore', 'uses' => 'HolidaysController@store'));
 	Route::get('/holidays/edit/{resource}', array('as' => 'holidayEdit', 'uses' => 'HolidaysController@edit'));
 	Route::post('/holidays/update/{resource}', array('as' => 'holidayUpdate', 'uses' => 'HolidaysController@update'));
-	Route::get('/holidays/destroy/{id}', array('as' => 'holidayDestroy', 'uses' => 'HolidaysController@destroy'));
+	Route::post('/holidays/destroy/{id}', array('as' => 'holidayDestroy', 'uses' => 'HolidaysController@destroy'));
 	Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
 	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));

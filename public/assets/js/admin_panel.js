@@ -9,6 +9,7 @@
 */
 
 // Initialize the datatables
+
 if(0 != $('#leavesTable').length) {
   $('#leavesTable').DataTable( {
           "order": [[ 4, "asc" ]]
@@ -136,7 +137,7 @@ $(document).on("submit","#report-form",function(e){
   }
   
   if(hasErrors){
-    alert("Please enter/select all search inputs first!!");
+    jAlert("Please enter/select all search inputs first!!");
     return false;
   }
   else{
@@ -185,6 +186,27 @@ $(document).on("change", "#date-option", function(){
     changeYear: true
   });
 });
+
+
+$(document).on("click", ".delete-holiday", function(){
+    var $this = $(this);
+    var $parentRow = $(this).closest("table").closest("tr");
+    jConfirm("Are you sure you want to delete this holiday", "Confirmation", function(r){
+      var url = $this.data("url");
+      if(r){
+        $.blockUI();
+        $.ajax({
+          url: url,
+          type: "post",
+          dataType: "json",
+          success: function(retdata){
+            $parentRow.remove();
+            $.unblockUI();
+          }
+        });
+      }
+    });
+  });
 
 
 $(document).on("click","#lm-autosearch table tr td", function(){

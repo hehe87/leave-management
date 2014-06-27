@@ -122,7 +122,7 @@ class HolidaysController extends \BaseController {
   public function destroy($id)
   {
     Holiday::destroy($id);
-    return Redirect::to(URL::route('holidaysListing'))->with('message', 'Holiday Deleted Successfully');
+    return Response::json(array('status' => true));
   }
 
 }
