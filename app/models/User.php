@@ -129,7 +129,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
           $registrationDataArr,
           array(
 	'name' => array('required', 'min:5'),
-	'email' => array('required','email'),
+	'email' => array('required','email', 'unique:users'),
 	'doj' => array('required','date'),
 	'dob' => array('required','date'),
 	'inTime' => array('required', 'date_format:H:i:s'),
@@ -253,7 +253,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     $lastLeaveDateInCurrentYear = new DateTime(date("Y-m-d",mktime(0,0,0,$currentYearStartMonth,$currentYearStartDay, date("Y"))));
-  
+
     if((int)$year == (int)date("Y")){
       if($currentDate >= $currentYearJan && $currentDate <= $lastLeaveDateInCurrentYear){
         $allLeaves += $this->getTotalLeavesForYear(((int)$year-1));
@@ -324,7 +324,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     else{
       $leaves = $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
     }
-    
+
     $approved = array();
     foreach($leaves as $leave){
       if($leave->leaveStatus() == "APPROVED"){
@@ -424,5 +424,5 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     );
   }
 
-  
+
 }

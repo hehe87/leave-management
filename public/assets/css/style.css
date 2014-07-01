@@ -29,7 +29,7 @@ Purpose		: Custom styles for leave management system
 	border-radius: 44px;
 }
 .rounded > label:first-child{
-	border-radius: 82px 82px 0px 0px; 	
+	border-radius: 82px 82px 0px 0px;
 	padding: 10px;
 	display: inline-block;
 	color: #fff;
@@ -54,7 +54,7 @@ Purpose		: Custom styles for leave management system
 
 
 #csr-container {
-	
+
 }
 
 .input-xs{
@@ -78,8 +78,7 @@ Purpose		: Custom styles for leave management system
 
 .slot_from{
 	width:270px;
-  margin-left: 12px;
-	float:left;
+  	float:left;
 }
 .slot_to{
 	width:217px;
@@ -126,11 +125,11 @@ Purpose		: Custom styles for leave management system
 }
 
 .checkbox-text{
-	
+
 }
 
 #lm-autosearch{
-	
+
 }
 
 #lm-autosearch table{
@@ -175,7 +174,7 @@ width: 100%;
   	margin-top: 8px;
 	position: absolute;
 	right: 9px;
-  
+
 }
 
 .form-horizontal, .table.table-striped{

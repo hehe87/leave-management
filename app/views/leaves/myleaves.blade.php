@@ -49,10 +49,10 @@
 								{{$leave->reason}}
 				      		</td>
 							<td align="left">
-								<a class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}" title="View Approvals"><span class="glyphicon glyphicon-eye-open"></span></a>
+								<a data-toggle="tooltip" class="btn btn-primary normal-button btn-xs view-approvals" data-url="{{ URL::route('approval.leaveApprovals', array('id' => $leave->id))}}" title="View Approvals"><span class="glyphicon glyphicon-eye-open"></span></a>
 								@if (!$leave->approvalStatus(Leave::APPROVED_BY_SOME) && !$leave->approvalStatus(Leave::REJECTED_BY_SOME))
-									<a class="btn btn-primary normal-button btn-xs" href="{{ URL::Route('leaves.edit', array($leave->id)) }}"><span class="glyphicon glyphicon-edit" title="Edit Leave"></span></a>
-									<a class="btn btn-danger normal-button btn-xs delete-myleave" data-url="{{ URL::Route('leaves.destroy', array($leave->id)) }}"><span class="glyphicon glyphicon-remove" title="Delete Leave"></span></a>
+									<a data-toggle="tooltip" class="btn btn-primary normal-button btn-xs" href="{{ URL::Route('leaves.edit', array($leave->id)) }}"" title="Edit Leave"><span class="glyphicon glyphicon-edit"></span></a>
+									<a data-toggle="tooltip" class="btn btn-danger normal-button btn-xs delete-myleave" data-url="{{ URL::Route('leaves.destroy', array($leave->id)) }}"  title="Delete Leave"><span class="glyphicon glyphicon-remove"></span></a>
 								@endif
 							</td>
 				    	</tr>

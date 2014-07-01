@@ -7,6 +7,13 @@
   Table updated:	            -
   Most Important Related Files:     -
 */
+
+
+// Tooltip on Anchors
+$('a[data-toggle="tooltip"]').tooltip({
+    animated: 'fade',
+    placement: 'bottom',
+});
 (function ( $ ) {
   $.blockUI =  function(){
     $("#blockUI").removeClass("hide");
@@ -38,7 +45,7 @@ $('#leave_option').on('change', function(elem){
       $csr_container.addClass("hide");
       $("#leave-type-form-group").removeClass("hide");
     }
-    
+
   }
 });
 
@@ -51,7 +58,7 @@ $('#leave_type').on('change',function(e){
   {
     $csr_container.removeClass("hide");
     $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
-    
+
   }
   else if( "LEAVE" == leave_type || "FH" == leave_type || "SH" == leave_type)
   {
@@ -130,7 +137,7 @@ $(document).on("ready",function(){
         defaultTime: false
       });
     });
-  } 
+  }
 });
 
 
@@ -151,7 +158,7 @@ $(document).on("ready",function(){
   {
     $csr_container.removeClass("hide").addClass("show");
     $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
-    
+
   }
   else if( "LEAVE" == leave_type || "FH" == leave_type || "SH" == leave_type)
   {
@@ -164,13 +171,13 @@ $(document).on("ready",function(){
   else{
     $("#date-control").removeClass("date-single").addClass("date-multiple").removeClass("date-long");
   }
-  
+
  if( $(".date_control").length !==0 )
  {
     $(".date_control").each(function(){
       var $date_control =   $(this);
       var date_control_val = $date_control.val().split(" ")[0];
-      
+
       if($(".date_control").hasClass("date-long")){
         var dts = [];
         if(date_control_val == ""){
@@ -197,7 +204,7 @@ $(document).on("ready",function(){
             addDates: dts
           });
         }
-  
+
       }
       else if($(".date_control").hasClass("date-multiple")){
         var dts = [];
@@ -248,7 +255,7 @@ $(document).on("ready",function(){
             addDates: [dt]
           });
         }
-        
+
       }
     })
   }
@@ -256,7 +263,7 @@ $(document).on("ready",function(){
   if($('.multiple-select-with-checkbox').length != 0){
     $('.multiple-select-with-checkbox').each(function(){
       var options = $(this).find("option");
-      var $selectbox = $(this); 
+      var $selectbox = $(this);
       var checkboxHtml = "<div class='row'><div class='col-lg-4'></div>";
       checkboxHtml += "<div class='col-lg-4'></div>";
       checkboxHtml += "<div class='col-lg-4'></div></div>";
@@ -270,8 +277,8 @@ $(document).on("ready",function(){
     });
     $('.multiple-select-with-checkbox').remove();
   }
-  
-  
+
+
   $(".delete-myleave").on("click", function(){
     var $this = $(this);
     var $parentRow = $(this).closest("tr");
@@ -346,7 +353,7 @@ $(document).on("submit", "#leaves_create_form, #leaves_edit_form",function(e){
   else{
     $("#leaves_edit_form")[0].submit();
   }
-  
+
 });
 
 

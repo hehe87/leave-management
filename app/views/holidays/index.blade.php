@@ -51,9 +51,9 @@
               <td align="center">
                 <table>
                   <tr>
-                    <td><a href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a  data-toggle="tooltip" title="Edit" href="{{ URL::route('holidayEdit',array('id' => $holiday->id)) }}" class="btn btn-primary btn-xs normal-button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-edit"></span></a></td>
                     <td>&nbsp;&nbsp;</td>
-                    <td><a href="javascript: void(0);" class="btn btn-primary btn-xs normal-button delete-holiday" data-url="{{ URL::route('holidayDestroy',array('id' => $holiday->id)) }}"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
+                    <td><a  data-toggle="tooltip" title="Delete" href="javascript: void(0);" class="btn btn-primary btn-xs normal-button delete-holiday" data-url="{{ URL::route('holidayDestroy',array('id' => $holiday->id)) }}"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
                   </tr>
                 </table>
               </td>
