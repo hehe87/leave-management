@@ -1,5 +1,5 @@
 <?php
-/**
+/*
   Class Name:                       AdminController
   author :		            Nicolas Naresh
   Date:			            June, 02 2014
@@ -10,9 +10,9 @@
 */
 
 class AdminController extends \BaseController {
-  
-  
-  /**
+
+
+  /*
     Function Name: 		generateReport
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -21,6 +21,6 @@ class AdminController extends \BaseController {
                                 on the basis of those inputs
   */
   public function generateReport(){
-    
+
   }
 }
