@@ -214,6 +214,26 @@ $(document).on("click", ".delete-holiday", function(){
     });
   });
 
+$(document).on("click", ".delete-user", function(){
+    var $this = $(this);
+    var $parentRow = $(this).closest("table").closest("tr");
+    jConfirm("Are you sure you want to delete this user", "Confirmation", function(r){
+      var url = $this.data("url");
+      if(r){
+        $.blockUI();
+        $.ajax({
+          url: url,
+          type: "post",
+          dataType: "json",
+          success: function(retdata){
+            $parentRow.remove();
+            $.unblockUI();
+          }
+        });
+      }
+    });
+  });
+
 
 $(document).on("click","#lm-autosearch table tr td", function(){
   $(this).closest("table").addClass("hide");

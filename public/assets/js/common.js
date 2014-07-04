@@ -438,8 +438,7 @@ $(document).on('click', '.view-approvals', function(e){
 });
 
 $(document).on('dblclick', ".editable", function(){
-  console.log("i m here");
-  $(this).prop("readonly",false);
+    $(this).prop("readonly",false);
 });
 
 $(document).on('blur', ".editable", function(){
@@ -487,7 +486,10 @@ $(document).on('keyup', ".editable", function(e){
           window.location.reload();
         }
         else{
+          jAlert('Alert', 'Carry forward cannot be more than 5', function(){
+
           $this.val(origVal);
+        });
         }
         $.unblockUI();
       }

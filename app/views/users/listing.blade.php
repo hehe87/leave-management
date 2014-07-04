@@ -35,7 +35,7 @@
       <table>
         <tr>
           <td><a data-toggle="tooltip" title="Edit User" href="{{ URL::route('userEdit', $user->id) }}" class="btn btn-primary btn-xs normal-button"><span class="glyphicon glyphicon-edit"></span></a>
-          <td><a data-toggle="tooltip" title="Delete User" href="{{ URL::route('userRemove', $user->id) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
+          <td><a data-toggle="tooltip" title="Delete User" href="javascript: void(0);" class="btn btn-danger btn-xs delete-user" data-url="{{ URL::route('userDestroy',array('id' => $user->id)) }}"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
         </tr>
       </table>
     </td>

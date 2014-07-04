@@ -372,7 +372,7 @@ class UsersController extends \BaseController {
   public function destroy($id)
   {
     User::destroy($id);
-    return Redirect::to(URL::route('usersListing'));
+    return Response::json(array('status' => true));
   }
 
 

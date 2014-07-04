@@ -32,6 +32,7 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/users/edit/{resource}', array('as' => 'userEdit', 'uses' => 'UsersController@edit'));
 	Route::post('/users/update/{resource}', array('as' => 'userUpdate', 'uses' => 'UsersController@update'));
 	Route::get('/users/remove/{resource}', array('as' => 'userRemove', 'uses' => 'UsersController@destroy'));
+	Route::post('/users/destroy/{id}', array('as' => 'userDestroy', 'uses' => 'UsersController@destroy'));
 	Route::get('/users', array('as' => 'usersListing', 'uses' => 'UsersController@index'));
 	Route::post('/users/search', array('as' => 'usersSearch', 'uses' => 'UsersController@postSearch'));
 
