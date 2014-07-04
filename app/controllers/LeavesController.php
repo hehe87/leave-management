@@ -49,7 +49,6 @@ class LeavesController extends \BaseController {
 	public function create()
 	{
 		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
-		$users["-1"] = "Select Employee";
 		ksort($users);
 		$leave = new Leave();
 		$leave->leave_type = "";
@@ -71,6 +70,15 @@ class LeavesController extends \BaseController {
 		$validator_leave = [];
 		$validator_csr = [];
 		$inputs = Input::all();
+		if(isset($inputs['leave']['leave_date'])){
+	  	$ldts = explode(",", $inputs['leave']['leave_date']);
+	  	$temp_ldts = array();
+	  	foreach($ldts as $ldt){
+	  		$ldt = date("Y-m-d",strtotime($ldt));
+	  		$temp_ldts[] = $ldt;
+	  	}
+	  	$inputs['leave']['leave_date'] = implode(",",$temp_ldts);
+	  }
 
 		$leave = $inputs['leave'];
 		$leave['leave_option'] = $inputs['leave_option'] ;
@@ -85,6 +93,7 @@ class LeavesController extends \BaseController {
 		$hasLeaveError = false;
 		$hasApprovalError = false;
 		$hasCsrError = false;
+
 
 		$validator_leave = Validator::make($leave, Leave::$rules);
 		$validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
@@ -135,6 +144,7 @@ class LeavesController extends \BaseController {
 			{
 			 	$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 			}
+
 			return Redirect::back()->withErrors($validator)->withInput($inputs);
 		}
 
@@ -144,6 +154,9 @@ class LeavesController extends \BaseController {
 		// grab all leave dates in an array
 
 		$leave_dates = explode(",", $leave['leave_date']);
+		foreach($leave_dates as $key => $ldate){
+			$leave_dates[$key] = date("Y-m-d",strtotime($ldate));
+		}
 
 		//checking if user or admin is adding new leave
 		$user_id = "";
@@ -250,7 +263,12 @@ class LeavesController extends \BaseController {
 	  $layout = "user_layout";
 	  $leave = Leave::find($id);
 	  if( 'LONG' == $leave->leave_type ) {
+	  	$leave->leave_date = date("Y-m-d",strtotime($leave->leave_date));
+	  	$leave->leave_to = date("Y-m-d",strtotime($leave->leave_to));
 	    $leave->leave_date .= ','. $leave->leave_to;
+	  }
+	  else{
+	  	$leave->leave_date = date("Y-m-d",strtotime($leave->leave_date));
 	  }
 	  $users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
 	  $inputCSRs = array();
@@ -280,6 +298,15 @@ class LeavesController extends \BaseController {
 	  $validator_leave = [];
 	  $validator_csr = [];
 	  $inputs = Input::all();
+	  if(isset($inputs['leave']['leave_date'])){
+	  	$ldts = explode(",", $inputs['leave']['leave_date']);
+	  	$temp_ldts = array();
+	  	foreach($ldts as $ldt){
+	  		$ldt = date("Y-m-d",strtotime($ldt));
+	  		$temp_ldts[] = $ldt;
+	  	}
+	  	$inputs['leave']['leave_date'] = implode(",",$temp_ldts);
+	  }
 	  $leave = $inputs['leave'];
 	  $hasLeaveError = false;
 	  $hasApprovalError = false;
@@ -313,11 +340,11 @@ class LeavesController extends \BaseController {
 	    {
 	      $validator_csr[$key] = Validator::make($csr, Csr::$rules);
 	      if($validator_csr[$key]->fails())
-		$hasCsrError = true;
-	    }
+					$hasCsrError = true;
+		    }
 	  }
 
-	  // check if user has selected any approver or not
+  // check if user has selected any approver or not
 
 	  if(!array_key_exists('approval', $inputs))
 	    $hasApprovalError = true;
@@ -331,7 +358,8 @@ class LeavesController extends \BaseController {
 	    {
 	      $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	    }
-	    return Redirect::back()->withErrors($validator)->withInput();
+
+	    return Redirect::back()->withErrors($validator)->withInput($inputs);
 	  }
 
 	  $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
@@ -340,8 +368,11 @@ class LeavesController extends \BaseController {
 	    $ldates = explode(",",$leave["leave_date"]);
 	    $leave_date = $ldates[0];
 	    $leave_to = $ldates[1];
-	    $leave["leave_date"] = $leave_date;
-	    $leave["leave_to"] = $leave_to;
+	    $leave["leave_date"] = date("Y-m-d",strtotime($leave_date));
+	    $leave["leave_to"] = date("Y-m-d",strtotime($leave_to));
+	  }
+	  else{
+	  	$leave["leave_date"] = $leave["leave_date"];
 	  }
 
 
@@ -367,7 +398,7 @@ class LeavesController extends \BaseController {
 	    $approval['approved'] = 'PENDING';
 	    Approval::create($approval);
 	  }
-	  return Redirect::to(URL::route('myLeaves'))
+  	return Redirect::to(URL::route('myLeaves'))
 		->with('message', 'Leave successfully applied');
 	}
 

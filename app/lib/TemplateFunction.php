@@ -81,4 +81,23 @@ class TemplateFunction{
 	    return $googleCreds;
 	}
 
+	public static function getUIDateClass($leaveOption, $leaveType){
+		if($leaveOption == "CSR" || $leaveOption == ""){
+			return "date-single";
+		}
+		else{
+			switch($leaveType){
+				case "LEAVE":
+				case "FH":
+				case "SH":
+					return "date-single";
+				case "LONG":
+					return "date-long";
+				case "MULTI":
+					return "date-multi";
+				default:
+					return "dae-single";
+			}
+		}
+	}
 }

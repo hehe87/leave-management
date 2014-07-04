@@ -285,6 +285,8 @@ class UsersController extends \BaseController {
       return Redirect::to(URL::route('userCreate'))->withErrors($validator)->withInput();
     }
     else{
+      $formData["doj"] = date("Y-m-d",strtotime($formData["doj"]));
+      $formData["dob"] = date("Y-m-d",strtotime($formData["dob"]));
       $user = User::create($formData);
       $user->totalLeaves = $user->getTotalLeaves();
 
@@ -339,7 +341,7 @@ class UsersController extends \BaseController {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
     $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
-    $validator = User::validateRegistrationForm($formData, false);
+    $validator = User::validateRegistrationForm($formData, $id);
     if($validator->fails())
     {
       return Redirect::to(URL::route('userEdit',array("id" => $id)))->withErrors($validator)->withInput();
@@ -348,6 +350,8 @@ class UsersController extends \BaseController {
       $formData = Input::except("password_confirmation","_token");
       $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
       $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+      $formData["doj"] = date("Y-m-d",strtotime($formData["doj"]));
+      $formData["dob"] = date("Y-m-d",strtotime($formData["dob"]));
       if(!empty($formData["password"])){
         $formData["password"] = Hash::make($formData["password"]);
       }
@@ -417,6 +421,9 @@ class UsersController extends \BaseController {
   public function postSettings(){
 
     $allSettings = Input::all();
+    if(isset($allSettings['extra_leaves']['from_date'])){
+      $allSettings['extra_leaves']['from_date'] = date("Y-m-d",strtotime($allSettings['extra_leaves']['from_date']));
+    }
     if(key_exists("gapi",$allSettings)){
       $showTab = "#gapi";
       $validationRules = array(
@@ -433,7 +440,7 @@ class UsersController extends \BaseController {
       );
 
       if($validator->fails()){
-	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
       }
       else{
       	$googleSettings = htmlspecialchars('<?php ' .
@@ -476,7 +483,7 @@ class UsersController extends \BaseController {
 
 
       	if($validator->fails()){
-      	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+      	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
       	}
       	else{
       	  $user = Auth::user();
@@ -514,7 +521,7 @@ class UsersController extends \BaseController {
       	  );
 
       	  if($validator->fails()){
-      	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput()->withErrors($validator);
+      	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
       	  }
       	  else{
 
@@ -523,28 +530,28 @@ class UsersController extends \BaseController {
             $maternity_leaves = Leaveconfig::getConfig("maternity_leaves",date("Y"));
             $paid_leaves      = Leaveconfig::getConfig("paid_leaves",date("Y"));
 
-            if("0" == $carry_forward_leaves->leave_days){
+            if(!isset($carry_forward_leaves->id)){
               $carry_forward_leaves = new leaveConfig();
               $carry_forward_leaves->leave_type = "carry_forward_leaves";
               $carry_forward_leaves->year = date("Y");
             }
             $carry_forward_leaves->leave_days = $allSettings["leave_setting"]["carry_forward_leaves"];
 
-            if("0" == $paternity_leaves->leave_days){
+            if(!isset($paternity_leaves->id)){
               $paternity_leaves = new Leaveconfig();
               $paternity_leaves->leave_type = "paternity_leaves";
               $paternity_leaves->year = date("Y");
             }
             $paternity_leaves->leave_days = $allSettings["leave_setting"]["paternity_leaves"];
 
-            if("0" == $maternity_leaves->leave_days){
+            if(!isset($maternity_leaves->id)){
               $maternity_leaves = new LeaveConfig();
               $maternity_leaves->leave_type = "maternity_leaves";
               $maternity_leaves->year = date("Y");
             }
             $maternity_leaves->leave_days = $allSettings["leave_setting"]["maternity_leaves"];
 
-            if("0" == $paid_leaves->leave_days){
+            if(!isset($paid_leaves->id)){
               $paid_leaves = new LeaveConfig();
               $paid_leaves->leave_type = "paid_leaves";
               $paid_leaves->year = date("Y");
@@ -579,8 +586,36 @@ class UsersController extends \BaseController {
       	else{
       	  if(key_exists("extra_leaves",$allSettings)){
       	    $showTab = "#extra_leave";
-      	    $empName = $allSettings["extra_leaves"]["employee_name"];
-      	    $extraLeaveType = $allSettings["extra_leaves"]["leave_type"];
+
+            $validationRules = array(
+              'employee_name' => 'required',
+              'leave_type'  =>'required',
+              'from_date' => 'required|date'
+            );
+
+            $validator = Validator::make(
+              $allSettings["extra_leaves"],
+              $validationRules
+            );
+
+            $validator->sometimes( 'leaves_count', 'required|numeric', function($input){
+              return (isset($input->leave_type) && ($input->leave_type == "extra"));
+            });
+
+            $validator->sometimes( 'description', 'required', function($input){
+              return (isset($input->leave_type) && ($input->leave_type == "extra"));
+            });
+
+
+            if($validator->fails()){
+              return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
+            }
+
+            $empName = $allSettings["extra_leaves"]["employee_name"];
+            $extraLeaveType = $allSettings["extra_leaves"]["leave_type"];
+
+
+
 
 
             $carry_forward_leaves = Leaveconfig::getConfig("carry_forward_leaves",date("Y"));
@@ -617,7 +652,7 @@ class UsersController extends \BaseController {
       	    $extraLeave->user_id = $userId;
       	    $extraLeave->leaves_count = $noOfLeaves;
       	    $extraLeave->for_year = date("Y");
-      	    $extraLeave->from_date = $fromDate;
+      	    $extraLeave->from_date = date("Y-m-d", strtotime($fromDate));
       	    $extraLeave->to_date = $toDate;
       	    $extraLeave->description = $description;
       	    $extraLeave->save();

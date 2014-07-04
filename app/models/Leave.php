@@ -23,7 +23,7 @@ class Leave extends \Eloquent {
 		'leave_option' => 'required|in:LEAVE,CSR',
 		'leave_date'  => 'required',
 		'leave_type'  => 'required|in:LEAVE,CSR,FH,SH,LONG,MULTI',
-		'reason'       => 'required',
+		'reason'       => array('required', 'max:255'),
             	];
 
 	// fillable fields

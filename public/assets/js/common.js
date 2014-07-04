@@ -69,13 +69,13 @@ $('#leave_type').on('change',function(e){
     $("#date-control").removeClass("date-single").removeClass("date-multiple").addClass("date-long");
   }
   else{
-    $("#date-control").removeClass("date-single").addClass("date-multiple").removeClass("date-long");
+    $("#date-control").addClass("date-multiple").removeClass("date-single").removeClass("date-long");
   }
   if($(".date_control").hasClass("date-long")){
     $(".date-long").multiDatesPicker({
       maxPicks: 2,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -85,7 +85,7 @@ $('#leave_type').on('change',function(e){
     $(".date-multiple").multiDatesPicker({
       maxPicks: 10,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -95,7 +95,7 @@ $('#leave_type').on('change',function(e){
     $(".date_control").multiDatesPicker({
       maxPicks: 1,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -169,7 +169,7 @@ $(document).on("ready",function(){
     $("#date-control").removeClass("date-single").removeClass("date-multiple").addClass("date-long");
   }
   else{
-    $("#date-control").removeClass("date-single").addClass("date-multiple").removeClass("date-long");
+    $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
   }
 
  if( $(".date_control").length !==0 )
@@ -184,7 +184,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 2,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -197,7 +197,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 2,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -211,7 +211,7 @@ $(document).on("ready",function(){
         if(date_control_val == ""){
           $date_control.multiDatesPicker({
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -223,7 +223,7 @@ $(document).on("ready",function(){
           });
           $date_control.multiDatesPicker({
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -237,7 +237,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 1,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -248,7 +248,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 1,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -286,7 +286,7 @@ $(document).on("ready",function(){
       if(r){
         $.blockUI();
         $.ajax({
-          url: $(this).data("url"),
+          url: $this.data("url"),
           type: "get",
           dataType: "json",
           success: function(retdata){
@@ -310,11 +310,11 @@ $(document).on("submit", "#leaves_create_form, #leaves_edit_form",function(e){
         var endTime = $("#timeSlot .timepicker.end").first().val();
         var diff = getHourDifference(startTime, endTime);
         if(diff < 0){
-          alert("Invalid Date Range selected for CSR time inputs");
+          jAlert("Invalid Date Range selected for CSR time inputs");
           return;
         }
         if(diff > 2){
-          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          jAlert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
           return;
         }
         break;
@@ -326,21 +326,21 @@ $(document).on("submit", "#leaves_create_form, #leaves_edit_form",function(e){
         var diff = getHourDifference(startTime1, endTime1);
 
         if(diff < 0){
-          alert("Invalid Date Range selected for CSR(1) time inputs");
+          jAlert("Invalid Date Range selected for CSR(1) time inputs");
           return;
         }
         if(diff > 2){
-          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          jAlert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
           return;
         }
         var diff2 = getHourDifference(startTime2,endTime2);
         if(diff2 < 0){
-          alert("Invalid Date Range selected for CSR(2) time inputs");
+          jAlert("Invalid Date Range selected for CSR(2) time inputs");
           return;
         }
         diff2 += diff;
         if(diff2 > 2){
-          alert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
+          jAlert("Please select CSR intervals so that the total CSR time will be less than 2 Hours");
           return;
         }
         diff += diff2;

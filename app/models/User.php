@@ -121,22 +121,46 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     Purpose:	      	This function will take an array of registration form values and validates
 			them
   */
-  public static function validateRegistrationForm($registrationDataArr){
+  public static function validateRegistrationForm($registrationDataArr, $id = null){
+
+    if(key_exists("doj", $registrationDataArr) && !empty($registrationDataArr["doj"])){
+      $registrationDataArr["doj"] = date("Y-m-d",strtotime($registrationDataArr["doj"]));
+    }
+    if(key_exists("dob", $registrationDataArr) && !empty($registrationDataArr["dob"])){
+      $registrationDataArr["dob"] = date("Y-m-d",strtotime($registrationDataArr["dob"]));
+    }
+
+    if($id != null){
+      $validationRules = array(
+          'name' => array('required', 'min:5'),
+          'email' => array('required','email', 'unique:users,email,'.$id),
+          'doj' => array('required','date'),
+          'dob' => array('required','date'),
+          'inTime' => array('required', 'date_format:H:i:s'),
+          'outTime' => array('required', 'date_format:H:i:s'),
+          'phone' => array('required','regex:/[0-9]{10}/'),
+          'altPhone' => array('regex:/[0-9]{10}/')
+      );
+      
+    }
+    else{
+      $validationRules = array(
+        'name' => array('required', 'min:5'),
+        'email' => array('required','email', 'unique:users'),
+        'doj' => array('required','date'),
+        'dob' => array('required','date'),
+        'inTime' => array('required', 'date_format:H:i:s'),
+        'outTime' => array('required', 'date_format:H:i:s'),
+        'phone' => array('required','regex:/[0-9]{10}/'),
+        'altPhone' => array('regex:/[0-9]{10}/')
+      );
+    }
 
 
 
     $validator = Validator::make(
           $registrationDataArr,
-          array(
-	'name' => array('required', 'min:5'),
-	'email' => array('required','email', 'unique:users'),
-	'doj' => array('required','date'),
-	'dob' => array('required','date'),
-	'inTime' => array('required', 'date_format:H:i:s'),
-	'outTime' => array('required', 'date_format:H:i:s'),
-	'phone' => array('required','regex:/[0-9]{10}/'),
-	'altPhone' => array('regex:/[0-9]{10}/')
-        )
+          $validationRules
       );
     return $validator;
   }
