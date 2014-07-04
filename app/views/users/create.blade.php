@@ -13,7 +13,7 @@
 @section('content')
   <div class="row">
     <div class="col-sm-12">
-      {{ Form::open(array('url' => URL::route("userStore"), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+      {{ Form::open(array('url' => URL::route("userStore"), 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal user-form')) }}
         <legend class="form-signin-heading">Add New User</legend>
         @include("users.form", array('user'=>$user))
         

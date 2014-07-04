@@ -49,7 +49,6 @@ class LeavesController extends \BaseController {
 	public function create()
 	{
 		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
-		$users["-1"] = "Select Employee";
 		ksort($users);
 		$leave = new Leave();
 		$leave->leave_type = "";
@@ -94,6 +93,7 @@ class LeavesController extends \BaseController {
 		$hasLeaveError = false;
 		$hasApprovalError = false;
 		$hasCsrError = false;
+
 
 		$validator_leave = Validator::make($leave, Leave::$rules);
 		$validator_leave->sometimes('leave_date', 'regex:/[\d]{4}-[\d]{2}-[\d]{2}([,][\d]{4}-[\d]{2}-[\d]{2})+/', function($input){
@@ -372,7 +372,7 @@ class LeavesController extends \BaseController {
 	    $leave["leave_to"] = date("Y-m-d",strtotime($leave_to));
 	  }
 	  else{
-	  	$leave["leave_date"] = date("Y-m-d",$leave["leave_date"]);
+	  	$leave["leave_date"] = $leave["leave_date"];
 	  }
 
 

@@ -9,16 +9,45 @@
 */
 
 // Initialize the datatables
+
+function removePaginationLinks(minLength){
+  if($("ul.pagination li").not(".previous").not(".next").length < minLength){
+    $("ul.pagination").hide();
+  }
+}
+
 $(document).on("ready",function(){
   if(0 != $('#leavesTable').length) {
     $('#leavesTable').DataTable( {
-            aoColumnDefs: [
-              {
-                 bSortable: false,
-                 aTargets: [ -1 ]
-              }
-            ]
-        } );
+        aaSorting: [[0, "desc"]],
+        aoColumnDefs: [
+          {
+             bSortable: false,
+             aTargets: [ -1 ]
+          }
+        ]
+    });
+  }
+  removePaginationLinks(10); // removes the pagination links if only one pagination link is present.
+});
+
+$(document).on("submit",".user-form", function(e){
+  e.preventDefault();
+  var inTime = $("#inTime").val();
+  var outTime = $("#outTime").val();
+  if(($.trim(inTime) == "") || ($.trim(outTime) == "")){
+    jAlert("Please Fill In/Out Time");
+  }
+  else{
+    inTime = new Date("12-10-2014 " + inTime);
+    outTime = new Date("12-10-2014 " + outTime);
+    diffInHours = (outTime - inTime)/(1000*60*60);
+    if(diffInHours > 9.5){
+      jAlert("In/Out Time difference must be less than 9:30 Hours");
+    }
+    else{
+      $(this)[0].submit();
+    }
   }
 });
 

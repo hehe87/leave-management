@@ -15,14 +15,26 @@
       'holidayDescription'
     );
     
-    public static function validateHolidayForm($formData){
+    public static function validateHolidayForm($formData, $id=null){
+      
+      if($id != null){
+
+        $rules = array(
+          'holidayDate' => array('required','date', 'unique:holidays, holidayDate,' . $id),
+          'holidayDescription' => array('required', 'max:255')
+        );
+      }
+      else{
+        $rules = array(
+          'holidayDate' => array('required','date','unique:holidays'),
+          'holidayDescription' => array('required', 'max:255')
+        );
+      }
       $validator = Validator::make(
-      $formData,
-      array(
-          'holidayDate' => array('required','date'),
-          'holidayDescription' => array('required')
-        )
+        $formData,
+        $rules
       );
+
       
       return $validator;
     }

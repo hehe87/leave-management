@@ -104,7 +104,7 @@ class HolidaysController extends \BaseController {
     if(isset($formData['holidayDate'])){
       $formData['holidayDate'] = date("Y-m-d",strtotime($formData['holidayDate']));
     }
-    $validator = Holiday::validateHolidayForm($formData);
+    $validator = Holiday::validateHolidayForm($formData, $id);
     if($validator->fails())
     {
       return Redirect::to(URL::route("holidayEdit",array("id" => $id)))->withErrors($validator)->withInput();

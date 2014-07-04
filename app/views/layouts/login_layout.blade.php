@@ -45,8 +45,16 @@
           </div>
           @yield('content')
         </div>
+        <div class="page_footer">
+          <div class="col-lg-6 col-lg-offset-6">
+            <span class="pull-right">
+              &copy; {{ date('Y') }} Rubico IT Private Limited
+            </span>
+          </div>
+        </div>
       </div>
     </div>
+
     <!-- including Scripts -->
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/bootstrap.min.js') }}"></script>

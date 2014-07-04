@@ -16,7 +16,7 @@
     <div class="form-group">
       <input class="form-control" placeholder="Email Address" required="1" name="email" type="email">
     </div>
-    <a href="{{ URL::route('userLogin') }}" class="btn btn-primary btn-sm button-normal">Login</a>
+    <a href="{{ URL::route('userLogin') }}" class="btn btn-primary btn-sm button-normal">Back to Login</a>
     <input class="btn btn-sm btn-primary pull-right button-normal" type="submit" value="Submit">
   </form>
 @stop

@@ -131,7 +131,7 @@
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
       <div class="col-sm-3">
-        {{ Form::text('outTime', date('h:i A', strtotime($user->outTime)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "out_time"), 'placeholder' => 'Out Time (hh:mm)')) }}
+        {{ Form::text('outTime', date('h:i A', strtotime($user->outTime)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "out_time"), 'placeholder' => 'Out Time (hh:mm)', 'id' => 'outTime')) }}
         <span class="glyphicon glyphicon-time form-control-feedback"></span>
       </div>
     </div>

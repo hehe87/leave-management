@@ -131,7 +131,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     }
 
     if($id != null){
-      $user = User::find($id);
       $validationRules = array(
           'name' => array('required', 'min:5'),
           'email' => array('required','email', 'unique:users,email,'.$id),
@@ -142,6 +141,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
           'phone' => array('required','regex:/[0-9]{10}/'),
           'altPhone' => array('regex:/[0-9]{10}/')
       );
+      
     }
     else{
       $validationRules = array(
