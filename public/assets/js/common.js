@@ -75,7 +75,7 @@ $('#leave_type').on('change',function(e){
     $(".date-long").multiDatesPicker({
       maxPicks: 2,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -85,7 +85,7 @@ $('#leave_type').on('change',function(e){
     $(".date-multiple").multiDatesPicker({
       maxPicks: 10,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -95,7 +95,7 @@ $('#leave_type').on('change',function(e){
     $(".date_control").multiDatesPicker({
       maxPicks: 1,
       showOn : "both",
-      dateFormat: "yy-mm-dd",
+      dateFormat: "dd-mm-yy",
       changeMonth: true,
       changeYear: true,
       yearRange: "-100:+0"
@@ -184,7 +184,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 2,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -197,7 +197,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 2,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -211,7 +211,7 @@ $(document).on("ready",function(){
         if(date_control_val == ""){
           $date_control.multiDatesPicker({
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -223,7 +223,7 @@ $(document).on("ready",function(){
           });
           $date_control.multiDatesPicker({
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -237,7 +237,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 1,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0"
@@ -248,7 +248,7 @@ $(document).on("ready",function(){
           $date_control.multiDatesPicker({
             maxPicks: 1,
             showOn : "both",
-            dateFormat: "yy-mm-dd",
+            dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
             yearRange: "-100:+0",
@@ -286,7 +286,7 @@ $(document).on("ready",function(){
       if(r){
         $.blockUI();
         $.ajax({
-          url: $(this).data("url"),
+          url: $this.data("url"),
           type: "get",
           dataType: "json",
           success: function(retdata){

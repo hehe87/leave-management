@@ -9,12 +9,19 @@
 */
 
 // Initialize the datatables
+$(document).on("ready",function(){
+  if(0 != $('#leavesTable').length) {
+    $('#leavesTable').DataTable( {
+            aoColumnDefs: [
+              {
+                 bSortable: false,
+                 aTargets: [ -1 ]
+              }
+            ]
+        } );
+  }
+});
 
-if(0 != $('#leavesTable').length) {
-  $('#leavesTable').DataTable( {
-          "order": [[ 4, "asc" ]]
-      } );
-}
 // Initialize timepickers
 if (0 != $('.timepicker').length) {
  $('.timepicker').timepicker({
@@ -181,7 +188,7 @@ $(document).on("change", "#date-option", function(){
   }
   $(".date_control").datepicker({
     showOn : "both",
-    dateFormat: "yy-mm-dd",
+    dateFormat: "mm-dd-yy",
     changeMonth: true,
     changeYear: true
   });
@@ -228,7 +235,7 @@ function getExtraLeaves(ajaxurl, username, year){
       $("#extra_leave .row .col-sm-12").html(retdata);
       $(".date_control").datepicker({
         showOn : "both",
-        dateFormat: "yy-mm-dd",
+        dateFormat: "dd-mm-yy",
         changeMonth: true,
         changeYear: true
       });

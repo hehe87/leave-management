@@ -61,10 +61,13 @@ class HolidaysController extends \BaseController {
   */
   public function store(){
     $formData = Input::except("_token");
+    if(isset($formData['holidayDate'])){
+      $formData['holidayDate'] = date("Y-m-d",strtotime($formData['holidayDate']));
+    }
     $validator = Holiday::validateHolidayForm($formData);
     if($validator->fails())
     {
-      return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput();
+      return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput($formData);
     }
     else{
       $formData["holidayType"] = "OPTIONAL";
@@ -98,6 +101,9 @@ class HolidaysController extends \BaseController {
   public function update($id){
     $holiday = Holiday::find($id);
     $formData = Input::except("_token");
+    if(isset($formData['holidayDate'])){
+      $formData['holidayDate'] = date("Y-m-d",strtotime($formData['holidayDate']));
+    }
     $validator = Holiday::validateHolidayForm($formData);
     if($validator->fails())
     {
