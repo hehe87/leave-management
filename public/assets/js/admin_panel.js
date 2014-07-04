@@ -12,7 +12,13 @@
 
 if(0 != $('#leavesTable').length) {
   $('#leavesTable').DataTable( {
-          "order": [[ 4, "asc" ]]
+          "order": [[ 0, "asc" ]]
+      } );
+}
+
+if(0 != $('#usersTable').length) {
+  $('#usersTable').DataTable( {
+          "order": [[ 0, "asc" ]]
       } );
 }
 // Initialize timepickers
@@ -47,10 +53,10 @@ $(document).on("keyup", "#user-search",function(e){
     if(typeof onBlank == "undefined"){
       onBlank = "";
     }
-    if(window.xhr){      
+    if(window.xhr){
       window.xhr.abort();
     }
-    
+
     window.xhr = $.ajax({
       url: $this.data("search_url"),
       data: {name: value, view: view, onblank: onBlank},
@@ -64,14 +70,14 @@ $(document).on("keyup", "#user-search",function(e){
 });
 
 $(document).on("keydown", "#user-search",function(e){
-  
+
   var $this = $(this);
   if(e.keyCode == 13){
     if(!$("#user-listing-tbody").closest("table").hasClass("hide")){
       e.preventDefault();
       $("#user-search").val($.trim($("#user-listing-tbody tr.active td").text()));
       $("#user-listing-tbody").closest("table").addClass("hide");
-      
+
       if(typeof $("#user-search").data("onselect") != "undefined"){
         window[$("#user-search").data("onselect")]($("#user-search").data("onselectajaxurl"),$("#user-search").val(), window.currentYear);
       }
@@ -93,10 +99,10 @@ $(document).on("keydown", "#user-search",function(e){
           $("#user-listing-tbody tr.active").next().addClass("active");
           $("#user-listing-tbody tr.active").first().removeClass("active");
         }
-        
+
       }
-      
-      
+
+
     }
     else{
       var currIndex = $("#user-listing-tbody tr.active").index();
@@ -110,7 +116,7 @@ $(document).on("keydown", "#user-search",function(e){
       }
     }
   }
-  
+
 });
 
 
@@ -135,7 +141,7 @@ $(document).on("submit","#report-form",function(e){
       }
     }
   }
-  
+
   if(hasErrors){
     jAlert("Please enter/select all search inputs first!!");
     return false;
@@ -155,7 +161,7 @@ $(document).on("change","#report-form #leave-type",function(){
   }
   else{
     inputs.show();
-    selects.show(); 
+    selects.show();
   }
   $("#report-form #leave-type").show();
   $("input[name='generate_report']").show();
