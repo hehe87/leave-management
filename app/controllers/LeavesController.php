@@ -145,7 +145,7 @@ class LeavesController extends \BaseController {
 			 	$validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 			}
 
-			return Redirect::back()->withErrors($validator)->withInput($inputs);
+			return Redirect::back()->withErrors($validator)->withInput($inputs)->with("error", "This form contains errors, please review and try again");
 		}
 
 		$tempLeave = $leave;
@@ -228,10 +228,10 @@ class LeavesController extends \BaseController {
 		}
 		if(Auth::user()->employeeType == "ADMIN"){
 			return Redirect::to(URL::route('leaves.create'))
-		->with('message', 'Leave successfully Added');
+		->with('success', 'Leave successfully Added');
 		}
 		else{
-			return Redirect::to(URL::route('myLeaves'))->with('message', 'Leave successfully applied');
+			return Redirect::to(URL::route('myLeaves'))->with('success', 'Leave successfully applied');
 		}
 	}
 
@@ -359,7 +359,7 @@ class LeavesController extends \BaseController {
 	      $validator = array_merge($validator, ($hasCsrError)? $vc->messages()->toArray() : [] );
 	    }
 
-	    return Redirect::back()->withErrors($validator)->withInput($inputs);
+	    return Redirect::back()->withErrors($validator)->withInput($inputs)->with("error", "This form contains errors, please review and try again");
 	  }
 
 	  $leave = array_merge($leave, ['user_id' => Auth::user()->id]);
@@ -399,7 +399,7 @@ class LeavesController extends \BaseController {
 	    Approval::create($approval);
 	  }
   	return Redirect::to(URL::route('myLeaves'))
-		->with('message', 'Leave successfully applied');
+		->with('success', 'Leave successfully applied');
 	}
 
 	/**
