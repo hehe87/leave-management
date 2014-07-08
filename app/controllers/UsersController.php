@@ -375,6 +375,8 @@ class UsersController extends \BaseController {
   */
   public function destroy($id)
   {
+    // Delete all leaves belongs to that user
+    User::where('user_id', '=', $id)->delete();
     User::destroy($id);
     return Response::json(array('status' => true));
   }

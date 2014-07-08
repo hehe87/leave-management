@@ -311,12 +311,12 @@ function getExtraLeaves(ajaxurl, username, year){
 
 $(document).on("change","input[name='extra_leaves[leave_type]']", function(){
   if($(this).hasClass("extra-leave-leave_type")){
-    $(".extra-leave-description").addClass("in");
+    $(".extra-leave-description").removeClass("fade").removeClass('hide');
   }
   else{
-    $(".extra-leave-description").removeClass("in");
+    $(".extra-leave-description").addClass("hide");
   }
-  $("#extra-leave-fromdate").addClass("in");
+  $("#extra-leave-fromdate").removeClass("fade").removeClass('hide');
 });
 
 
