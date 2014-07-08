@@ -233,7 +233,7 @@ class UsersController extends \BaseController {
       $searchFor = "%". Input::get("name") . "%";
     }
 
-    $users = User::where("name","LIKE", $searchFor)->get();
+    $users = User::where(DB::raw("lower(name)"),"LIKE", $searchFor)->get();
 
     return View::make(Input::get('view') ? 'users.' . Input::get('view') : 'users.listing')->with("users", $users);
   }
@@ -660,7 +660,7 @@ class UsersController extends \BaseController {
       	}
       }
     }
-    return Redirect::to(URL::route('users.settings') . $showTab);
+    return Redirect::to(URL::route('users.settings') . $showTab)->with('success', 'Settings updated successfully!');
   }
 
   /*

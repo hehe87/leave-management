@@ -351,6 +351,7 @@ function getByDateInputHTML(){
 
 
 $(document).on("click", ".settings-tab-links li a", function (e) {
+  $('.message').hide();
   e.preventDefault()
   $(this).tab('show');
 })

@@ -64,23 +64,20 @@
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
-          @if(Session::get('success'))
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="alert alert-success">
-                      {{ Session::get('success') }}
-                  </div>
+              <div class="row message">
+            @if(Session::get('success'))
+                  <div class="col-sm-12">
+                    <div class="alert alert-success">
+                        {{ Session::get('success') }}
+                    </div>
                 </div>
-              </div>
-           @elseif(Session::get('error'))
-            <div class="row">
-                <div class="col-sm-12">
-                  <div class="alert alert-danger">
-                      {{ Session::get('error') }}
-                  </div>
+             @elseif(Session::get('error'))
+                  <div class="col-sm-12">
+                    <div class="alert alert-danger">
+                        {{ Session::get('error') }}
+                    </div>
                 </div>
-              </div>
-          @endif
+            @endif
           @yield('content')
           }
         </div>

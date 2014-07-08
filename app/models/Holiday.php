@@ -14,13 +14,13 @@
       'holidayType',
       'holidayDescription'
     );
-    
+
     public static function validateHolidayForm($formData, $id=null){
-      
+
       if($id != null){
 
         $rules = array(
-          'holidayDate' => array('required','date', 'unique:holidays, holidayDate,' . $id),
+          'holidayDate' => array('required','date', 'unique:holidays,holidayDate,' . $id),
           'holidayDescription' => array('required', 'max:255')
         );
       }
@@ -35,7 +35,7 @@
         $rules
       );
 
-      
+
       return $validator;
     }
   }

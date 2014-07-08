@@ -70,23 +70,21 @@
         <!-- End Left Panel Menus -->
         <!-- Content Panel -->
         <div id="content-panel" class="col-lg-10">
-         @if(Session::get('success'))
-              <div class="row">
+              <div class="row message">
+              @if(Session::get('success'))
                 <div class="col-sm-12">
                   <div class="alert alert-success">
                       {{ Session::get('success') }}
                   </div>
                 </div>
-              </div>
            @elseif(Session::get('error'))
-            <div class="row">
                 <div class="col-sm-12">
                   <div class="alert alert-danger">
                       {{ Session::get('error') }}
                   </div>
-                </div>
               </div>
           @endif
+          </div>
           @yield('content')
         </div>
         <!-- End Content Panel -->
