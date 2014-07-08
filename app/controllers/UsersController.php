@@ -376,6 +376,7 @@ class UsersController extends \BaseController {
   public function destroy($id)
   {
     // Delete all leaves belongs to that user
+    Approval::where('user_id', '=', $id)->delete();
     Leave::where('user_id', '=', $id)->delete();
     User::destroy($id);
     return Response::json(array('status' => true));
