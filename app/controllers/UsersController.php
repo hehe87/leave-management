@@ -384,13 +384,16 @@ class UsersController extends \BaseController {
       Approval::whereIn('leave_id', $leave_ids)->delete();
 
       // Delete all approvals he did
-      Approval::where('approver_id', $id)->delete();
+      Approval::where('approver_id', '=', $id)->delete();
 
       // Delete all csrs
       Csr::whereIn('leave_id', $leave_ids)->delete();
 
       // Delete all leaves
       Leave::where('user_id', '=', $id)->delete();
+
+      // Delete Extra Leaves
+      Extraleave::where('user_id', '=', $id)->delete();
     }
 
     // Delete the users
