@@ -41,7 +41,7 @@ class ApprovalController extends \BaseController {
     else{
       $approval = Approval::findOrFail(Input::get('approvalId'));
       if($approval->approver_id != Auth::user()->id){
-        return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave!'));
+        return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave'));
       }
       $approval_status = Input::get('approvalStatus');
     }

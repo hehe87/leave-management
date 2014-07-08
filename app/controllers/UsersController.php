@@ -362,7 +362,7 @@ class UsersController extends \BaseController {
       $user->update($formData);
       $user->totalLeaves = $user->getTotalLeaves();
       $user->save();
-      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been updated successfully!');
+      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been updated successfully');
     }
   }
 
@@ -660,7 +660,7 @@ class UsersController extends \BaseController {
       	}
       }
     }
-    return Redirect::to(URL::route('users.settings') . $showTab)->with('success', 'Settings updated successfully!');
+    return Redirect::to(URL::route('users.settings') . $showTab)->with('success', 'Settings updated successfully');
   }
 
   /*
