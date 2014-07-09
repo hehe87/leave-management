@@ -79,7 +79,6 @@
                 </div>
             @endif
           @yield('content')
-          }
         </div>
         <!-- End Content Panel -->
       </div>
