@@ -30,7 +30,7 @@
       @endif
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="col-sm-12">
       <div class="row">
@@ -38,7 +38,7 @@
           {{ Form::label('admin_account[password]', 'Password *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
-          {{ Form::text('admin_account[password]', '', array('class' => 'form-control', 'placeholder' => 'Password')) }}
+          {{ Form::password('admin_account[password]', array('class' => 'form-control', 'placeholder' => 'Password')) }}
         </div>
       </div>
       @if ($errors->first('password'))
@@ -52,7 +52,7 @@
       @endif
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="col-sm-12">
       <div class="row">
@@ -60,7 +60,7 @@
           {{ Form::label('admin_account[password_confirmation]', 'Confirm Password *', array('class' => 'control-label')) }}
         </div>
         <div class="col-sm-8">
-          {{ Form::text('admin_account[password_confirmation]', '', array('class' => 'form-control', 'placeholder' => 'Confirm Password')) }}
+          {{ Form::password('admin_account[password_confirmation]', array('class' => 'form-control', 'placeholder' => 'Confirm Password')) }}
         </div>
       </div>
       @if ($errors->first('password_confirmation'))
@@ -74,7 +74,7 @@
       @endif
     </div>
   </div>
-  
+
   <div class="form-group">
     <div class="col-sm-8 col-sm-offset-3">
       <a class="btn btn-danger pull-left" href="{{ URL::previous() }}">Cancel</a>

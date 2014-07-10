@@ -198,7 +198,7 @@ class UsersController extends \BaseController {
       )
     );
     if($validator->fails()){
-      return Redirect::to(URL::route("userChangePassword",array("token" => $token)))->withErrors($validator)->withInput();
+      return Redirect::to(URL::route("userChangePassword",array("token" => $token)))->withErrors($validator)->withInput()->with("error", "This form contains errors, please review and try again");
     }
     else{
       $user = User::where("changePasswordToken",$token);
@@ -233,7 +233,7 @@ class UsersController extends \BaseController {
       $searchFor = "%". Input::get("name") . "%";
     }
 
-    $users = User::where("name","LIKE", $searchFor)->get();
+    $users = User::where(DB::raw("lower(name)"),"LIKE", $searchFor)->get();
 
     return View::make(Input::get('view') ? 'users.' . Input::get('view') : 'users.listing')->with("users", $users);
   }
@@ -282,7 +282,7 @@ class UsersController extends \BaseController {
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {
-      return Redirect::to(URL::route('userCreate'))->withErrors($validator)->withInput();
+      return Redirect::to(URL::route('userCreate'))->withErrors($validator)->withInput()->with("error", "This form contains errors, please review and try again");
     }
     else{
       $formData["doj"] = date("Y-m-d",strtotime($formData["doj"]));
@@ -344,7 +344,7 @@ class UsersController extends \BaseController {
     $validator = User::validateRegistrationForm($formData, $id);
     if($validator->fails())
     {
-      return Redirect::to(URL::route('userEdit',array("id" => $id)))->withErrors($validator)->withInput();
+      return Redirect::to(URL::route('userEdit',array("id" => $id)))->withErrors($validator)->withInput()->with("error", "This form contains errors, please review and try again");
     }
     else{
       $formData = Input::except("password_confirmation","_token");
@@ -362,7 +362,7 @@ class UsersController extends \BaseController {
       $user->update($formData);
       $user->totalLeaves = $user->getTotalLeaves();
       $user->save();
-      return Redirect::to(URL::route('usersListing'))->with('success', 'Your account has been created successfully, Please login now!');
+      return Redirect::to(URL::route('usersListing'))->with('success', 'Account has been updated successfully');
     }
   }
 
@@ -375,8 +375,31 @@ class UsersController extends \BaseController {
   */
   public function destroy($id)
   {
+    $leave_ids = Leave::where('user_id', '=', $id)->lists('id');
+
+      // Delete all approvals he did (if any)
+      Approval::where('approver_id', '=', $id)->delete();
+
+    if( count($leave_ids)>0 )
+    {
+
+      // Delete all approvals
+      Approval::whereIn('leave_id', $leave_ids)->delete();
+
+
+      // Delete all csrs
+      Csr::whereIn('leave_id', $leave_ids)->delete();
+
+      // Delete all leaves
+      Leave::where('user_id', '=', $id)->delete();
+
+      // Delete Extra Leaves
+      Extraleave::where('user_id', '=', $id)->delete();
+    }
+
+    // Delete the users
     User::destroy($id);
-    return Redirect::to(URL::route('usersListing'));
+    return Response::json(array('status' => true));
   }
 
 
@@ -440,7 +463,7 @@ class UsersController extends \BaseController {
       );
 
       if($validator->fails()){
-	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
+	       return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator)->with("error", "This form contains errors, please review and try again");
       }
       else{
       	$googleSettings = htmlspecialchars('<?php ' .
@@ -483,7 +506,7 @@ class UsersController extends \BaseController {
 
 
       	if($validator->fails()){
-      	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
+      	  return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator)->with("error", "This form contains errors, please review and try again");
       	}
       	else{
       	  $user = Auth::user();
@@ -521,7 +544,7 @@ class UsersController extends \BaseController {
       	  );
 
       	  if($validator->fails()){
-      	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
+      	    return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator)->with("error", "This form contains errors, please review and try again");
       	  }
       	  else{
 
@@ -608,7 +631,7 @@ class UsersController extends \BaseController {
 
 
             if($validator->fails()){
-              return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator);
+              return Redirect::to(URL::route('users.settings') . $showTab)->withInput($allSettings)->withErrors($validator)->with("error", "This form contains errors, please review and try again");
             }
 
             $empName = $allSettings["extra_leaves"]["employee_name"];
@@ -660,7 +683,7 @@ class UsersController extends \BaseController {
       	}
       }
     }
-    return Redirect::to(URL::route('users.settings') . $showTab);
+    return Redirect::to(URL::route('users.settings') . $showTab)->with('success', 'Settings updated successfully');
   }
 
   /*

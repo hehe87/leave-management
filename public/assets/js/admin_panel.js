@@ -10,13 +10,30 @@
 
 // Initialize the datatables
 
+
+
+
 function removePaginationLinks(minLength){
-  if($("ul.pagination li").not(".previous").not(".next").length < minLength){
+  if($("ul.pagination li").not(".previous").not(".next").length <= minLength){
     $("ul.pagination").hide();
   }
+
 }
 
 $(document).on("ready",function(){
+
+  if(0 != $('#usersTable').length) {
+  $('#usersTable').DataTable( {
+          "order": [[ 0, "asc" ]],
+        aoColumnDefs: [
+          {
+             bSortable: false,
+             aTargets: [ -1 ]
+          }
+        ]
+      } );
+}
+
   if(0 != $('#leavesTable').length) {
     $('#leavesTable').DataTable( {
         aaSorting: [[0, "desc"]],
@@ -28,7 +45,7 @@ $(document).on("ready",function(){
         ]
     });
   }
-  removePaginationLinks(10); // removes the pagination links if only one pagination link is present.
+  removePaginationLinks(1); // removes the pagination links if only one pagination link is present.
 });
 
 $(document).on("submit",".user-form", function(e){
@@ -83,10 +100,10 @@ $(document).on("keyup", "#user-search",function(e){
     if(typeof onBlank == "undefined"){
       onBlank = "";
     }
-    if(window.xhr){      
+    if(window.xhr){
       window.xhr.abort();
     }
-    
+
     window.xhr = $.ajax({
       url: $this.data("search_url"),
       data: {name: value, view: view, onblank: onBlank},
@@ -100,14 +117,14 @@ $(document).on("keyup", "#user-search",function(e){
 });
 
 $(document).on("keydown", "#user-search",function(e){
-  
+
   var $this = $(this);
   if(e.keyCode == 13){
     if(!$("#user-listing-tbody").closest("table").hasClass("hide")){
       e.preventDefault();
       $("#user-search").val($.trim($("#user-listing-tbody tr.active td").text()));
       $("#user-listing-tbody").closest("table").addClass("hide");
-      
+
       if(typeof $("#user-search").data("onselect") != "undefined"){
         window[$("#user-search").data("onselect")]($("#user-search").data("onselectajaxurl"),$("#user-search").val(), window.currentYear);
       }
@@ -129,10 +146,10 @@ $(document).on("keydown", "#user-search",function(e){
           $("#user-listing-tbody tr.active").next().addClass("active");
           $("#user-listing-tbody tr.active").first().removeClass("active");
         }
-        
+
       }
-      
-      
+
+
     }
     else{
       var currIndex = $("#user-listing-tbody tr.active").index();
@@ -146,7 +163,7 @@ $(document).on("keydown", "#user-search",function(e){
       }
     }
   }
-  
+
 });
 
 
@@ -171,7 +188,7 @@ $(document).on("submit","#report-form",function(e){
       }
     }
   }
-  
+
   if(hasErrors){
     jAlert("Please enter/select all search inputs first!!");
     return false;
@@ -191,7 +208,7 @@ $(document).on("change","#report-form #leave-type",function(){
   }
   else{
     inputs.show();
-    selects.show(); 
+    selects.show();
   }
   $("#report-form #leave-type").show();
   $("input[name='generate_report']").show();
@@ -244,6 +261,26 @@ $(document).on("click", ".delete-holiday", function(){
     });
   });
 
+$(document).on("click", ".delete-user", function(){
+    var $this = $(this);
+    var $parentRow = $(this).closest("table").closest("tr");
+    jConfirm("Are you sure you want to delete this user", "Confirmation", function(r){
+      var url = $this.data("url");
+      if(r){
+        $.blockUI();
+        $.ajax({
+          url: url,
+          type: "post",
+          dataType: "json",
+          success: function(retdata){
+            $parentRow.remove();
+            $.unblockUI();
+          }
+        });
+      }
+    });
+  });
+
 
 $(document).on("click","#lm-autosearch table tr td", function(){
   $(this).closest("table").addClass("hide");
@@ -274,12 +311,12 @@ function getExtraLeaves(ajaxurl, username, year){
 
 $(document).on("change","input[name='extra_leaves[leave_type]']", function(){
   if($(this).hasClass("extra-leave-leave_type")){
-    $(".extra-leave-description").addClass("in");
+    $(".extra-leave-description").removeClass("fade").removeClass('hide');
   }
   else{
-    $(".extra-leave-description").removeClass("in");
+    $(".extra-leave-description").addClass("hide");
   }
-  $("#extra-leave-fromdate").addClass("in");
+  $("#extra-leave-fromdate").removeClass("fade").removeClass('hide');
 });
 
 
@@ -314,6 +351,7 @@ function getByDateInputHTML(){
 
 
 $(document).on("click", ".settings-tab-links li a", function (e) {
+  $('.message').hide();
   e.preventDefault()
   $(this).tab('show');
 })

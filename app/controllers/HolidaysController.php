@@ -67,12 +67,12 @@ class HolidaysController extends \BaseController {
     $validator = Holiday::validateHolidayForm($formData);
     if($validator->fails())
     {
-      return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput($formData);
+      return Redirect::to(URL::route("holidayCreate"))->withErrors($validator)->withInput($formData)->with("error", "This form contains errors, please review and try again");
     }
     else{
       $formData["holidayType"] = "OPTIONAL";
       Holiday::create($formData);
-      return Redirect::to(URL::route("holidaysListing"));
+      return Redirect::to(URL::route("holidaysListing"))->with("success", "Holiday added successfully");
     }
   }
 
@@ -107,11 +107,11 @@ class HolidaysController extends \BaseController {
     $validator = Holiday::validateHolidayForm($formData, $id);
     if($validator->fails())
     {
-      return Redirect::to(URL::route("holidayEdit",array("id" => $id)))->withErrors($validator)->withInput();
+      return Redirect::to(URL::route("holidayEdit",array("id" => $id)))->withErrors($validator)->withInput()->with("error", "This form contains errors, please review and try again");
     }
     else{
       $holiday->update($formData);
-      return Redirect::to(URL::route("holidaysListing"));
+      return Redirect::to(URL::route("holidaysListing"))->with("success", "Holiday updated successfully");
     }
     $holiday->update(Input::except("_token"));
     return Redirect::to(URL::route("holidaysListing"));
