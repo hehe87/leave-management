@@ -550,4 +550,37 @@ class LeavesController extends \BaseController {
 		$leaves = Leave::pendingLeaves();
 		return View::make('leaves.index')->with("leaves", $leaves)->with("extraLeaves", array());
 	}
+
+	public function getAddLeave(){
+		return View::make("leaves.newleaves.add_leave");
+	}
+
+	public function postAddLeave(){
+		print_r(Input::all());
+	}
+
+	public function getEditLeave(){
+		return View::make("leaves.newleaves.edit_leave");
+	}
+
+	public function postEditLeave(){
+
+	}
+
+	public function getAddCSR(){
+		return View::make("leaves.newleaves.add_csr");
+	}
+
+	public function postAddCSR(){
+
+	}
+
+	public function getEditCSR(){
+		return View::make("leaves.newleaves.edit_csr");
+	}
+
+	public function postEditCSR(){
+
+	}
+
 }

@@ -23,8 +23,13 @@ $('a[data-toggle="tooltip"]').tooltip({
   };
 }( jQuery ));
 
-$(".in_time").val("09:30 AM");
-$(".out_time").val("07:00 PM");
+if(($(".in_time").length == 1) && $(".in_time").val() == ""){
+  $(".in_time").val("09:30 AM");
+}
+if(($(".out_time").length == 1) && $(".out_time").val() == ""){
+  $(".out_time").val("09:30 AM");
+}
+
 
 
 $('#leave_option').on('change', function(elem){
@@ -530,3 +535,391 @@ function getRejectedInfoHTML(){
 
 
 
+// new add leave/csr js
+
+function timingsContainersDisplay(hideOrShow){
+  inOutTimeContainerDisplay(hideOrShow);
+  availabilitySlotContainerDisplay(hideOrShow);
+}
+
+function inOutTimeContainerDisplay(hideOrShow){
+  if(hideOrShow == "hide"){
+    $(".in-out-time-container").hide();
+  }
+  else{
+    $(".in-out-time-container").show(); 
+  }
+  
+}
+
+function availabilitySlotContainerDisplay(hideOrShow){
+  if(hideOrShow == "hide"){
+    $(".availablity-time-slot-container").hide();
+  }
+  else{
+    $(".availablity-time-slot-container").show(); 
+  }
+}
+
+
+
+var nowTemp = new Date();
+var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+ 
+var checkin = $('.from_dt').datepicker({
+  format: "dd-mm-yyyy",
+  onSelect: function(date) {
+    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+  }
+}).on('changeDate', function(ev) {
+  if (ev.date.valueOf() > checkout.date.valueOf()) {
+    var newDate = new Date(ev.date)
+    newDate.setDate(newDate.getDate());
+    checkout.setValue(newDate);
+    timingsContainersDisplay("hide");
+  }
+  else{
+    var coVal;
+    if($.trim($('.to_dt').val()) == ""){
+      coVal = $('.from_dt').val();
+      timingsContainersDisplay("show");
+    }
+    else{
+      coVal = $('.to_dt').val();
+      if($.trim($('.to_dt').val()) == $.trim($('.from_dt').val())){
+        timingsContainersDisplay("show");
+      }
+      else{
+        timingsContainersDisplay("hide");
+      }
+      
+    }
+    checkout.setValue(coVal);
+  }
+  checkin.hide();
+  // $('.to_dt')[0].focus();
+}).data('datepicker');
+var checkout = $('.to_dt').datepicker({
+  format: "dd-mm-yyyy",
+  onRender: function(date) {
+    return date.valueOf() < checkin.date.valueOf() ? 'disabled' : '';
+  }
+}).on('changeDate', function(ev) {
+  var coVal;
+  if($.trim($('.to_dt').val()) == $.trim($('.from_dt').val())){
+    // if from date and to date are same
+    timingsContainersDisplay("show");
+  }
+  else{
+    // if from date and to date are different
+    timingsContainersDisplay("hide");
+  }
+}).data('datepicker');
+
+$(document).on("focus", ".from_dt", function(){
+  checkout.hide();
+});
+$(document).on("focus", ".to_dt", function(){
+  checkin.hide();
+});
+
+
+
+window.current_user = {};
+window.current_user.break_start_time = moment($("#input-break-start-time").val(),"hh:mm A");
+window.current_user.break_end_time = moment($("#input-break-end-time").val(),"hh:mm A");
+window.current_user.break_hours = window.current_user.break_end_time.diff(window.current_user.break_start_time,"minutes") / 60;
+function changeUserInOutTime(){
+  window.current_user.inTime = $("#in-time").val();
+  window.current_user.inTimeObj = moment(window.current_user.inTime, "hh:mm A");
+  window.current_user.outTime = $("#out-time").val();
+  window.current_user.outTimeObj = moment(window.current_user.outTime, "hh:mm A");  
+  window.current_user.inTimeMinutes = window.current_user.inTimeObj.hours() * 60 + window.current_user.inTimeObj.minutes();
+
+  if(typeof window.current_user.hourDiff != "undefined"){
+    window.current_user.outTimeMinutes = window.current_user.inTimeMinutes + window.current_user.hourDiff;
+    var outHour = Math.floor((window.current_user.outTimeMinutes / 60) % 12);
+    var outMin = window.current_user.outTimeMinutes % 60;
+    if(outHour.toString().length == 1) outHour = "0" + outHour;
+    if(outMin.toString().length == 1) outMin = "0" + outMin;
+    $("#out-time").val(outHour + ":" + outMin + " PM");
+    window.current_user.outTime = $("#out-time").val();
+  }
+  else{
+    window.current_user.outTimeMinutes = window.current_user.outTimeObj.hours() * 60 + window.current_user.outTimeObj.minutes();
+  }
+
+  window.current_user.hourDiff = window.current_user.outTimeMinutes - window.current_user.inTimeMinutes;
+ 
+  window.current_user.inBetweenHours = [];
+
+  for(i=window.current_user.inTimeMinutes+60;true;i+=60){
+    var ampm = "";
+    var tmpHour = Math.floor((i / 60));
+    if(tmpHour > 12){
+      tmpHour = tmpHour % 12;
+      ampm = "PM";
+    }
+    else{
+      ampm = "AM";
+    }
+    var tmpMin = i % 60;
+    if(tmpHour.toString().length == 1) tmpHour = "0" + tmpHour;
+    if(tmpMin.toString().length == 1) tmpMin = "0" + tmpMin;
+    window.current_user.inBetweenHours.push(tmpHour + ":" + tmpMin + " " + ampm);
+    if(window.current_user.hourDiff == 9.5){
+      if(i>window.current_user.outTimeMinutes){
+        break;
+      }
+    }
+    else{
+      if(i >= (window.current_user.outTimeMinutes - 60)){
+        break;
+      }
+    }
+  }
+  
+  if(window.current_user.hourDiff == 9.5){
+    $(".in-between-hours").removeClass("slot_9").addClass("slot_95");
+  }
+  else{
+    $(".in-between-hours").addClass("slot_9").removeClass("slot_95");
+  }
+
+}
+
+$(document).on("ready", function(){
+  $("#in-time").on("change", function(){
+    changeUserInOutTime();
+    $("#from-time").html(window.current_user.inTime);
+    $("#to-time").html(window.current_user.outTime);
+    var inBetweenHoursHtml = "";
+    $(window.current_user.inBetweenHours).each(function(){
+      inBetweenHoursHtml += "<div>" + this + "</div>";
+    })
+    $(".in-between-hours").html(inBetweenHoursHtml);
+    
+    // console.log(window.current_user.inTimeMinutes);
+    // console.log(window.current_user.outTimeMinutes);
+    if($.trim($(".slider").html()) != ""){
+      $(".slider").html("");
+    }
+    $(".slider").slider({
+      range: true,
+      min: window.current_user.inTimeMinutes,
+      max: window.current_user.outTimeMinutes,
+      step: 5,
+      value: [window.current_user.inTimeMinutes,window.current_user.inTimeMinutes],
+      handle: "round"
+    }).on("slide", function(ui) {
+      var rangeStart = ui.value[0];
+      var rangeEnd = ui.value[1];
+      var rangeStartHours = Math.floor(rangeStart / 60);
+      var rangeStartMinutes = rangeStart - (rangeStartHours * 60);
+
+      var rangeEndHours = Math.floor(rangeEnd / 60);
+      var rangeEndMinutes = rangeEnd - (rangeEndHours * 60);
+
+
+      var ampm = "AM";
+      if(rangeStartHours >= 12){
+        if(rangeStartHours != 12){
+          rangeStartHours = rangeStartHours % 12;
+        }
+        if(rangeStartHours.toString().length == 1) rangeStartHours = '0' + rangeStartHours;
+        if(rangeStartMinutes.toString().length == 1) rangeStartMinutes = '0' + rangeStartMinutes;
+        ampm = "PM";
+      }
+      else{
+        if(rangeStartHours.toString().length == 1) rangeStartHours = '0' + rangeStartHours;
+        if(rangeStartMinutes.toString().length == 1) rangeStartMinutes = '0' + rangeStartMinutes;
+        ampm = "AM";
+      }
+      rangeStart = rangeStartHours + ":" + rangeStartMinutes + " " + ampm;
+
+
+      if(rangeEndHours >= 12){
+        if(rangeEndHours != 12){
+          rangeEndHours = rangeEndHours % 12;
+        }
+        if(rangeEndHours.toString().length == 1) rangeEndHours = '0' + rangeEndHours;
+        if(rangeEndMinutes.toString().length == 1) rangeEndMinutes = '0' + rangeEndMinutes;  
+        ampm = "PM";
+      }
+      else{
+        if(rangeEndHours.toString().length == 1) rangeEndHours = '0' + rangeEndHours;
+        if(rangeEndMinutes.toString().length == 1) rangeEndMinutes = '0' + rangeEndMinutes;
+      }
+      rangeEnd = rangeEndHours + ":" + rangeEndMinutes + " " + ampm;
+      
+      
+
+      $('.tooltip-inner').html(rangeStart + " - " + rangeEnd);
+      $("#from-time").html(rangeStart);
+      $("#to-time").html(rangeEnd);
+      $("#input-from-time").val(rangeStart);
+      $("#input-to-time").val(rangeEnd);
+    });
+
+    $('.tooltip-inner').html(window.current_user.inTime + " - " + window.current_user.outTime);
+    changeUserInOutTime();
+  });
+  $("#in-time").change();
+
+  $("#leave_apply").on("click", function(){
+    var fromDate = $(".from_dt").val();
+    var toDate = $(".to_dt").val();
+    var fromDateObj;
+    var toDateObj;
+    var leaveType = "LEAVE";
+    if($.trim(fromDate) == ""){
+      jAlert("Please select From Date");
+    }
+    else{
+       fromDateObj = moment(fromDate, "DD-MM-YYYY");
+    }
+    if(($.trim(toDate) != "")){
+      toDateObj = moment(toDate, "DD-MM-YYYY");
+    }
+    var diffDays = toDateObj.diff(fromDateObj, "days");
+    var leaveDays = diffDays + 1;
+    if(leaveDays > 1){
+      leaveType = "LONG";
+    }
+    else{
+      var fromt = $("#input-from-time").val();
+      var tot = $("#input-to-time").val();
+      var fromtObj = moment(fromt, "hh:mm A");
+      var totObj = moment(tot, "hh:mm A");
+      if(totObj.diff(fromtObj) == 0){
+        leaveType = "LEAVE";
+      }
+      else{
+        var inHours = totObj.diff(fromtObj,"minutes") / 60;
+        var outHours = (window.current_user.hourDiff / 60) - inHours;
+        if(outHours > 4.5)
+        {
+          leaveType = "LEAVE";
+        }
+        else{
+          if(outHours == 4.5){
+            if(fromtObj.diff(window.current_user.inTimeObj) < window.current_user.outTimeObj.diff(totObj)){
+              leaveType = "SH";
+            }
+            else{
+              leaveType = "FH";
+            }
+          }
+          else{
+            console.log(outHours);
+            if(outHours == 0){
+              leaveType = "LEAVE";
+            }
+            else{
+              jAlert("Your Out Time is approximately 2 Hours, Please fill the CSR form instead");
+              return;
+            }
+          }
+        }      
+      }
+    }
+    var fullLeaveType = "";
+    switch(leaveType){
+      case "FH":
+        fullLeaveType = "First Half";
+        break;
+      case "SH":
+        fullLeaveType = "Second Half";
+        break;
+      case "LEAVE":
+        fullLeaveType = "Full Day Leave";
+        break;
+      case "LONG":
+        fullLeaveType = "Long Leave";
+        break;
+    }
+    
+    $(".modal-title").html("Leave Summary");
+    var leaveSummaryBody = "";
+    if(leaveDays > 1){
+      // if user selected more than one day of leave(Long Leave)
+      leaveSummaryBody += "<div class='row'>";
+      leaveSummaryBody += "<label class='control-label col-sm-3'>";
+      leaveSummaryBody += "Leave Type";
+      leaveSummaryBody += "</label>";
+      leaveSummaryBody += "<div class='col-sm-9'>";
+      leaveSummaryBody += fullLeaveType;
+      leaveSummaryBody += "</div>";
+      leaveSummaryBody += "</div>";
+      leaveSummaryBody += "<div class='row'>";
+      leaveSummaryBody += "<label class='control-label col-sm-3'>From Date</label>";
+      leaveSummaryBody += "<div class='col-sm-9'>" + fromDate + "</div>";
+      leaveSummaryBody += "</div>";
+
+      leaveSummaryBody += "<div class='row'>";
+      leaveSummaryBody += "<label class='control-label col-sm-3'>To Date</label>";
+      leaveSummaryBody += "<div class='col-sm-9'>" + toDate + "</div>";
+      leaveSummaryBody += "</div>";
+
+      leaveSummaryBody += "<div class='row'>";
+      leaveSummaryBody += "<label class='control-label col-sm-3'>Total Days</label>";
+      leaveSummaryBody += "<div class='col-sm-9'>" + (parseInt(toDateObj.diff(fromDateObj, "days")) + 1) + " Days</div>";
+      leaveSummaryBody += "</div>";
+    }
+    else{
+      // if user selected only one day leave
+      if(fromtObj.diff(totObj) != 0){
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>";
+        leaveSummaryBody += "Leave Type";
+        leaveSummaryBody += "</label>";
+        leaveSummaryBody += "<div class='col-sm-9'>";
+        leaveSummaryBody += fullLeaveType;
+        leaveSummaryBody += "</div>";
+        leaveSummaryBody += "</div>";
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>Leave Date</label>";
+        leaveSummaryBody += "<div class='col-sm-9'>" + fromDate + "</div>";
+        leaveSummaryBody += "</div>";
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>Out Time</label>";
+        leaveSummaryBody += "<div class='col-sm-9'>";
+        if(fromtObj.diff(window.current_user.inTimeObj) != 0){
+          leaveSummaryBody += window.current_user.inTime + " To " + fromt;
+          if(window.current_user.outTimeObj.diff(totObj) != 0){
+            leaveSummaryBody += "<br>" + tot + " To " + window.current_user.outTime;
+          }
+        }
+        else{
+          leaveSummaryBody += tot + " To " + window.current_user.outTime;
+        }
+        leaveSummaryBody += "</div>";
+        leaveSummaryBody += "</div>";
+      }
+      else{
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>";
+        leaveSummaryBody += "Leave Type";
+        leaveSummaryBody += "</label>";
+        leaveSummaryBody += "<div class='col-sm-9'>";
+        leaveSummaryBody += fullLeaveType;
+        leaveSummaryBody += "</div>";
+        leaveSummaryBody += "</div>";
+
+
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>Leave Date</label>";
+        leaveSummaryBody += "<div class='col-sm-9'>" + fromDate + "</div>";
+        leaveSummaryBody += "</div>";
+      }
+    }
+    
+    
+
+    $(".modal-body").html(leaveSummaryBody);
+    if($("#confirm-leave").length == 0){
+      $(".modal-footer").prepend('<button type="button" id="confirm-leave" class="btn btn-primary normal-button" data-dismiss="modal">Confirm</button>');
+    }
+    $(".modal").modal("show");
+  });
+});

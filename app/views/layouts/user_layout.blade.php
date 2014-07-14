@@ -22,9 +22,11 @@
     {{ HTML::style('assets/css/dataTables.bootstrap.css') }}
     {{ HTML::style('assets/css/bootstrap-multiselect.css') }}
     {{ HTML::style('assets/css/mdp.css') }}
+    {{ HTML::style('assets/css/datepicker.css') }}
     {{ HTML::style('assets/css/pepper-ginder-custom.css') }}
     {{ HTML::style('assets/css/prettify.css') }}
     {{ HTML::style('assets/css/bootstrap-timepicker.min.css') }}
+    {{ HTML::style('assets/css/slider.css') }}
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
@@ -55,6 +57,22 @@
         {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
         {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
         {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Requests(" .  $pendingRequests . ")") }}
+
+        
+        <li class="">
+          <a class="link" href="{{ URL::route('leaves.getAddLeave') }}">
+            Add Leave(New)
+          </a>
+        </li>
+
+        <li class="">
+          <a class="link" href="{{ URL::route('leaves.getAddCSR') }}">
+            Add CSR(New)
+          </a>
+        </li>
+
+
+
         <li class="small-window-show">
           <a class="link" href="{{ URL::route('userLogout') }}">
             Logout
@@ -121,6 +139,7 @@
     {{ HTML::script('assets/js/jquery-migrate.js') }}
     {{ HTML::script('assets/js/bootstrap.min.js') }}
     {{ HTML::script('assets/js/jquery.ui.js') }}
+    {{ HTML::script('assets/js/bootstrap-datepicker.js') }}
     {{ HTML::script('assets/js/jquery.easing.js') }}
 
 
@@ -130,9 +149,10 @@
     {{ HTML::script('assets/js/jquery.ui.multidatespicker.js') }}
     {{ HTML::script('assets/js/jquery.alerts.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
-    {{ HTML::script('assets/js/dateformat.js') }}
+    {{-- HTML::script('assets/js/dateformat.js') --}}
+    {{ HTML::script('assets/js/moment.js') }}
     {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
-
+    {{ HTML::script('assets/js/bootstrap-slider.js') }}
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
     <!-- End including Scripts -->

@@ -98,3 +98,13 @@ Route::group(array('before' => 'auth.user'),function(){
 
 
 Route::get('leaves/{resource}/approvals', array('as' => 'approval.leaveApprovals', 'uses' => 'ApprovalController@leaveApprovals'));
+
+
+Route::get('leaves/new/add', array('as' => 'leaves.getAddLeave', 'uses' => 'LeavesController@getAddLeave'));
+Route::get('leaves/new/{resource}/edit', array('as' => 'leaves.getEditLeave', 'uses' => 'LeavesController@getEditLeave'));
+Route::get('csr/new/add', array('as' => 'leaves.getAddCSR', 'uses' => 'LeavesController@getAddCSR'));
+Route::get('csr/new/{resource}/edit', array('as' => 'leaves.getEditCSR', 'uses' => 'LeavesController@getEditCSR'));
+Route::post('leaves/new/store', array('as' => 'leaves.postAddLeave', 'uses' => 'LeavesController@postAddLeave'));
+Route::post('leaves/new/{resource}/update', array('as' => 'leaves.postEditLeave', 'uses' => 'LeavesController@postEditLeave'));
+Route::post('csr/new/store', array('as' => 'leaves.postAddCSR', 'uses' => 'LeavesController@postAddCSR'));
+Route::post('csr/new/{resource}/update', array('as' => 'leaves.postEditCSR', 'uses' => 'LeavesController@postEditCSR'));

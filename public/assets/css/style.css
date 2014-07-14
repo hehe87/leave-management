@@ -206,3 +206,55 @@ width: 100%;
 
 
 /*----------------------------------*/
+.slider-track{
+	background-color: #FFA2A2 !important;
+	background-image: linear-gradient(to bottom, #FFA2A2, #FFA2A2);
+	z-index: 1000;
+}
+
+.slider-selection{
+
+	background-color: #B24040 !important;
+	background-image: linear-gradient(to bottom, #B24040, #B24040);
+}
+.slider-handle{
+	border-bottom-color: #571010 !important;
+	background-color: #571010 !important;
+	background-image: linear-gradient(to bottom, #571010, #571010)
+}
+
+.in-between-hours.slot_95 div{
+	float: left;
+	padding-left: 1.79%;
+	z-index: -1;
+	height: 20px;
+	border-right: 1px solid #571010;
+	padding-top: 20px;
+}
+
+.in-between-hours.slot_9 div{
+	float: left;
+	padding-left: 2.25%;
+	z-index: -1;
+	height: 20px;
+	border-right: 1px solid #571010;
+	padding-top: 20px;
+}
+
+
+.datepicker td.active, .datepicker td.active:hover {
+	color: #ffffff;
+	background-color: #006dcc;
+	background-image: -moz-linear-gradient(top, #B24040, #991B1E);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#B24040), to(#991B1E));
+	background-image: -webkit-linear-gradient(top, #B24040, #991B1E);
+	background-image: -o-linear-gradient(top, #B24040, #991B1E);
+	background-image: linear-gradient(to bottom, #B24040, #991B1E);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+	border-color: #991B1E #991B1E #002a80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
