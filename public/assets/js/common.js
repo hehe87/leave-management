@@ -874,12 +874,12 @@ $(document).on("ready", function(){
 
 
         console.log(inHours);
-        if(inHours < 4.25)
+        if(inHours < 4)
         {
           leaveType = "LEAVE";
         }
         else{
-          if((inHours >= 4.25) && (inHours < (window.current_user.hourDiff - 2))){
+          if((inHours >= 4) && (inHours < (window.current_user.hourDiff - 2))){
             if(fromtObj.diff(window.current_user.inTimeObj) < window.current_user.outTimeObj.diff(totObj)){
               leaveType = "SH";
             }
