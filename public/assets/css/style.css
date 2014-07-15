@@ -223,15 +223,6 @@ width: 100%;
 	background-image: linear-gradient(to bottom, #571010, #571010)
 }
 
-.in-between-hours.slot_95 div{
-	float: left;
-	padding-left: 1.79%;
-	z-index: -1;
-	height: 20px;
-	border-right: 1px solid #571010;
-	padding-top: 20px;
-}
-
 .in-between-hours{
 	padding-left: 0px !important;
 	padding-right: 0px !important;
@@ -259,6 +250,41 @@ width: 100%;
 	width: 65px;
 	display: inline-block;
 }
+
+
+
+
+
+.in-between-hours.slot_95 div{
+	float: left;
+	z-index: -1;
+	
+	/*border-right: 1px solid #571010;*/
+	width: 10.526315%;
+	position: relative;
+}
+
+.in-between-hours.slot_95 > div > span.slotline{
+	position:absolute;
+	border-right: 1px solid #571010;
+	height: 20px;
+	right: 0px;
+	top: -20px;
+}
+
+.in-between-hours.slot_95 > div > span.slot-time-value{
+	position: relative;
+	margin-left: 62px;
+	width: 65px;
+	display: inline-block;
+}
+
+
+
+
+
+
+
 
 
 .datepicker td.active, .datepicker td.active:hover {

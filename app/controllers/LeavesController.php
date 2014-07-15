@@ -556,7 +556,15 @@ class LeavesController extends \BaseController {
 	}
 
 	public function postAddLeave(){
-		print_r(Input::all());
+		$allInputs = Input::all();
+		$fromDate = $allInputs["from_date"];
+		$toDate = $allInputs["to_date"];
+		$leaveType = $allInputs["leaveType"];
+		$userOfficeInTime = $allInputs["userOfficeInTime"];
+		$userOfficeOutTime = $allInputs["userOfficeOutTime"];
+		$userLeaveInTime = $allInputs["userLeaveInTime"];
+		$userLeaveOutTime = $allInputs["userLeaveOutTime"];
+		
 	}
 
 	public function getEditLeave(){

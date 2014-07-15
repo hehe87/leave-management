@@ -676,7 +676,7 @@ function changeUserInOutTime(){
   }
 
   window.current_user.minuteDiff = window.current_user.outTimeMinutes - window.current_user.inTimeMinutes;
-  window.current_user.hourDiff = Math.floor(window.current_user.minuteDiff / 60);
+  window.current_user.hourDiff = window.current_user.minuteDiff / 60;
  
   window.current_user.inBetweenHours = [];
 
@@ -695,7 +695,9 @@ function changeUserInOutTime(){
     if(tmpMin.toString().length == 1) tmpMin = "0" + tmpMin;
     window.current_user.inBetweenHours.push(tmpHour + ":" + tmpMin + " " + ampm);
     if(window.current_user.hourDiff == 9.5){
-      if(i>window.current_user.outTimeMinutes){
+      console.log(i);
+      console.log(window.current_user.outTimeMinutes);
+      if(i>=(window.current_user.outTimeMinutes - 30)){
         break;
       }
     }
@@ -705,7 +707,6 @@ function changeUserInOutTime(){
       }
     }
   }
-  
   if(window.current_user.hourDiff == 9.5){
     $(".in-between-hours").removeClass("slot_9").addClass("slot_95");
   }
@@ -1015,6 +1016,18 @@ $(document).on("ready", function(){
 });
 
 $(document).on("click", "#confirm-leave", function(){
-  console.log($(this).data("leaveData"));
+  var $this = $(this);
+  
+  $form = $("#leaves_create_form");
+  url = $form.attr("action");
+  data = $this.data("leaveData");
+  $.ajax({
+    url: url,
+    data: data,
+    type: "post",
+    success: function(retdata){
+
+    }
+  });
   $(".modal").modal("hide");
 });
