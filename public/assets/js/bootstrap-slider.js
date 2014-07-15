@@ -21,7 +21,7 @@
 
 	var Slider = function(element, options) {
 		this.element = $(element);
-		this.picker = $('<div class="slider col-sm-8">'+
+		this.picker = $('<div class="slider col-sm-12">'+
 							'<div class="slider-track">'+
 								'<div class="slider-selection"></div>'+
 								'<div class="slider-handle"></div>'+

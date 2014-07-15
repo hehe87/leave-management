@@ -626,9 +626,35 @@ $(document).on("focus", ".to_dt", function(){
 
 
 window.current_user = {};
-window.current_user.break_start_time = moment($("#input-break-start-time").val(),"hh:mm A");
-window.current_user.break_end_time = moment($("#input-break-end-time").val(),"hh:mm A");
-window.current_user.break_hours = window.current_user.break_end_time.diff(window.current_user.break_start_time,"minutes") / 60;
+window.current_user.lunch_break_start_time = moment($("#input-lunch-break-start-time").val(),"hh:mm A");
+window.current_user.lunch_break_end_time = moment($("#input-lunch-break-end-time").val(),"hh:mm A");
+window.current_user.lunch_break_hour_diff = window.current_user.lunch_break_end_time.diff(window.current_user.lunch_break_start_time,"minutes") / 60;
+window.current_user.break_1_start_time = moment($("#input-break-start-time-1").val(),"hh:mm A");
+window.current_user.break_1_end_time = moment($("#input-break-end-time-1").val(),"hh:mm A");
+window.current_user.break_2_start_time = moment($("#input-break-start-time-2").val(),"hh:mm A");
+window.current_user.break_2_end_time = moment($("#input-break-end-time-2").val(),"hh:mm A");
+window.current_user.break_1_hour_diff = window.current_user.break_1_end_time.diff(window.current_user.break_1_start_time, "minutes") / 60;
+window.current_user.break_2_hour_diff = window.current_user.break_2_end_time.diff(window.current_user.break_2_start_time, "minutes") / 60;
+window.current_user.break_1_slot = [window.current_user.break_1_start_time, window.current_user.break_1_end_time];
+window.current_user.break_2_slot = [window.current_user.break_2_start_time, window.current_user.break_2_end_time];
+
+function isSlotInsideTimes(timeStart, inBetweenSlot , timeEnd){
+  if((timeStart <= inBetweenSlot[0]) && (timeEnd >= inBetweenSlot[1])){
+    return true;
+  }
+  return false;
+}
+
+// exclusive check (timeBetween is not included in timeStart and timeEnd)
+function isTimeBetweenTimes(timeStart, timeBetween, timeEnd){
+  if((timeStart < timeBetween) && (timeEnd > timeBetween)){
+    return true;
+  }
+  return false;
+}
+
+
+
 function changeUserInOutTime(){
   window.current_user.inTime = $("#in-time").val();
   window.current_user.inTimeObj = moment(window.current_user.inTime, "hh:mm A");
@@ -637,7 +663,7 @@ function changeUserInOutTime(){
   window.current_user.inTimeMinutes = window.current_user.inTimeObj.hours() * 60 + window.current_user.inTimeObj.minutes();
 
   if(typeof window.current_user.hourDiff != "undefined"){
-    window.current_user.outTimeMinutes = window.current_user.inTimeMinutes + window.current_user.hourDiff;
+    window.current_user.outTimeMinutes = window.current_user.inTimeMinutes + window.current_user.minuteDiff;
     var outHour = Math.floor((window.current_user.outTimeMinutes / 60) % 12);
     var outMin = window.current_user.outTimeMinutes % 60;
     if(outHour.toString().length == 1) outHour = "0" + outHour;
@@ -649,7 +675,8 @@ function changeUserInOutTime(){
     window.current_user.outTimeMinutes = window.current_user.outTimeObj.hours() * 60 + window.current_user.outTimeObj.minutes();
   }
 
-  window.current_user.hourDiff = window.current_user.outTimeMinutes - window.current_user.inTimeMinutes;
+  window.current_user.minuteDiff = window.current_user.outTimeMinutes - window.current_user.inTimeMinutes;
+  window.current_user.hourDiff = Math.floor(window.current_user.minuteDiff / 60);
  
   window.current_user.inBetweenHours = [];
 
@@ -695,12 +722,10 @@ $(document).on("ready", function(){
     $("#to-time").html(window.current_user.outTime);
     var inBetweenHoursHtml = "";
     $(window.current_user.inBetweenHours).each(function(){
-      inBetweenHoursHtml += "<div>" + this + "</div>";
+      inBetweenHoursHtml += "<div><span class='slot-time-value'>" + this + "</span><span class='slotline'></span></div>";
     })
     $(".in-between-hours").html(inBetweenHoursHtml);
     
-    // console.log(window.current_user.inTimeMinutes);
-    // console.log(window.current_user.outTimeMinutes);
     if($.trim($(".slider").html()) != ""){
       $(".slider").html("");
     }
@@ -772,6 +797,9 @@ $(document).on("ready", function(){
     var fromDateObj;
     var toDateObj;
     var leaveType = "LEAVE";
+    var leaveData = {};
+    leaveData["from_date"] = fromDate;
+    leaveData["to_date"] = toDate;
     if($.trim(fromDate) == ""){
       jAlert("Please select From Date");
     }
@@ -791,18 +819,66 @@ $(document).on("ready", function(){
       var tot = $("#input-to-time").val();
       var fromtObj = moment(fromt, "hh:mm A");
       var totObj = moment(tot, "hh:mm A");
+
+
+      if((isTimeBetweenTimes(window.current_user.break_1_start_time, totObj, window.current_user.break_1_end_time)) || (isTimeBetweenTimes(window.current_user.break_2_start_time, totObj, window.current_user.break_2_end_time))){
+        jAlert("You have selected your out time between break hours");
+        return;
+      }
+
+      if((isTimeBetweenTimes(window.current_user.break_1_start_time, fromtObj, window.current_user.break_1_end_time)) || (isTimeBetweenTimes(window.current_user.break_2_start_time, fromtObj, window.current_user.break_2_end_time))){
+        jAlert("You have selected your in time between break hours");
+        return;
+      }
+
+      if(isTimeBetweenTimes(window.current_user.lunch_break_start_time, fromtObj, window.current_user.lunch_break_end_time)){
+        jAlert("You have selected your in time between Lunch hours");
+        return;
+      }
+
+      if(isTimeBetweenTimes(window.current_user.lunch_break_start_time, totObj, window.current_user.lunch_break_end_time)){
+        jAlert("You have selected your out time between Lunch hours");
+        return;
+      }
+
+
+
+
+
+
       if(totObj.diff(fromtObj) == 0){
         leaveType = "LEAVE";
       }
       else{
         var inHours = totObj.diff(fromtObj,"minutes") / 60;
-        var outHours = (window.current_user.hourDiff / 60) - inHours;
-        if(outHours > 4.5)
+        var outHours = window.current_user.hourDiff - inHours;
+        // var inHours;
+        // var outHours;
+
+        console.log(inHours);
+        if(isSlotInsideTimes(fromtObj, [window.current_user.break_1_start_time,window.current_user.break_1_end_time], totObj)){
+          inHours -= window.current_user.break_1_hour_diff;
+          console.log("break 1 is included in Slot")
+        }
+
+        if(isSlotInsideTimes(fromtObj, [window.current_user.break_2_start_time,window.current_user.break_2_end_time], totObj)){
+          inHours -= window.current_user.break_2_hour_diff;
+          console.log("break 2 is included in Slot")
+        }
+
+        if(isSlotInsideTimes(fromtObj, [window.current_user.lunch_break_start_time,window.current_user.lunch_break_end_time], totObj)){
+          inHours -= window.current_user.lunch_break_hour_diff;
+          console.log("lunch break is included in Slot")
+        }
+
+
+        console.log(inHours);
+        if(inHours < 4.25)
         {
           leaveType = "LEAVE";
         }
         else{
-          if(outHours == 4.5){
+          if((inHours >= 4.25) && (inHours < (window.current_user.hourDiff - 2))){
             if(fromtObj.diff(window.current_user.inTimeObj) < window.current_user.outTimeObj.diff(totObj)){
               leaveType = "SH";
             }
@@ -811,8 +887,7 @@ $(document).on("ready", function(){
             }
           }
           else{
-            console.log(outHours);
-            if(outHours == 0){
+            if(inHours == 0){
               leaveType = "LEAVE";
             }
             else{
@@ -823,6 +898,11 @@ $(document).on("ready", function(){
         }      
       }
     }
+    leaveData["leaveType"] = leaveType;
+    leaveData["userOfficeInTime"] =  window.current_user.inTime;
+    leaveData["userOfficeOutTime"] =  window.current_user.outTime;
+    leaveData["userLeaveInTime"] = $("#input-from-time").val();
+    leaveData["userLeaveOutTime"] = $("#input-to-time").val();
     var fullLeaveType = "";
     switch(leaveType){
       case "FH":
@@ -865,6 +945,7 @@ $(document).on("ready", function(){
       leaveSummaryBody += "<label class='control-label col-sm-3'>Total Days</label>";
       leaveSummaryBody += "<div class='col-sm-9'>" + (parseInt(toDateObj.diff(fromDateObj, "days")) + 1) + " Days</div>";
       leaveSummaryBody += "</div>";
+      leaveData["leaveDays"] = (parseInt(toDateObj.diff(fromDateObj, "days") + 1));
     }
     else{
       // if user selected only one day leave
@@ -893,7 +974,15 @@ $(document).on("ready", function(){
         else{
           leaveSummaryBody += tot + " To " + window.current_user.outTime;
         }
+
         leaveSummaryBody += "</div>";
+        leaveSummaryBody += "</div>";
+
+        leaveSummaryBody += "<div class='row'>";
+        leaveSummaryBody += "<label class='control-label col-sm-3'>Total In Time</label>";
+        var inHoursShow = Math.floor(inHours);
+        var inMinutesShow = Math.floor((inHours - inHoursShow) * 60);
+        leaveSummaryBody += "<div class='col-sm-9'>" + inHoursShow + " Hours, " + inMinutesShow + " Minutes</div>";
         leaveSummaryBody += "</div>";
       }
       else{
@@ -918,8 +1007,14 @@ $(document).on("ready", function(){
 
     $(".modal-body").html(leaveSummaryBody);
     if($("#confirm-leave").length == 0){
-      $(".modal-footer").prepend('<button type="button" id="confirm-leave" class="btn btn-primary normal-button" data-dismiss="modal">Confirm</button>');
+      $(".modal-footer").prepend('<button type="button" id="confirm-leave" class="btn btn-primary normal-button">Confirm</button>');
     }
+    $("#confirm-leave").data("leaveData", leaveData);
     $(".modal").modal("show");
   });
+});
+
+$(document).on("click", "#confirm-leave", function(){
+  console.log($(this).data("leaveData"));
+  $(".modal").modal("hide");
 });
