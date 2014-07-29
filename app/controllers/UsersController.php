@@ -279,6 +279,8 @@ class UsersController extends \BaseController {
     $formData = Input::except("_token");
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
     $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+    $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+    $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {
@@ -325,6 +327,8 @@ class UsersController extends \BaseController {
     $user = User::find($id);
     $user->inTime = preg_replace("/:00$/", "", $user->inTime);
     $user->outTime = preg_replace("/:00$/", "", $user->outTime);
+    $user->lunch_start_time = preg_replace("/:00$/", "", $user->lunch_start_time);
+    $user->lunch_end_time = preg_replace("/:00$/", "", $user->lunch_end_time);
     return View::make('users.edit')->with("user", $user);
   }
 
@@ -341,6 +345,8 @@ class UsersController extends \BaseController {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
     $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+    $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+    $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
     $validator = User::validateRegistrationForm($formData, $id);
     if($validator->fails())
     {
@@ -350,6 +356,8 @@ class UsersController extends \BaseController {
       $formData = Input::except("password_confirmation","_token");
       $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
       $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+      $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+      $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
       $formData["doj"] = date("Y-m-d",strtotime($formData["doj"]));
       $formData["dob"] = date("Y-m-d",strtotime($formData["dob"]));
       if(!empty($formData["password"])){

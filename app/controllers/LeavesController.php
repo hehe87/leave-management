@@ -552,7 +552,10 @@ class LeavesController extends \BaseController {
 	}
 
 	public function getAddLeave(){
-		return View::make("leaves.newleaves.add_leave");
+		$leave = new Leave();
+		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
+		$layout = Auth::user()->employeeType == "ADMIN" ? "admin_layout" : "user_layout";
+		return View::make("leaves.newleaves.add_leave", array("leave" => $leave, "layout" => $layout, "users" => $users));
 	}
 
 	public function postAddLeave(){
@@ -564,7 +567,39 @@ class LeavesController extends \BaseController {
 		$userOfficeOutTime = $allInputs["userOfficeOutTime"];
 		$userLeaveInTime = $allInputs["userLeaveInTime"];
 		$userLeaveOutTime = $allInputs["userLeaveOutTime"];
-		
+		$leaveReason = $allInputs["leave_reason"];
+		$user = Auth::user("id");
+		$leave = new Leave();
+		$leave->leave_type = $leaveType;
+
+		$leave->leave_date = date("Y-m-d",strtotime($fromDate));
+		$leave->reason = $leaveReason;
+		$leave->user_id = $user->id;
+		switch($leaveType){
+			case "LONG":
+				$leave->leave_to = date("Y-m-d",strtotime($toDate));
+				break;
+			case "FH":
+			case "SH":
+				$leave->in_time = date('H:i:s', strtotime($userOfficeInTime));
+				$leave->out_time = date('H:i:s', strtotime($userOfficeOutTime));
+				$leave->available_in_time = date('H:i:s', strtotime($available_in_time));
+				$leave->available_out_time = date('H:i:s', strtotime($available_out_time));
+				break;
+		}
+		$leave->save();
+		foreach($allInputs["approvals"] as $approver_id){
+			$approval = new Approval();
+			$approval->approver_id = $approver_id;
+			$approval->leave_id = $leave->id;
+			$approval->approval_note = "";
+			$approval->approved = "PENDING";
+			$approval->save();
+			unset($approval);
+		}
+		return array(
+			"status" => true
+		);
 	}
 
 	public function getEditLeave(){

@@ -26,6 +26,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'employeeType',
     'inTime',
     'outTime',
+    'lunch_start_time',
+    'lunch_end_time',
     'doj',
     'dob',
     'phone',

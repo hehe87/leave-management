@@ -8,11 +8,11 @@
 	      <div class="form-group">
 		      <div class="col-sm-12">
 			      <div class="row">
-			        <div class="col-sm-6">
+			        <div class="col-sm-3">
 			        	{{ Form::label('leave[leave_date]', 'From Date', array('class' => 'control-label')) }}
 								{{ Form::text('leave[leave_date]',(new DateTime())->format('d-m-Y'), array('class' => 'form-control datepicker from_dt')) }}
 			        </div>
-			        <div class="col-sm-6">
+			        <div class="col-sm-3">
 			        	{{ Form::label('leave[to_date]', 'To Date', array('class' => 'control-label')) }}
 								{{ Form::text('leave[to_date]',(new DateTime())->format('d-m-Y'), array('class' => 'form-control datepicker to_dt')) }}
 			        </div>
@@ -23,11 +23,11 @@
         <div class="form-group in-out-time-container">
 		      <div class="col-sm-12">
 			      <div class="row">
-			        <div class="col-sm-6">
+			        <div class="col-sm-3">
 			        	{{ Form::label('leave[in_time]', 'In Time', array('class' => 'control-label')) }}
 								{{ Form::text('leave[in_time]',(new DateTime(Auth::user()->inTime))->format("g:i A"), array('class' => 'form-control timepicker in_time', 'id' => 'in-time')) }}
 			        </div>
-			        <div class="col-sm-6">
+			        <div class="col-sm-3">
 			        	{{ Form::label('leave[out_time]', 'Out Time', array('class' => 'control-label')) }}
 								{{ Form::text('leave[out_time]',(new DateTime(Auth::user()->outTime))->format("g:i A"), array('class' => 'form-control timepicker out_time', 'id' => 'out-time')) }}
 			        </div>
@@ -51,10 +51,6 @@
 		      	{{ Form::hidden('leave[break_end_time_2]', "4:45 PM", array("id" => "input-break-end-time-2", "value" => "")) }}
 		
 
-
-
-
-
 		      	{{ Form::hidden('leave[available_in_time]', "09:30 AM", array("id" => "input-from-time")) }}
 		      	{{ Form::hidden('leave[available_out_time]', "09:30 AM", array("id" => "input-to-time")) }}
 		      	<div class="row">
@@ -76,7 +72,69 @@
 		      		</div>
 		      	</div>
 		      </div>
-			  </div>   
+			  </div>
+
+				
+				<div class="form-group">
+				  <div class="col-sm-12">
+				    <div class="row">
+				      <div class="col-sm-2">
+				        {{ Form::label('reason', 'Reason *', array('class' => 'control-label')) }}
+				      </div>
+				    </div>
+				    <div class="row">
+				      <div class="col-sm-6">
+				        {{ Form::textarea('reason', $leave->reason, array('class' => 'form-control', 'rows' => '4', 'id' => 'leave-reason')) }}
+				      </div>
+				    </div>
+				    @if ($errors->first('reason'))
+				      <div class="row">
+				        <div class="col-sm-6 col-sm-offset-2">
+				          <div class="alert alert-danger">
+				            {{{ $errors->first('reason') }}}
+				          </div>
+				        </div>
+				      </div>
+				    @endif
+				  </div>
+				</div>
+
+
+
+			  @if ($layout != "admin_layout")
+				  <div class="form-group">
+				    <div class="col-sm-12">
+				      <div class="row">
+				        <div class="col-sm-2">
+				          {{ Form::label('approver_id', 'Approval *', array('class' => 'control-label')) }}
+				        </div>
+				      </div>
+				      <div class="row">
+				        <div class="col-sm-6">
+				          {{ Form::select('approval[][approver_id]', $users, array_map(function($approver){return $approver['approver_id']; },(is_array(Input::old('approval')) ? Input::old('approval') : $leave->approvals->toArray())), array('class' => 'form-control multiselect', 'multiple' => true, 'id' => 'approval-select-box')) }}
+
+				        </div>
+				      </div>
+				      @if ($errors->first('approval'))
+				        <div class="row">
+				          <div class="col-sm-6 col-sm-offset-2">
+				            <div class="alert alert-danger">
+				              {{{ $errors->first('approval') }}}
+				            </div>
+				          </div>
+				        </div>
+				      @endif
+				    </div>
+				  </div>
+				@else
+				  {{ Form::hidden('approval[][approver_id]',Auth::user()->id)}}
+				@endif
+
+
+
+
+
+
 			  <div class="form-group">
 	        <div class="col-sm-12">
 	          <div class="row">

@@ -841,22 +841,18 @@ $(document).on("ready", function(){
         jAlert("You have selected your out time between Lunch hours");
         return;
       }
-
-
-
-
-
-
       if(totObj.diff(fromtObj) == 0){
         leaveType = "LEAVE";
       }
       else{
         var inHours = totObj.diff(fromtObj,"minutes") / 60;
         var outHours = window.current_user.hourDiff - inHours;
+        if(outHours <= 2){
+          jAlert("Your Out Time is approximately 2 Hours, Please fill the CSR form instead");
+          return;
+        }
         // var inHours;
         // var outHours;
-
-        console.log(inHours);
         if(isSlotInsideTimes(fromtObj, [window.current_user.break_1_start_time,window.current_user.break_1_end_time], totObj)){
           inHours -= window.current_user.break_1_hour_diff;
           console.log("break 1 is included in Slot")
@@ -1017,16 +1013,19 @@ $(document).on("ready", function(){
 
 $(document).on("click", "#confirm-leave", function(){
   var $this = $(this);
-  
   $form = $("#leaves_create_form");
   url = $form.attr("action");
   data = $this.data("leaveData");
+  data["approvals"] = $("#approval-select-box").val();
+  data["leave_reason"] = $("#leave-reason").val();
   $.ajax({
     url: url,
     data: data,
     type: "post",
     success: function(retdata){
-
+      if(retdata.status == true){
+        window.location.href = "/leaves/myleaves";
+      }
     }
   });
   $(".modal").modal("hide");

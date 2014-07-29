@@ -66,5 +66,4 @@ class ApprovalController extends \BaseController {
 		$leave = Leave::find($id);
 		return View::make("leaves.leaveapprovals")->with("leave", $leave);
 	}
-
 }

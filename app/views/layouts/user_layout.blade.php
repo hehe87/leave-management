@@ -56,10 +56,10 @@
         {{ HTML::nav_link(Route::currentRouteName(), "usersHome", "Dashboard") }}
         {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
         {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
-        {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Requests(" .  $pendingRequests . ")") }}
+        {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Approvals(" .  $pendingRequests . ")") }}
 
         
-        <li class="">
+        <!-- <li class="">
           <a class="link" href="{{ URL::route('leaves.getAddLeave') }}">
             Add Leave(New)
           </a>
@@ -69,7 +69,7 @@
           <a class="link" href="{{ URL::route('leaves.getAddCSR') }}">
             Add CSR(New)
           </a>
-        </li>
+        </li> -->
 
 
 
