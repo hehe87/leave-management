@@ -30,6 +30,12 @@
     <link type="text/css" media="all" rel="stylesheet" href="{{{asset('assets/css/admin_panel.css')}}}">
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
+    <script type="text/javascript">
+      var current_user_id = "{{ Auth::user()->id }}";
+      @if(Session::get("notification"))
+        var notification_data = JSON.parse('{{ json_encode(Session::get("notification")) }}');
+      @endif
+    </script>
   </head>
   <body>
     <div class="container-fluid">
@@ -56,8 +62,17 @@
         {{ HTML::nav_link(Route::currentRouteName(), "usersHome", "Dashboard") }}
         {{ HTML::nav_link(Route::currentRouteName(), "myleaves", "My Leaves") }}
         {{ HTML::nav_link(Route::currentRouteName(), "add_leave", "Add Leave/CSR") }}
-        {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Approvals(" .  $pendingRequests . ")") }}
-
+        {{ HTML::nav_link(Route::currentRouteName(), "leaverequests", "Leave Approvals(<span id='pending-request-count'>" .  $pendingRequests . "</span>)") }}
+        <li class="">
+          <a class="link" href="#" id="notify_others">
+            Notify Others
+          </a>
+        </li>
+        <li class="">
+          <a class="link" href="#" id="my_notification">
+            
+          </a>
+        </li>
         
         <!-- <li class="">
           <a class="link" href="{{ URL::route('leaves.getAddLeave') }}">
@@ -155,6 +170,8 @@
     {{ HTML::script('assets/js/bootstrap-slider.js') }}
     <script type="text/javascript" src="{{ asset('assets/js/admin_panel.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/common.js') }}"></script>
+    {{ HTML::script('assets/js/socket.io.js')}}
+    {{ HTML::script('assets/js/socket_script.js')}}
     <!-- End including Scripts -->
   </body>
 </html>
