@@ -22,7 +22,7 @@
     <!-- end including Stylesheets -->
   </head>
   <body>
-    
+
     <div class="container-fluid">
       <div class="row">
         <br/>
@@ -30,6 +30,11 @@
         <div class="col-sm-4 col-sm-offset-4 login-well well">
           <div class="row">
             <div class="col-sm-12">
+              @if(Session::has('message'))
+                <div class="alert alert-danger">
+                  {{ Session::get('message') }}
+                </div>
+              @endif
               @if (Session::has("success"))
                 <div class="alert alert-success">
                   {{ Session::get('success') }}

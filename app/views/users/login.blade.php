@@ -13,6 +13,12 @@
 @section('content')
   <form class="form-signin" role="form" method="post">
     <legend class="form-signin-heading">Please sign in</legend>
+    <div class="row">
+      <div class="col-sm-12">
+        <a href="logingoogle">{{ HTML::image('/assets/images/sigin-in-with-google.png', $alt='Google Sign In') }}</a>
+      </div>
+    </div>
+    <div class="row">&nbsp;</div>
     <div class="form-group">
       <input class="form-control" placeholder="Email Address" required="1" name="email" type="email">
     </div>
