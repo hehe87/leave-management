@@ -122,6 +122,7 @@ return array(
     'Way\Generators\GeneratorsServiceProvider',
     'Cornford\Bootstrapper\BootstrapServiceProvider',
     'Barryvdh\Debugbar\ServiceProvider',
+    'Artdarek\OAuth\OAuthServiceProvider'
 
 	),
 
@@ -189,7 +190,8 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
     'Bootstrap'       => 'Cornford\Bootstrapper\Facades\Bootstrap',
-    'Carbon'          => 'Carbon\Carbon'
+    'Carbon'          => 'Carbon\Carbon',
+    'OAuth' 					=> 'Artdarek\OAuth\Facade\OAuth',
 
 	),
 	'lms_key' => '1q3AHJZdIIPPWxmvbReESWTfy39whNE6',

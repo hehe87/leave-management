@@ -11,7 +11,8 @@
 	    	"iron-io/iron_mq": "dev-master",
 	    	"google/apiclient": "1.0.*@dev",
 	    	"way/generators": "2.*",
-	    	"barryvdh/laravel-debugbar": "1.*"
+	    	"barryvdh/laravel-debugbar": "1.*",
+	    	"artdarek/oauth-4-laravel": "dev-master"
 
 	},
 	"require-dev": {

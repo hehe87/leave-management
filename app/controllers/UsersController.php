@@ -23,7 +23,8 @@ class UsersController extends \BaseController {
       	  'getForgotPassword',
       	  'postForgotPassword',
       	  'getChangePassword',
-      	  'postChangePassword'
+      	  'postChangePassword',
+          'loginWithGoogle',
       	)
       )
     );
@@ -53,6 +54,65 @@ class UsersController extends \BaseController {
     }
     return View::make('users.login');
   }
+
+  /*
+    Function Name :    loginWithGoogle
+    Author Name   :    Jack Braj <jack.braj@ithands.net>
+    Date          :    July, 29 2014
+    Parameters    :    none
+    Purpose       :    This function facilitates google sign in
+  */
+    public function loginWithGoogle() {
+
+    // get data from input
+    $code = Input::get( 'code' );
+
+    // get google service
+    $googleService = OAuth::consumer( 'Google' );
+
+    // check if code is valid
+
+    // if code is provided get user data and sign in
+    if ( !empty( $code ) ) {
+
+      // This was a callback request from google, get the token
+      $token = $googleService->requestAccessToken( $code );
+
+      // Send a request with it
+      $result = json_decode( $googleService->request( 'https://www.googleapis.com/oauth2/v1/userinfo' ), true );
+      $user = User::whereEmail($result['email'])->get()->first();
+
+       // check if user exists in database
+      if( isset($user) && ($user->count() > 0) ) {
+
+        // log in the user
+        Auth::loginUsingId($user->id);
+
+        // take user to dashboard
+        $employeeType = Auth::user()->employeeType;
+
+        if($employeeType === "EMPLOYEE"){
+          return Redirect::intended(URL::route('usersHome'));
+        }
+        else{
+         return Redirect::intended(URL::route('usersListing'));
+        }
+      }
+
+      // If not redirect back to login page with message
+      return Redirect::to('login')->with('message', 'You are not registered yet, please contact administrator to create a profile for you');
+
+
+    }
+    // if not ask for permission first
+    else {
+        // get googleService authorization
+        $url = $googleService->getAuthorizationUri();
+
+        // return to google login url
+        return Redirect::to( (string)$url );
+    }
+}
 
   /*
     Function Name: 		postLogin
