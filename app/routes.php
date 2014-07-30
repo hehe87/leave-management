@@ -45,7 +45,8 @@ Route::group(array('before' => 'auth.admin'), function(){
 	Route::get('/holidays', array('as' => 'holidaysListing', 'uses' => 'HolidaysController@index'));
 	Route::get('/leaves', array('as' => 'leaves.index', 'uses' => 'LeavesController@index'));
 	Route::get('/leaves/report', array('as' => 'leaves.report', 'uses' => 'LeavesController@getReport'));
-	Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
+	Route::get('/leaves/report/general', array('as' => 'leaves.general_report', 'uses' => 'LeavesController@generalReport'));
+	//Route::post('/leaves/report/generate', array('as' => 'leaves.generateReport', 'uses' => 'LeavesController@generateReport'));
 	Route::get('/leaves/pending', array('as' => 'leaves.pendingLeaves', 'uses' => 'LeavesController@pendingLeaves'));
 	Route::get('/settings', array('as' => 'users.settings', 'uses' => 'UsersController@getSettings'));
 	Route::post('/settings', array('as' => 'users.postSettings', 'uses' => 'UsersController@postSettings'));

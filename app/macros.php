@@ -21,6 +21,7 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
       "leaves.getEditLeave" => "leaves.getEditLeave",
       "leaves.getAddCSR" => "leaves.getAddCSR",
       "leaves.getEditCSR" => "leaves.getEditCSR",
+      "leaves.general_report" => "leaves.general_report",
     );
     $menuhrefs = array(
       "users" => "usersListing",
@@ -36,6 +37,7 @@ HTML::macro('nav_link', function($route_name, $link_name, $text)
       "leaves.getEditLeave" => "leaves.getEditLeave",
       "leaves.getAddCSR" => "leaves.getAddCSR",
       "leaves.getEditCSR" => "leaves.getEditCSR",
+      "leaves.general_report" => "leaves.general_report",
     );
     $class = "";
     if($routes[$route_name] == $link_name){

@@ -547,13 +547,25 @@ class LeavesController extends \BaseController {
 	  return View::make('leaves.report')->withInput($searchData)->with("leaves",$leaves)->with("users", $users);
 	}
 
-	public function generateReport(){
-
-	}
-
 	public function pendingLeaves(){
 		$leaves = Leave::pendingLeaves();
 		return View::make('leaves.index')->with("leaves", $leaves)->with("extraLeaves", array());
+	}
+
+	public function generalReport(){
+		$all_users = User::where("employeeType","!=","ADMIN")->get();
+		$extra_leave_names = array(
+			"Marriage",
+			"Paternity",
+			"Maternity",
+			"Education",
+			"Other"
+		);
+		return View::Make("leaves.general_report", array(
+				"all_users" => $all_users,
+				"extra_leave_names" => $extra_leave_names
+			)
+		);
 	}
 
 	public function getAddLeave(){

@@ -7,6 +7,24 @@ Purpose		: Custom styles for leave management system
 
 /*--------- Leave Module -----------*/
 
+.general-report-container{
+	overflow: scroll;
+	height:580px;
+	width: 99.5%;
+}
+.general-report-container-inner{
+	/*min-width:1500px;*/
+}
+.notification{
+	position: absolute;
+	right: 18px;
+	min-width: 270px;
+	z-index: 1000;
+	top: 50px;
+}
+.notification button{
+	margin-right: 4px;
+}
 .box{
 	border: 1px solid #991B1E;
 	min-height: 50px;

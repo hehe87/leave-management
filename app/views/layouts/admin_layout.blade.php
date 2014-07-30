@@ -61,6 +61,7 @@
           {{ HTML::nav_link(Route::currentRouteName(), "pendingLeaves", "Pending Leaves") }}
           {{ HTML::nav_link(Route::currentRouteName(), "reports", "Reports") }}
           {{ HTML::nav_link(Route::currentRouteName(), "settings", "Settings") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "leaves.general_report", "General Report") }}
           <li class="small-window-show">
             <a class="link" href="{{ URL::route('userLogout') }}">
               Logout
