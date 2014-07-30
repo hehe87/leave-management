@@ -141,7 +141,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
           'phone' => array('required','regex:/[0-9]{10}/'),
           'altPhone' => array('regex:/[0-9]{10}/')
       );
-      
+
     }
     else{
       $validationRules = array(
@@ -412,7 +412,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all applied leaves for current user for a given year
   */
   public function appliedLeaves($year){
-    return $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    if(Config::get("database.default") == "mysql"){
+      return $this->hasMany('Leave')->where(DB::raw('DATE(leave_date)'), $year)->get();
+    }
+    else {
+      return $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    }
   }
 
   /*
