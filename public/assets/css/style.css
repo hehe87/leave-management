@@ -11,10 +11,15 @@ Purpose		: Custom styles for leave management system
 	overflow: scroll;
 	height:580px;
 	width: 99.5%;
+	font-size: 12px;
 }
 .general-report-container-inner{
 	/*min-width:1500px;*/
 }
+/*.general-report-container-inner th, .general-report-container-inner td{
+	width: 30px;
+}*/
+
 .notification{
 	position: absolute;
 	right: 18px;

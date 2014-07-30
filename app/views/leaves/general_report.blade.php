@@ -1,9 +1,9 @@
-@extends('layouts.user_layout')
+@extends('layouts.admin_layout')
 
 @section('content')
 	<div class="row">
     <div class="col-lg-12 general-report-container">
-    	<div class="general-report-container-inner" style="width: {{ (100 * (count($all_users) + 1)) . 'px;' }}">
+    	<div class="general-report-container-inner" style="width: {{ (30 * (count($all_users) + 1)) . 'px;' }}">
 	    	<table class="table table-bordered">
 	    		<thead>
 	    			<tr>

@@ -424,6 +424,19 @@ $(document).on('click','.approve-status-change', function (e) {
       else{
         $this.parent().html(getRejectedInfoHTML());
       }
+      if(typeof data != "undefined" && typeof data.status != "undefined" && data.status == true){
+        if(data.fully_approved){
+          var leave_user_id = data.leave_user_id;
+          console.log(leave_user_id);
+          notification_data = {
+            "noti_name" : "leave_approved",
+            "notification_getter" : [leave_user_id]
+          };
+          if(typeof socket != "undefined"){
+            socket.emit("leave_approved", notification_data)
+          }
+        }
+      }
       $.unblockUI();
     }
   });

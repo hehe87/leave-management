@@ -31,7 +31,7 @@
     {{ HTML::style('assets/css/style.css') }}
     <!-- end including Stylesheets -->
     <script type="text/javascript">
-      var current_user_id = "{{ Auth::user()->id }}";
+      var current_user_id = {{ Auth::user()->id }};
       @if(Session::get("notification"))
         var notification_data = JSON.parse('{{ json_encode(Session::get("notification")) }}');
       @endif

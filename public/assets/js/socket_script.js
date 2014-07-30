@@ -21,8 +21,15 @@ socket.on("notify_approver", function(data){
 		var pending_request_count = parseInt($("#pending-request-count").html());
 		pending_request_count += 1;
 		$("#pending-request-count").html(pending_request_count);
+		var notification_method;
+		if(typeof data.message != undefined){
+			notification_method = data.message;
+		}
+		else{
+			notification_method = "One new leave request Arrived";
+		}
 		notification_html = '<div class="row">' + 
-      '<div class="col-sm-12">One new leave request Arrived</div>' + 
+      '<div class="col-sm-12">'+notification_method+'</div>' + 
     '</div>';
     if($(".notification").length == 0){
     	notification_html_outer = getNotificationHtmlOuter();
@@ -35,24 +42,28 @@ socket.on("notify_approver", function(data){
 	}
 });
 
-// socket.on("notify_applier", function(data){
-// 	if($.inArray(current_user_id, data.notification_getter) != -1){
-// 		var pending_request_count = parseInt($("#pending-request-count").html());
-// 		pending_request_count += 1;
-// 		$("#pending-request-count").html(pending_request_count);
-// 		notification_html = '<div class="row">' + 
-//       '<div class="col-sm-12">One new leave request Arrived</div>' + 
-//     '</div>';
-//     if($(".notification").length == 0){
-//     	notification_html_outer = getNotificationHtmlOuter();
-//     	$("#content-panel").prepend(notification_html_outer);
-//     }
-//     $(".notification").append(notification_html);
-//     if($(".notification").hasClass("hide")){
-//     	$(".notification").removeClass("hide");
-//     }
-// 	}
-// });
+socket.on("notify_applier", function(data){
+	if($.inArray(current_user_id, data.notification_getter) != -1){
+		var notification_method;
+		if(typeof data.message != undefined){
+			notification_method = data.message;
+		}
+		else{
+			notification_method = "One of your leaves has been approved";
+		}
+		notification_html = '<div class="row">' + 
+      '<div class="col-sm-12">'+notification_method+'</div>' + 
+    '</div>';
+    if($(".notification").length == 0){
+    	notification_html_outer = getNotificationHtmlOuter();
+    	$("#content-panel").prepend(notification_html_outer);
+    }
+    $(".notification").append(notification_html);
+    if($(".notification").hasClass("hide")){
+    	$(".notification").removeClass("hide");
+    }
+	}
+});
 
 function getNotificationHtmlOuter(){
 	return '<div class="alert alert-info alert-dismissible notification hide">' + 
