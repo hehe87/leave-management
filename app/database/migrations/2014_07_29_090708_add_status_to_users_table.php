@@ -14,7 +14,7 @@ class AddStatusToUsersTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table)
 		{
-			$table->boolean('status')->after('remark');
+			$table->boolean('status')->after('remark')->default(true);
 		});
 	}
 

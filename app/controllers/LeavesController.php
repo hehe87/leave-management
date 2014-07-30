@@ -568,6 +568,16 @@ class LeavesController extends \BaseController {
 		);
 	}
 
+	public function fetchGeneralReport(){
+		$month = Input::get("month");
+		$year = Input::get("year");
+		$firstDay = 1;
+		$firstDate = new DateTime( date("Y") . "-" . sprintf("%02s",$month) . '-01' );
+		$lastDay = (int)$firstDate->format("t");
+		$allUsers = User::where("employeeType","!=","ADMIN")->get();
+		return View::make("leaves.fetch_next_general_report", array("lastDay" => $lastDay, "allUsers" => $allUsers, "month" => $month, "year" => $year));
+	}
+
 	public function getAddLeave(){
 		$leave = new Leave();
 		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');

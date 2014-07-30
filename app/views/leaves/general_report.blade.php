@@ -1,10 +1,15 @@
 @extends('layouts.admin_layout')
-
+@section("page_script")
+	<script type="text/javascript">
+		var general_report = true;
+		var general_report_url = "{{ URL::route('leaves.post_general_report') }}";
+	</script>
+@stop
 @section('content')
 	<div class="row">
     <div class="col-lg-12 general-report-container">
     	<div class="general-report-container-inner" style="width: {{ (30 * (count($all_users) + 1)) . 'px;' }}">
-	    	<table class="table table-bordered">
+	    	<table class="table table-bordered" data-month={{date("m")}} data-year={{date("Y") }}>
 	    		<thead>
 	    			<tr>
 	    				<th width="100px">&nbsp;</th>
@@ -83,33 +88,7 @@
 								</td>
 							@endforeach
 	    			</tr>
-	    			<?php 
-	    				$months = array(); 
-	    				$curr_month = (int)date("m");
-	    				for($i=$curr_month;$i>=1;$i--){
-	    					$months[] = $i;
-	    				}
-	    			?>
-						@foreach($months as $month)
-							<?php $firstDay = 1; ?>
-							<?php $firstDate = new DateTime( date("Y") . '-01-01' ); ?>
-							<?php $lastDay = (int)$firstDate->format("t"); ?>
-							<?php $i = 1;?>
-							@while($i<=$lastDay)
-								<tr>
-									<th>
-										<?php $dt = new DateTime(date("Y") . "-" . sprintf("%02s", $month) . "-" . $i); ?>
-										{{ $dt->format("d-M") }}
-									</th>
-									@foreach($all_users as $user)
-										<td>
-											{{ $user->dayLeave($dt->format("Y-m-d")) }}
-										</td>
-									@endforeach
-								</tr>
-								<?php $i+=1; ?>
-							@endwhile
-						@endforeach
+	    			<!-- enter months code here -->
 	    		</tbody>
 	    	</table>
     	</div>

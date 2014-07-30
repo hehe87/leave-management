@@ -22,8 +22,8 @@ return array(
 		 * Google
 		 */
         'Google' => array(
-            'client_id'     => '1044535373669-8bun0a6rhn0rru7n0sbgp6ht9pktc6k0.apps.googleusercontent.com',
-            'client_secret' => '46T0rlXdV_7euGvFG3laeAQb',
+            'client_id'     => '435313904512-4elr5moook4ardtq8dgbmrl48i0mh9in.apps.googleusercontent.com',
+            'client_secret' => 'ROK1YzOaAAdJyoJ2O_OM7dq1',
             'scope'         => array('userinfo_email', 'userinfo_profile'),
         ),
 

@@ -32,6 +32,7 @@
     <script type="text/javascript">
       window.currentYear = "{{ date('Y') }}";
     </script>
+    @yield("page_script")
   </head>
   <body>
     <div class="container-fluid">
