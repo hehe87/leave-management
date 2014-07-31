@@ -234,7 +234,7 @@ class LeavesController extends \BaseController {
 			$approvals = Input::get("approval");
 			$approval_ids = array();
 			foreach($approvals as $appr){
-				$approval_ids[] = $appr["approver_id"];
+				$approval_ids[] = (int)$appr["approver_id"];
 			}
 			return Redirect::to(URL::route('myLeaves'))->with('success', 'Leave successfully applied')->with("notification", array("noti_name" => "leave_added", "noti_getter" => $approval_ids));
 		}
