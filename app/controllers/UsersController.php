@@ -100,8 +100,22 @@ class UsersController extends \BaseController {
       }
 
       // If not redirect back to login page with message
-      return Redirect::to('login')->with('message', 'You are not registered yet, please contact administrator to create a profile for you');
+      $user_data = array( 'name' => $result['name'], 'email' => $result['email']);
 
+      // create a new user
+      $temp_user = User::create($user_data);
+
+      // get admin user
+      $admin_user = User::where('employeeType', '=', 'ADMIN')->first();
+
+      $data = ['temp_user' => $temp_user, 'admin_user' => $admin_user];
+      // send an email to admin with user details
+      Mail::send('emails.newuser', $data, function($message) use ($admin_user)
+      {
+        $message->to($admin_user->email, $admin_user->name)->from('nicolas.naresh@ithands.net', 'Admin')->subject("Request for a new user for LMS");
+      });
+
+      return Redirect::to('login')->with('message', 'Your request has been sent. Please contact administrator !');
 
     }
     // if not ask for permission first

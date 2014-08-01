@@ -11,10 +11,9 @@
 |
 */
 
-Route::get('/logingoogle', 'UsersController@loginWithGoogle');
 //  SSL workaround for IRON MQ
 Route::get('/test', array('as' => 'test', 'uses' => 'UsersController@test'));
-
+Route::get('/logingoogle', 'UsersController@loginWithGoogle');
 Route::get('/login', array('as' => 'userLogin', 'uses' => 'UsersController@getLogin'));
 Route::post('/login', array('as' => 'userLoginPost', 'uses' => 'UsersController@postLogin'));
 Route::get('/logout', array('as' => 'userLogout', 'uses' => 'UsersController@logout'));
@@ -111,3 +110,6 @@ Route::post('leaves/new/store', array('as' => 'leaves.postAddLeave', 'uses' => '
 Route::post('leaves/new/{resource}/update', array('as' => 'leaves.postEditLeave', 'uses' => 'LeavesController@postEditLeave'));
 Route::post('csr/new/store', array('as' => 'leaves.postAddCSR', 'uses' => 'LeavesController@postAddCSR'));
 Route::post('csr/new/{resource}/update', array('as' => 'leaves.postEditCSR', 'uses' => 'LeavesController@postEditCSR'));
+Route::get('/', function(){
+	return Redirect::to('/logingoogle');
+});
