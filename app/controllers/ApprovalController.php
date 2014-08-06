@@ -35,11 +35,13 @@ class ApprovalController extends \BaseController {
       $approval->approver_id = Auth::user()->id;
       $approval->approval_note = "Status Updated By Admin";
       $approval->leave_id = Input::get("leaveId");
+      $leave = Leave::find(Input::get("leaveId"));
       $approval->save();
       $approval_status = "YES";
     }
     else{
       $approval = Approval::findOrFail(Input::get('approvalId'));
+      $leave = $approval->leave()->first();
       if($approval->approver_id != Auth::user()->id){
         return Response::json(array('status' => true, 'message' => 'You are not allowed to approve this leave'));
       }
@@ -49,7 +51,15 @@ class ApprovalController extends \BaseController {
     $approval->save();
     $approval->sendApprovalNotification();
     $approval->markCalendarEvent();
-		return Response::json(array('status' => true));
+    // $leaveId = Input::get("leaveId");
+    $leave_user_id = $leave->user()->get()->first()->id;
+    $fully_approved = $leave->leaveStatus() == "APPROVED" ? true : false;
+    $json_data = array(
+      "leave_user_id" => $leave_user_id,
+      "fully_approved" => $fully_approved,
+      "status" => true
+    );
+		return Response::json($json_data);
 	}
 
 
@@ -66,5 +76,4 @@ class ApprovalController extends \BaseController {
 		$leave = Leave::find($id);
 		return View::make("leaves.leaveapprovals")->with("leave", $leave);
 	}
-
 }

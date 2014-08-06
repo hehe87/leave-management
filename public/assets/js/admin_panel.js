@@ -375,3 +375,38 @@ $(document).on("ready",function(e){
   }
 });
 
+
+// code for general report
+$(document).on("ready", function(){
+  if(typeof general_report != "undefined" && general_report){
+    var month = $(".general-report-container-inner table").data("month");
+    fetchNextMonthGeneralReportData(month);
+  }
+
+  $(".general-report-container").on("scroll", function(e){
+    if((($(".general-report-container-inner").height() - $(this).scrollTop() + 35) - $(".general-report-container").height()) < 200){
+      month  = $(".general-report-container-inner table").data("month");
+      fetchNextMonthGeneralReportData(month);
+      // console.log(($(".general-report-container-inner").height() - $(this).scrollTop() + 35) - $(".general-report-container-inner").height());
+    }
+  });
+});
+
+function fetchNextMonthGeneralReportData(month){
+  if(month != 0){
+    $.ajax({
+      url: general_report_url,
+      data: {month: month},
+      type: "post",
+      success: function(retdata){
+        $(".general-report-container-inner table tbody").append(retdata);
+        $(".general-report-container-inner table").data("month",month - 1);
+      }
+    });
+  }
+}
+
+
+
+
+

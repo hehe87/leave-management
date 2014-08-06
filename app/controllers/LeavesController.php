@@ -231,7 +231,12 @@ class LeavesController extends \BaseController {
 		->with('success', 'Leave successfully Added');
 		}
 		else{
-			return Redirect::to(URL::route('myLeaves'))->with('success', 'Leave successfully applied');
+			$approvals = Input::get("approval");
+			$approval_ids = array();
+			foreach($approvals as $appr){
+				$approval_ids[] = (int)$appr["approver_id"];
+			}
+			return Redirect::to(URL::route('myLeaves'))->with('success', 'Leave successfully applied')->with("notification", array("noti_name" => "leave_added", "noti_getter" => $approval_ids));
 		}
 	}
 
@@ -542,12 +547,110 @@ class LeavesController extends \BaseController {
 	  return View::make('leaves.report')->withInput($searchData)->with("leaves",$leaves)->with("users", $users);
 	}
 
-	public function generateReport(){
-
-	}
-
 	public function pendingLeaves(){
 		$leaves = Leave::pendingLeaves();
 		return View::make('leaves.index')->with("leaves", $leaves)->with("extraLeaves", array());
 	}
+
+	public function generalReport(){
+		$all_users = User::where("employeeType","!=","ADMIN")->get();
+		$extra_leave_names = array(
+			"Marriage",
+			"Paternity",
+			"Maternity",
+			"Education",
+			"Other"
+		);
+		return View::Make("leaves.general_report", array(
+				"all_users" => $all_users,
+				"extra_leave_names" => $extra_leave_names
+			)
+		);
+	}
+
+	public function fetchGeneralReport(){
+		$month = Input::get("month");
+		$year = Input::get("year");
+		$firstDay = 1;
+		$firstDate = new DateTime( date("Y") . "-" . sprintf("%02s",$month) . '-01' );
+		$lastDay = (int)$firstDate->format("t");
+		$allUsers = User::where("employeeType","!=","ADMIN")->get();
+		return View::make("leaves.fetch_next_general_report", array("lastDay" => $lastDay, "allUsers" => $allUsers, "month" => $month, "year" => $year));
+	}
+
+	public function getAddLeave(){
+		$leave = new Leave();
+		$users = User::where('id', '<>', Auth::user()->id)->employee()->lists('name', 'id');
+		$layout = Auth::user()->employeeType == "ADMIN" ? "admin_layout" : "user_layout";
+		return View::make("leaves.newleaves.add_leave", array("leave" => $leave, "layout" => $layout, "users" => $users));
+	}
+
+	public function postAddLeave(){
+		$allInputs = Input::all();
+		$fromDate = $allInputs["from_date"];
+		$toDate = $allInputs["to_date"];
+		$leaveType = $allInputs["leaveType"];
+		$userOfficeInTime = $allInputs["userOfficeInTime"];
+		$userOfficeOutTime = $allInputs["userOfficeOutTime"];
+		$userLeaveInTime = $allInputs["userLeaveInTime"];
+		$userLeaveOutTime = $allInputs["userLeaveOutTime"];
+		$leaveReason = $allInputs["leave_reason"];
+		$user = Auth::user("id");
+		$leave = new Leave();
+		$leave->leave_type = $leaveType;
+
+		$leave->leave_date = date("Y-m-d",strtotime($fromDate));
+		$leave->reason = $leaveReason;
+		$leave->user_id = $user->id;
+		switch($leaveType){
+			case "LONG":
+				$leave->leave_to = date("Y-m-d",strtotime($toDate));
+				break;
+			case "FH":
+			case "SH":
+				$leave->in_time = date('H:i:s', strtotime($userOfficeInTime));
+				$leave->out_time = date('H:i:s', strtotime($userOfficeOutTime));
+				$leave->available_in_time = date('H:i:s', strtotime($available_in_time));
+				$leave->available_out_time = date('H:i:s', strtotime($available_out_time));
+				break;
+		}
+		$leave->save();
+		foreach($allInputs["approvals"] as $approver_id){
+			$approval = new Approval();
+			$approval->approver_id = $approver_id;
+			$approval->leave_id = $leave->id;
+			$approval->approval_note = "";
+			$approval->approved = "PENDING";
+			$approval->save();
+			unset($approval);
+		}
+		return array(
+			"status" => true
+		);
+	}
+
+	public function getEditLeave(){
+		return View::make("leaves.newleaves.edit_leave");
+	}
+
+	public function postEditLeave(){
+
+	}
+
+	public function getAddCSR(){
+		return View::make("leaves.newleaves.add_csr");
+	}
+
+	public function postAddCSR(){
+
+	}
+
+	public function getEditCSR(){
+		return View::make("leaves.newleaves.edit_csr");
+	}
+
+	public function postEditCSR(){
+
+	}
+
 }

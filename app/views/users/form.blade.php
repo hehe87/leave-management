@@ -146,6 +146,11 @@
     @endif
   </div>
 </div>
+
+
+
+
+
 <div class="form-group has-feedback">
   <div class="col-sm-12">
     <div class="row">
@@ -162,6 +167,33 @@
         <div class="col-sm-6 col-sm-offset-2">
           <div class="alert alert-danger">
             {{{ $errors->first('remark') }}}
+          </div>
+        </div>
+      </div>
+    @endif
+  </div>
+</div>
+
+<div class="form-group has-feedback">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-2">
+        {{ Form::label('lunch_start_time', 'Lunch Start/End Time', array('class' => 'control-label')) }}
+      </div>
+      <div class="col-sm-3">
+        {{ Form::text('lunch_start_time', date('h:i A', strtotime($user->lunch_start_time)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "in_time"), 'placeholder' => 'In Time (hh:mm)')) }}
+        <span class="glyphicon glyphicon-time form-control-feedback"></span>
+      </div>
+      <div class="col-sm-3">
+        {{ Form::text('lunch_end_time', date('h:i A', strtotime($user->lunch_end_time)), array('class' => 'form-control timepicker ' . ($user->id ? "" : "out_time"), 'placeholder' => 'Out Time (hh:mm)', 'id' => 'lunch_end_time')) }}
+        <span class="glyphicon glyphicon-time form-control-feedback"></span>
+      </div>
+    </div>
+    @if ($errors->first('lunch_start_time'))
+      <div class="row">
+        <div class="col-sm-6 col-sm-offset-2">
+          <div class="alert alert-danger">
+            {{{ $errors->first('lunch_start_time') }}}
           </div>
         </div>
       </div>

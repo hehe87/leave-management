@@ -26,6 +26,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     'employeeType',
     'inTime',
     'outTime',
+    'lunch_start_time',
+    'lunch_end_time',
     'doj',
     'dob',
     'phone',
@@ -141,7 +143,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
           'phone' => array('required','regex:/[0-9]{10}/'),
           'altPhone' => array('regex:/[0-9]{10}/')
       );
-      
+
     }
     else{
       $validationRules = array(
@@ -194,6 +196,100 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     return $this->getRemainingLeavesForYear(date("Y"));
   }
 
+
+  /*
+    Function Name     : getNormalLeavesForYear
+    Author Name       : Nicolas Naresh
+    Date              : July 30, 2014
+    Parameters        : $year
+    Purpost           : this function returns the count of all the normal leaves for current user for a given year.
+  */
+  public function getNormalLeavesForYear($year){
+    $januaryOne = new DateTime(date("Y-m-d", mktime(0,0,0,1,1,$year)));
+    $paidLeaves = Leaveconfig::getConfig("paid_leaves", $year)->leave_days;
+    $allLeaves = $paidLeaves;
+    if(Config::get("database.default") == "mysql"){
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('YEAR(holidayDate)'), "=", $year)->orderBy("holidayDate", "asc")->get();
+    }
+    else{
+      $optionalHolidays = Holiday::where("holidayType", "=", "OPTIONAL")->where(DB::raw('EXTRACT( YEAR from "holidayDate"::date)'), "=", $year)->orderBy("holidayDate", "asc")->get();
+    }
+    $optionalHolidaysCount = count(array_keys($optionalHolidays->toArray()));
+
+    $dateOfJoining = new DateTime($this->doj);
+    $joiningYear = (int)$dateOfJoining->format("Y");
+    $joiningYearStart = YearStart::where("year", $joiningYear)->first();
+
+    if($joiningYearStart){
+      $joiningYearStartDay = $joiningYearStart->startDay;
+      $joiningYearStartMonth = $joiningYearStart->startMonth;
+    }
+    else{
+      $joiningYearStartDay = 15;
+      $joiningYearStartMonth = 1;
+    }
+
+    $lastLeaveDateInYearOfJoining = new DateTime(date("Y-m-d", mktime(0,0,0,$joiningYearStartMonth,$joiningYearStartDay,$joiningYear)));
+
+    $yearsInCompany = (int)$januaryOne->format("Y") - (int)$dateOfJoining->format("Y");
+
+    $isJoinedInCurrentYear = $yearsInCompany == 0 ? true : false;
+
+    $isJoinedBeforeLastLeaveDateOfJoiningYear = (((int)$dateOfJoining->format("m") == 1) && ((int)$dateOfJoining->format("d") <= 15)) ? true : false;
+
+    if(!$isJoinedBeforeLastLeaveDateOfJoiningYear && !$isJoinedInCurrentYear){
+      $yearsInCompany -= 1;
+    }
+
+    $allLeaves += $optionalHolidaysCount;
+
+
+    $leavesPerMonth = $allLeaves / 12;
+
+    if($isJoinedInCurrentYear){
+      $lastYearDateTS = mktime(0,0,0,12,31,$year);
+      $joiningDateTS = mktime(0,0,0,$dateOfJoining->format("m"), $dateOfJoining->format("d"), $dateOfJoining->format("Y"));
+      $diff = $lastYearDateTS - $joiningDateTS;
+      $diffMonths = $diff / (24 * 60 * 60 * 30);
+      $allLeaves = round($diffMonths * $leavesPerMonth);
+    }
+    else{
+      $allLeaves += $yearsInCompany;
+    }
+
+    // $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
+
+    // foreach($extraLeaves as $extraL){
+    //   $allLeaves += $extraL->leaves_count;
+    // }
+
+    $currentDate = new DateTime();
+
+
+    $currentYearStart = YearStart::where("year", date("Y"))->first();
+    $currentYearJan = new DateTime(date("Y-m-d",mktime(0,0,0,1,1,date("Y"))));
+
+    if($currentYearStart){
+      $currentYearStartDay = $currentYearStart->startDay;
+      $currentYearStartMonth = $currentYearStart->startMonth;
+    }
+    else{
+      $currentYearStartDay = 15;
+      $currentYearStartMonth = 1;
+    }
+
+    $lastLeaveDateInCurrentYear = new DateTime(date("Y-m-d",mktime(0,0,0,$currentYearStartMonth,$currentYearStartDay, date("Y"))));
+
+    if((int)$year == (int)date("Y")){
+      if($currentDate >= $currentYearJan && $currentDate <= $lastLeaveDateInCurrentYear){
+        $allLeaves += $this->getTotalLeavesForYear(((int)$year-1));
+      }
+      else{
+        $allLeaves += $this->carry_forward_leaves;
+      }
+    }
+    return $allLeaves;
+  }
 
   /*
     Function Name     : getTotalLeavesForYear
@@ -301,15 +397,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     $remainingLeaves = $totalLeaves;
     $userLeaves = $this->leaves()->get();
     foreach($userLeaves as $uLeave){
-      $isApproved = true;
-      foreach($uLeave->approvals as $approval){
-        if($approval->approved != "YES"){
-          $isApproved = false;
-          break;
+      //$isApproved = true;
+      if($uLeave->leaveStatus() == "APPROVED"){
+        if($uLeave->leave_type == "FH" || $uLeave->leave_type == "SH"){
+          $remainingLeaves -= 0.5;
         }
-      }
-      if($isApproved){
-        $remainingLeaves -= 1;
+        else{
+          $remainingLeaves -= 1;
+        }
       }
     }
     $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
@@ -412,7 +507,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all applied leaves for current user for a given year
   */
   public function appliedLeaves($year){
-    return $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    if(Config::get("database.default") == "mysql"){
+      return $this->hasMany('Leave')->where(DB::raw('DATE(leave_date)'), $year)->get();
+    }
+    else {
+      return $this->hasMany('Leave')->where(DB::raw('EXTRACT(year FROM "leave_date"::date)'), $year)->get();
+    }
   }
 
   /*
@@ -423,9 +523,99 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
   Purpose       :       to get the all extra leaves for current user for a given year
   */
   public function extraLeaves($year){
-    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year)->get();
+    $extraLeaves = Extraleave::where("user_id", $this->id)->where("for_year", $year);
     return $extraLeaves;
   }
+
+
+
+
+  /*
+  Function Name :       getExtraLeave
+  Author Name   :       Nicolas Naresh
+  Date          :       30 July, 2014
+  Parameters    :       $year, $description
+  Purpose       :       to get marriage leaves for user
+  */
+  public function getExtraLeave($year, $description){
+    $extra_leave = $this->extraleaves($year)->where("description", "LIKE", "%" . $description . "%")->first();
+    if($extra_leave){  
+      return $extra_leave->leaves_count;
+    }
+    return "";
+  }
+
+  /*
+  Function Name :       dayLeave
+  Author Name   :       Nicolas Naresh
+  Date          :       30 July, 2014
+  Parameters    :       $year, $description
+  Purpose       :       this function will return 1 or 0.5 or "" on the basis of leave taken by
+                        user on given date, 1 for full day, 0.5 for half day, "" blank for no leave
+  */
+  public function dayLeave($date){
+    $leave = $this->hasMany('Leave')->where("leave_date","=", $date)->first();
+    if($leave && $leave->leaveStatus() == "APPROVED"){
+      if($leave->leave_type == "FH" || $leave->leave_type == "SH"){
+        return 0.5;
+      }
+      else{
+        if($leave->leave_type = "LEAVE"){
+          return 1;
+        }
+      }
+    }
+    else{
+      return "";
+    }
+  }
+
+
+  /*
+  Function Name :       getMarriageLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       30 July, 2014
+  Parameters    :       $year
+  Purpose       :       to get marriage leaves for user
+  */
+  // public function getMarriageLeaves($year){
+  //   $marriage_leave = $this->extraleaves(date("Y"))->where("description","LIKE","%Marriage%")->first();
+  //   if($marriage_leave){  
+  //     return $marriage_leave->leaves_count;
+  //   }
+  //   return "";
+  // }
+
+  /*
+  Function Name :       getPaternityLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       30 July, 2014
+  Parameters    :       $year
+  Purpose       :       to get paternity leaves for user
+  */
+  // public function getPaternityLeaves($year){
+  //   $paternity_leave = $this->extraleaves(date("Y"))->where("description","LIKE","%Paternity%")->first();
+  //   if($paternity_leave){  
+  //     return $paternity_leave->leaves_count;
+  //   }
+  //   return "";
+  // }
+
+  /*
+  Function Name :       getMaternityLeaves
+  Author Name   :       Nicolas Naresh
+  Date          :       30 July, 2014
+  Parameters    :       $year
+  Purpose       :       to get maternity leaves for user
+  */
+  // public function getMaternityLeaves($year){
+  //   $maternity_leave = $this->extraleaves(date("Y"))->where("description","LIKE","%Maternity%")->first();
+  //   if($maternity_leave){  
+  //     return $maternity_leave->leaves_count;
+  //   }
+  //   return "";
+  // }
+
 
 
 

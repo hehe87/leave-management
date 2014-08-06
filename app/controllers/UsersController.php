@@ -23,7 +23,8 @@ class UsersController extends \BaseController {
       	  'getForgotPassword',
       	  'postForgotPassword',
       	  'getChangePassword',
-      	  'postChangePassword'
+      	  'postChangePassword',
+          'loginWithGoogle',
       	)
       )
     );
@@ -55,6 +56,83 @@ class UsersController extends \BaseController {
   }
 
   /*
+    Function Name :    loginWithGoogle
+    Author Name   :    Jack Braj <jack.braj@ithands.net>
+    Date          :    July, 29 2014
+    Parameters    :    none
+    Purpose       :    This function facilitates google sign in
+  */
+    public function loginWithGoogle() {
+
+    // get data from input
+    $code = Input::get( 'code' );
+
+    // get google service
+    $googleService = OAuth::consumer( 'Google' );
+
+    // check if code is valid
+
+    // if code is provided get user data and sign in
+    if ( !empty( $code ) ) {
+
+      // This was a callback request from google, get the token
+      $token = $googleService->requestAccessToken( $code );
+
+      // Send a request with it
+      $result = json_decode( $googleService->request( 'https://www.googleapis.com/oauth2/v1/userinfo' ), true );
+      $user = User::whereEmail($result['email'])->get()->first();
+
+       // check if user exists in database
+      if( isset($user) && ($user->count() > 0) ) {
+
+        // check if user is not activated yet
+        if ( $user->status == false ) {
+          return Redirect::to('login')->with('message', 'Your account is not activated. Please contact administrator !');
+        }
+        // log in the user
+        Auth::loginUsingId($user->id);
+
+        // take user to dashboard
+        $employeeType = Auth::user()->employeeType;
+
+        if($employeeType === "EMPLOYEE"){
+          return Redirect::intended(URL::route('usersHome'));
+        }
+        else{
+         return Redirect::intended(URL::route('usersListing'));
+        }
+      }
+
+      // If not redirect back to login page with message
+      $user_data = array( 'name' => $result['name'], 'email' => $result['email'], 'status' => false);
+
+      // create a new user
+      $temp_user = User::create($user_data);
+
+      // get admin user
+      $admin_user = User::where('employeeType', '=', 'ADMIN')->first();
+
+      $data = ['temp_user' => $temp_user, 'admin_user' => $admin_user];
+      // send an email to admin with user details
+      Mail::send('emails.newuser', $data, function($message) use ($admin_user)
+      {
+        $message->to($admin_user->email, $admin_user->name)->from('nicolas.naresh@ithands.net', 'Admin')->subject("Request for a new user for LMS");
+      });
+
+      return Redirect::to('login')->with('message', 'Your request has been sent. Please contact administrator !');
+
+    }
+    // if not ask for permission first
+    else {
+        // get googleService authorization
+        $url = $googleService->getAuthorizationUri();
+
+        // return to google login url
+        return Redirect::to( (string)$url );
+    }
+}
+
+  /*
     Function Name: 		postLogin
     Author Name:		Nicolas Naresh
     Date:			June, 02 2014
@@ -70,7 +148,7 @@ class UsersController extends \BaseController {
     if(key_exists("rememberMe",$formData)){
       $rememberMe = true;
     }
-    if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
+    if (Auth::attempt(array('email' => $email, 'password' => $password, 'status' => true), $rememberMe))
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
@@ -82,7 +160,7 @@ class UsersController extends \BaseController {
 
     }
     else{
-      return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
+      return Redirect::to(URL::route('userLogin'))->with('error', 'There was a problem loggin you in, Please check your credentials and try again');
     }
   }
 
@@ -279,6 +357,8 @@ class UsersController extends \BaseController {
     $formData = Input::except("_token");
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
     $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+    $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+    $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
     $validator = User::validateRegistrationForm($formData);
     if($validator->fails())
     {
@@ -325,6 +405,8 @@ class UsersController extends \BaseController {
     $user = User::find($id);
     $user->inTime = preg_replace("/:00$/", "", $user->inTime);
     $user->outTime = preg_replace("/:00$/", "", $user->outTime);
+    $user->lunch_start_time = preg_replace("/:00$/", "", $user->lunch_start_time);
+    $user->lunch_end_time = preg_replace("/:00$/", "", $user->lunch_end_time);
     return View::make('users.edit')->with("user", $user);
   }
 
@@ -341,6 +423,8 @@ class UsersController extends \BaseController {
     $formData = Input::all();
     $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
     $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+    $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+    $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
     $validator = User::validateRegistrationForm($formData, $id);
     if($validator->fails())
     {
@@ -350,6 +434,8 @@ class UsersController extends \BaseController {
       $formData = Input::except("password_confirmation","_token");
       $formData['inTime'] = date('H:i:s', strtotime($formData['inTime']));
       $formData['outTime'] = date('H:i:s', strtotime($formData['outTime']));
+      $formData['lunch_start_time'] = date('H:i:s', strtotime($formData['lunch_start_time']));
+      $formData['lunch_end_time'] = date('H:i:s', strtotime($formData['lunch_end_time']));
       $formData["doj"] = date("Y-m-d",strtotime($formData["doj"]));
       $formData["dob"] = date("Y-m-d",strtotime($formData["dob"]));
       if(!empty($formData["password"])){
