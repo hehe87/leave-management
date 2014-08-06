@@ -85,6 +85,10 @@ class UsersController extends \BaseController {
        // check if user exists in database
       if( isset($user) && ($user->count() > 0) ) {
 
+        // check if user is not activated yet
+        if ( $user->status == false ) {
+          return Redirect::to('login')->with('message', 'Your account is not activated. Please contact administrator !');
+        }
         // log in the user
         Auth::loginUsingId($user->id);
 
@@ -100,7 +104,7 @@ class UsersController extends \BaseController {
       }
 
       // If not redirect back to login page with message
-      $user_data = array( 'name' => $result['name'], 'email' => $result['email']);
+      $user_data = array( 'name' => $result['name'], 'email' => $result['email'], 'status' => false);
 
       // create a new user
       $temp_user = User::create($user_data);
@@ -144,7 +148,7 @@ class UsersController extends \BaseController {
     if(key_exists("rememberMe",$formData)){
       $rememberMe = true;
     }
-    if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
+    if (Auth::attempt(array('email' => $email, 'password' => $password, 'status' => true), $rememberMe))
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
@@ -156,7 +160,7 @@ class UsersController extends \BaseController {
 
     }
     else{
-      return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
+      return Redirect::to(URL::route('userLogin'))->with('error', 'There was a problem loggin you in, Please check your credentials and try again');
     }
   }
 
