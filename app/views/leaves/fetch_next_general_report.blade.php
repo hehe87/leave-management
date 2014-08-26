@@ -9,7 +9,7 @@
 		</tr>
 	@endif
 	<tr>
-		<th>
+		<th class="text-center">
 			<?php $dt = new DateTime(date("Y") . "-" . sprintf("%02s", $month) . "-" . $i); ?>
 			{{ $dt->format("d") }}
 		</th>

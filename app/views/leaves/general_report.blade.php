@@ -34,7 +34,7 @@
 	    				</th>
 	    				@foreach($all_users as $user)
 								<td>
-									{{ date("M,d",strtotime($user->doj)) }}
+									{{ date("M d",strtotime($user->doj)) }}
 									{{ date("Y",strtotime($user->doj)) }}
 								</td>
 							@endforeach
