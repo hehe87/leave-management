@@ -91,7 +91,7 @@ Route::filter('auth.admin', function(){
 Route::filter('auth.user', function()
 {
 	if(!Auth::check()){
-		return Redirect::to(URL::route("userLogin"));
+		return Redirect::to(URL::route("logingoogle"));
 	}
 	if("EMPLOYEE" != Auth::user()->employeeType){
 		return Redirect::to(URL::route("usersListing"));

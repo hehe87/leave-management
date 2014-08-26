@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/logingoogle', 'UsersController@loginWithGoogle');
+Route::get('/logingoogle',array("as" => "logingoogle", "uses" => 'UsersController@loginWithGoogle'));
 //  SSL workaround for IRON MQ
 Route::get('/test', array('as' => 'test', 'uses' => 'UsersController@test'));
 
