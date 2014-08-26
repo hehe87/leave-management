@@ -194,10 +194,6 @@ class UsersController extends \BaseController {
     }
     else{
       $user = User::where("email", $email)->get();
-
-      $profile = $user->profile()->get()->first();
-
-      return $profile;
       if($user->first()){
       	$user = $user->first();
       	$userName = $user->name;
@@ -209,8 +205,6 @@ class UsersController extends \BaseController {
       $token = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 100);
 
       $emailSubject = "Leave Management: Change Your Password";
-
-      $profile = $user->profile()->get()->first();
 
       $data = array(
       	'token' => $token,
