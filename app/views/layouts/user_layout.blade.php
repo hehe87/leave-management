@@ -47,6 +47,10 @@
             </div>
             <div class="col-sm-3 col-sm-offset-2">
               <div class="link show h4-new welcome-message pull-right">Welcome {{ Auth::user()->name }}</div>
+              <!-- <div class="link show h4-new welcome-message pull-right" style="position: relative;">
+                <button class="glyphicon glyphicon-globe popover-dismiss" id="notification-popover"></button>
+                <div id="notification-count" data-count=0>1</div>
+              </div> -->
             </div>
             <div class="col-sm-1">
                 <a class="link logout-link pull-right" href="{{ URL::route('userLogout') }}">
