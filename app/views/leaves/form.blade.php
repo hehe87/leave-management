@@ -88,7 +88,7 @@
         {{ Form::label('leave_date', 'Leave Date *', array('class' => 'control-label')) }}
       </div>
       <div class="col-sm-6" id="leaveDateFrom">
-        {{ Form::text('leave[leave_date]',$leave->leave_date, array('class' => 'form-control date_control ' . TemplateFunction::getUIDateClass(Input::old('leave.leave_option'), Input::old('leave.leave_type')), 'id' => 'date-control')) }}
+        {{ Form::text('leave[leave_date]',$leave->leave_date, array('class' => 'form-control date_control ' . TemplateFunction::getUIDateClass(Input::old('leave_option'), Input::old('leave.leave_type')), 'id' => 'date-control')) }}
         <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
       </div>
     </div>

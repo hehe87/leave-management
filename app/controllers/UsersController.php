@@ -85,6 +85,10 @@ class UsersController extends \BaseController {
        // check if user exists in database
       if( isset($user) && ($user->count() > 0) ) {
 
+        // check if user is not activated yet
+        if ( $user->status == false ) {
+          return Redirect::to('login')->with('message', 'Your account is not activated. Please contact administrator !');
+        }
         // log in the user
         Auth::loginUsingId($user->id);
 
@@ -100,8 +104,22 @@ class UsersController extends \BaseController {
       }
 
       // If not redirect back to login page with message
-      return Redirect::to('login')->with('message', 'You are not registered yet, please contact administrator to create a profile for you');
+      $user_data = array( 'name' => $result['name'], 'email' => $result['email'], 'status' => false);
 
+      // create a new user
+      $temp_user = User::create($user_data);
+
+      // get admin user
+      $admin_user = User::where('employeeType', '=', 'ADMIN')->first();
+
+      $data = ['temp_user' => $temp_user, 'admin_user' => $admin_user];
+      // send an email to admin with user details
+      Mail::send('emails.newuser', $data, function($message) use ($admin_user)
+      {
+        $message->to($admin_user->email, $admin_user->name)->from('nicolas.naresh@ithands.net', 'Admin')->subject("Request for a new user for LMS");
+      });
+
+      return Redirect::to('login')->with('message', 'Your request has been sent. Please contact administrator !');
 
     }
     // if not ask for permission first
@@ -130,7 +148,7 @@ class UsersController extends \BaseController {
     if(key_exists("rememberMe",$formData)){
       $rememberMe = true;
     }
-    if (Auth::attempt(array('email' => $email, 'password' => $password), $rememberMe))
+    if (Auth::attempt(array('email' => $email, 'password' => $password, 'status' => true), $rememberMe))
     {
       $employeeType = Auth::user()->employeeType;
       if($employeeType === "EMPLOYEE"){
@@ -142,7 +160,7 @@ class UsersController extends \BaseController {
 
     }
     else{
-      return Redirect::to(URL::route('userLogin'))->with('error', 'Email or Password does not match');
+      return Redirect::to(URL::route('userLogin'))->with('error', 'There was a problem loggin you in, Please check your credentials and try again');
     }
   }
 

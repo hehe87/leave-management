@@ -87,16 +87,16 @@ class TemplateFunction{
 		}
 		else{
 			switch($leaveType){
+				case "MULTI":
+					return "date-multi";
+				case "LONG":
+					return "date-long";
 				case "LEAVE":
 				case "FH":
 				case "SH":
 					return "date-single";
-				case "LONG":
-					return "date-long";
-				case "MULTI":
-					return "date-multi";
 				default:
-					return "dae-single";
+					return "date-single";
 			}
 		}
 	}

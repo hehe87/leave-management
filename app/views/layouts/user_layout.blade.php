@@ -142,7 +142,7 @@
     {{ HTML::script('assets/js/jquery-migrate.js') }}
     {{ HTML::script('assets/js/bootstrap.min.js') }}
     {{ HTML::script('assets/js/jquery.ui.js') }}
-    {{ HTML::script('assets/js/bootstrap-datepicker.js') }}
+    {{-- HTML::script('assets/js/bootstrap-datepicker.js') --}}
     {{ HTML::script('assets/js/jquery.easing.js') }}
 
 

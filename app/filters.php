@@ -57,7 +57,7 @@ Route::filter('auth.basic', function()
 
 Route::filter('guest', function()
 {
-	if (Auth::check()) return Redirect::to('/');
+	if (Auth::check()) return Redirect::to('/logingoogle');
 });
 
 /*
@@ -81,7 +81,7 @@ Route::filter('csrf', function()
 
 Route::filter('auth.admin', function(){
 	if(!Auth::check()){
-		return Redirect::to(URL::route("userLogin"));
+		return Redirect::to("/logingoogle");
 	}
 	if("ADMIN" != Auth::user()->employeeType){
 		return Redirect::to(URL::route("myLeaves"));
@@ -100,7 +100,7 @@ Route::filter('auth.user', function()
 
 Route::filter('admin_added_or_admin_auth', function(){
 	if((User::where("employeeType","ADMIN")->count() != 0) && !(Auth::check() && Auth::user()->employeeType == "ADMIN")){
-		return Redirect::to(URL::route("userLogin"));
+		return Redirect::to("/logingoogle");
 	}
 });
 
