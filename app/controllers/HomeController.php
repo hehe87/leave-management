@@ -22,7 +22,7 @@ class HomeController extends BaseController {
 		$approvedLeaves = count($user->approvedLeaves(date("Y")));
 		$pendingLeaves = count($user->pendingLeaves(date("Y")));
 		$rejectedLeaves = count($user->rejectedLeaves(date("Y")));
-		$extraLeaves = count($user->extraLeaves(date("Y")));
+		$extraLeaves = count($user->extraLeaves(date("Y"))->get());
 		$appliedLeaves = count($user->appliedLeaves(date("Y")));
 
 		return View::make("users.user_dashboard")
