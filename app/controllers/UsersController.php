@@ -104,7 +104,7 @@ class UsersController extends \BaseController {
       }
 
       // If not redirect back to login page with message
-      $user_data = array( 'name' => $result['name'], 'email' => $result['email'], 'status' => false);
+      $user_data = array( 'name' => $result['name'], 'email' => $result['email'], 'status' => false, 'employeeType' => 'EMPLOYEE');
 
       // create a new user
       $temp_user = User::create($user_data);
