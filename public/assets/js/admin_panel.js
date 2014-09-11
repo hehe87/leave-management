@@ -38,7 +38,7 @@ $(document).on("ready",function(){
     $('#leavesTable').DataTable( {
         aaSorting: [[0, "desc"]],
         aoColumnDefs: [
-          {
+          { 
              bSortable: false,
              aTargets: [ -1 ]
           }
@@ -406,7 +406,7 @@ function fetchNextMonthGeneralReportData(month){
   }
 }
 
-
-
-
-
+// Reset dates to select again
+$('.date_control').on('click', function(){console.log('clicked');
+  $(this).multiDatesPicker('resetDates');
+});
