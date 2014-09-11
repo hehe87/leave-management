@@ -159,32 +159,41 @@ $(document).on("ready",function(){
     );
   }
   var leave_type = $('#leave_type');
-  if( 'CSR' == leave_type )
-  {
-    $csr_container.removeClass("hide").addClass("show");
-    $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
+  // if( 'CSR' == leave_type )
+  // {
+  //   $csr_container.removeClass("hide").addClass("show");
+  //   $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
 
-  }
-  else if( "LEAVE" == leave_type || "FH" == leave_type || "SH" == leave_type)
-  {
-    $csr_container.removeClass("show").addClass("hide");
-    $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
-  }
-  else if("LONG" == leave_type){
-    $("#date-control").removeClass("date-single").removeClass("date-multiple").addClass("date-long");
-  }
-  else{
-    $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
-  }
+  // }
+  // else if( "LEAVE" == leave_type || "FH" == leave_type || "SH" == leave_type)
+  // {
+  //   $csr_container.removeClass("show").addClass("hide");
+  //   $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
+  // }
+  // else if("LONG" == leave_type){
+  //   $("#date-control").removeClass("date-single").removeClass("date-multiple").addClass("date-long");
+  // }
+  // else{
+  //   $("#date-control").addClass("date-single").removeClass("date-multiple").removeClass("date-long");
+  // }
 
  if( $(".date_control").length !==0 )
  {
     $(".date_control").each(function(){
       var $date_control =   $(this);
-      var date_control_val = $date_control.val().split(" ")[0];
-
+      console.log($date_control.val());
+      var date_control_val = $date_control.val().split(",");
+      var dts = [];
+      $.each(date_control_val,function(k,v){
+        var dt = new Date(v.split('-')[0], parseInt(v.split('-')[1]) - 1, v.split('-')[2]);
+        if(dt){
+          dts.push(dt);
+        }
+      });
+      if(dts[0] == "Invalid Date"){
+        dts = [new Date()];
+      }
       if($(".date_control").hasClass("date-long")){
-        var dts = [];
         if(date_control_val == ""){
           $date_control.multiDatesPicker({
             maxPicks: 2,
@@ -192,13 +201,11 @@ $(document).on("ready",function(){
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
-            yearRange: "-100:+0"
+            yearRange: "-100:+0",
+            addDates: dts
           });
         }
         else{
-          $.each(date_control_val.split(","),function(k,v){
-            dts.push(new Date(v.split('-')[0], parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
-          });
           $date_control.multiDatesPicker({
             maxPicks: 2,
             showOn : "both",
@@ -211,21 +218,18 @@ $(document).on("ready",function(){
         }
 
       }
-      else if($(".date_control").hasClass("date-multiple")){
-        var dts = [];
+      else if($(".date_control").hasClass("date-multi")){
         if(date_control_val == ""){
           $date_control.multiDatesPicker({
             showOn : "both",
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
-            yearRange: "-100:+0"
+            yearRange: "-100:+0",
+            addDates: dts
           });
         }
         else{
-          $.each(date_control_val.split(","),function(k,v){
-            dts.push(new Date(v.split('-')[0],parseInt(v.split('-')[1]) - 1, v.split('-')[2]));
-          });
           $date_control.multiDatesPicker({
             showOn : "both",
             dateFormat: "dd-mm-yy",
@@ -245,11 +249,12 @@ $(document).on("ready",function(){
             dateFormat: "dd-mm-yy",
             changeMonth: true,
             changeYear: true,
-            yearRange: "-100:+0"
+            yearRange: "-100:+0",
+            addDates: dts
           });
         }
         else{
-          dt = new Date(date_control_val.split("-")[0],parseInt(date_control_val.split("-")[1]) - 1,date_control_val.split("-")[2]);
+          dt = new Date(date_control_val[0]);
           $date_control.multiDatesPicker({
             maxPicks: 1,
             showOn : "both",

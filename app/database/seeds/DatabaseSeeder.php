@@ -10,10 +10,22 @@ class DatabaseSeeder extends Seeder {
 	public function run()
 	{
 		Eloquent::unguard();
-
 		$this->call('HolidayTableSeeder');
+		$this->call('UserTableSeeder');
 	}
 
+}
+
+class UserTableSeeder extends Seeder{
+	public function run(){
+		DB::table('users')->delete();
+		$user = new User();
+		$user->name = "Dave Deepak";
+		$user->email = "deepak.s@rubicoit.com";
+		$user->password = Hash::make("admin");
+		$user->employeeType = "ADMIN";
+		$user->save();
+	}
 }
 
 class HolidayTableSeeder extends Seeder{

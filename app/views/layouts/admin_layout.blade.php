@@ -62,7 +62,7 @@
           {{ HTML::nav_link(Route::currentRouteName(), "pendingLeaves", "Pending Leaves") }}
           {{ HTML::nav_link(Route::currentRouteName(), "reports", "Reports") }}
           {{ HTML::nav_link(Route::currentRouteName(), "settings", "Settings") }}
-          {{ HTML::nav_link(Route::currentRouteName(), "leaves.general_report", "General Report") }}
+          {{ HTML::nav_link(Route::currentRouteName(), "leaves.general_report", "Leave Report") }}
           <li class="small-window-show">
             <a class="link" href="{{ URL::route('userLogout') }}">
               Logout
@@ -136,6 +136,7 @@
     {{ HTML::script('assets/js/jquery.alerts.js') }}
     {{ HTML::script('assets/js/prettify.js') }}
     {{ HTML::script('assets/js/bootstrap-timepicker.min.js') }}
+    {{ HTML::script('assets/js/moment.js') }}
     {{ HTML::script('assets/js/common.js') }}
     {{ HTML::script('assets/js/admin_panel.js') }}
     <!-- End including Scripts -->

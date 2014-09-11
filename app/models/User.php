@@ -476,6 +476,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     return $pending;
   }
 
+
   /*
   Function Name :       rejectedLeaves
   Author Name   :       Nicolas Naresh

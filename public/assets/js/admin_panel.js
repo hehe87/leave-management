@@ -394,15 +394,18 @@ $(document).on("ready", function(){
 
 function fetchNextMonthGeneralReportData(month){
   if(month != 0){
-    $.ajax({
-      url: general_report_url,
-      data: {month: month},
-      type: "post",
-      success: function(retdata){
-        $(".general-report-container-inner table tbody").append(retdata);
-        $(".general-report-container-inner table").data("month",month - 1);
-      }
-    });
+    if(typeof window.xhr == "undefined"){
+      window.xhr = $.ajax({
+        url: general_report_url,
+        data: {month: month},
+        type: "post",
+        success: function(retdata){
+          delete(window.xhr);
+          $(".general-report-container-inner table tbody").append(retdata);
+          $(".general-report-container-inner table").data("month",month - 1);
+        }
+      });
+    }
   }
 }
 

@@ -11,10 +11,28 @@ Purpose		: Custom styles for leave management system
 	overflow: scroll;
 	height:580px;
 	width: 99.5%;
-	font-size: 12px;
+	font-size: 10px;
+	font-family: "arial";
+	color: #000;
+}
+.general-report-container tr td{
+	text-align: center;
+}
+.general-report-container thead th{
+	background-color: #aeaeae;
 }
 .general-report-container-inner{
 	/*min-width:1500px;*/
+}
+
+.g-report-month-header{
+	font-size: 17px;
+	font-weight: 700;
+	background-color: #ddd;
+}
+
+.red{
+	background-color: red;
 }
 /*.general-report-container-inner th, .general-report-container-inner td{
 	width: 30px;
@@ -326,3 +344,35 @@ width: 100%;
 	color: #fff;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
+
+
+/*.popover-content{
+	color: #991B1E;
+	font-size: 12px;
+	padding: 1px 5px;
+}
+#notification-popover{
+	margin-right: 36px;
+	margin-top: 2px;
+	font-size: 23px;
+	border-radius: 27px;
+	width: 28px;
+	padding: 0px !important;
+	height: 31px;
+	background-color: transparent;
+	border: none;
+	outline: none;
+}
+#notification-count{
+	background-color: #DC7476;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  height: 20px;
+  left: 16px;
+  padding-left: 6px;
+  padding-top: 1px;
+  position: absolute;
+  top: 8px;
+  width: 20px;
+}*/

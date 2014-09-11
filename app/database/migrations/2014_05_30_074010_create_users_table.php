@@ -19,13 +19,13 @@ class CreateUsersTable extends Migration {
 			$table->string('fName', 80)->nullable();
 			$table->string('email', 50);
 			$table->string('password', 80);
-			$table->time('inTime');
-			$table->time('outTime');
-			$table->datetime('dob');
-			$table->datetime('doj');
+			$table->time('inTime')->nullable();
+			$table->time('outTime')->nullable();
+			$table->datetime('dob')->nullable();
+			$table->datetime('doj')->nullable();
 			$table->string('bloodGroup', 5)->nullable();
 			$table->boolean('maritalStatus')->nullable();
-			$table->string('phone', 15);
+			$table->string('phone', 15)->nullable();
 			$table->string('altPhone', 15)->nullable();
 			$table->text('cAddress', 200)->nullable();
 			$table->text('pAddress', 200)->nullable();

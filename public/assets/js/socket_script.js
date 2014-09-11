@@ -9,6 +9,15 @@ var socket = io('http://lms-node.herokuapp.com');
 // });
 
 $(document).on("ready", function(){
+	// var options = {
+	// 	content: notificationHtml(),
+	// 	placement: "bottom",
+	// 	trigger: "focus"
+	// }
+	// function notificationHtml(){
+	// 	return "I am here";
+	// }
+	// $('#notification-popover').popover(options);
 	if(typeof notification_data != "undefined"){
 		var notification_name = notification_data["noti_name"];
 		var notification_getter = notification_data["noti_getter"];
