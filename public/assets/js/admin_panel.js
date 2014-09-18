@@ -59,12 +59,12 @@ $(document).on("submit",".user-form", function(e){
     inTime = new Date("12-10-2014 " + inTime);
     outTime = new Date("12-10-2014 " + outTime);
     diffInHours = (outTime - inTime)/(1000*60*60);
-    if(diffInHours > 9.5){
-      jAlert("In/Out Time difference must be less than 9:30 Hours");
-    }
-    else{
+    // if(diffInHours > 9.5){
+    //   jAlert("In/Out Time difference must be less than 9:30 Hours");
+    // }
+    // else{
       $(this)[0].submit();
-    }
+    // }
   }
 });
 
